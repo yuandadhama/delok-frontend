@@ -107,8 +107,7 @@ const page = () => {
             name="email"
             type="email"
             placeholder="alan@turing.com"
-            error={errors.email}
-          />
+            error={errors.email} 
 
           <Input
             label="Password"
