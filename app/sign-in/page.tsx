@@ -2,7 +2,7 @@
 
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
-import { signUpSchema } from "@/src/features/auth/schema";
+import { signInSchema } from "@/src/features/auth/schema";
 import { authClient } from "@/src/lib/auth-client";
 import Link from "next/link";
 
@@ -13,16 +13,14 @@ import { z } from "zod";
 // Infer TypeScript type directly from zod schema
 // Result:
 // {
-//   name: string;
 //   email: string;
 //   password: string;
 // }
-type SignUpForm = z.infer<typeof signUpSchema>;
+type SignUpForm = z.infer<typeof signInSchema>;
 
 // Create optional error object based on form fields
 // Result:
 // {
-//   name?: string;
 //   email?: string;
 //   password?: string;
 // }
@@ -77,13 +75,11 @@ const page = () => {
 
       // Read form values
       const formData = new FormData(e.currentTarget);
-      const name = formData.get("name") as string;
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
 
       // Validate using zod schema
-      const result = signUpSchema.safeParse({
-        name,
+      const result = signInSchema.safeParse({
         email,
         password,
       });
@@ -118,8 +114,7 @@ const page = () => {
       /**
        * Create account using Better Auth
        */
-      await authClient.signUp.email({
-        name,
+      await authClient.signIn.email({
         email,
         password,
         fetchOptions: {
@@ -127,7 +122,7 @@ const page = () => {
            * Redirect after successful registration
            */
           onSuccess: () => {
-            router.push("/sign-up/verify-email");
+            router.push("/dashboard");
           },
 
           /**
@@ -165,12 +160,6 @@ const page = () => {
               {formError}
             </div>
           )}
-          <Input
-            label="Name"
-            name="name"
-            placeholder="Alan Turing"
-            error={errors.name}
-          />
 
           <Input
             label="Email"
@@ -193,18 +182,18 @@ const page = () => {
             className="bg-green-500 mt-6 text-white p-2 rounded hover:opacity-80 cursor-pointer"
             disabled={isLoading}
           >
-            {isLoading ? "submitting . . ." : "Sign up with email"}
+            {isLoading ? "submitting . . ." : "Sign In with email"}
           </button>
         </form>
 
         <p>
-          Already have an account?
+          dont have an account?
           <Link
-            href={"/sign-in"}
+            href={"/sign-up"}
             className="text-blue-600 underline underline-offset-2"
           >
             {" "}
-            Sign in
+            Sign Up
           </Link>
         </p>
 
