@@ -4,6 +4,8 @@ type InputProps = {
   type?: string;
   placeholder?: string;
   error?: string;
+  value?: string;
+  onChange?: (e: any) => void;
 };
 
 export default function Input({
@@ -12,6 +14,8 @@ export default function Input({
   type = "text",
   placeholder,
   error,
+  value,
+  onChange,
 }: InputProps) {
   return (
     <div className="flex flex-col gap-1">
@@ -23,7 +27,9 @@ export default function Input({
         id={name}
         name={name}
         type={type}
+        value={value}
         placeholder={placeholder}
+        onChange={onChange}
         className="
           border
           rounded

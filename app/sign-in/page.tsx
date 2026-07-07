@@ -16,7 +16,7 @@ import { z } from "zod";
 //   email: string;
 //   password: string;
 // }
-type SignUpForm = z.infer<typeof signInSchema>;
+type SignInForm = z.infer<typeof signInSchema>;
 
 // Create optional error object based on form fields
 // Result:
@@ -24,13 +24,13 @@ type SignUpForm = z.infer<typeof signInSchema>;
 //   email?: string;
 //   password?: string;
 // }
-type SignUpErrors = Partial<Record<keyof SignUpForm, string>>;
+type SignInErrors = Partial<Record<keyof SignInForm, string>>;
 
 const page = () => {
   const router = useRouter();
 
   // Store validation errors for each field
-  const [errors, setErrors] = useState<SignUpErrors>({});
+  const [errors, setErrors] = useState<SignInErrors>({});
 
   // Store form error from backend
   const [formError, setFormError] = useState("");
@@ -98,10 +98,10 @@ const page = () => {
        * }
        */
       if (!result.success) {
-        const fieldErrors: SignUpErrors = {};
+        const fieldErrors: SignInErrors = {};
 
         result.error.issues.forEach((issue) => {
-          const field = issue.path[0] as keyof SignUpErrors;
+          const field = issue.path[0] as keyof SignInErrors;
 
           fieldErrors[field] = issue.message;
         });
@@ -112,7 +112,7 @@ const page = () => {
       }
 
       /**
-       * Create account using Better Auth
+       * sign in account using Better Auth
        */
       await authClient.signIn.email({
         email,
@@ -129,9 +129,14 @@ const page = () => {
            * Handle backend error
            *
            * Example:
-           * "email already exists"
+           * "invalid email or password"
            */
           onError: (ctx) => {
+            if (ctx.error.message.includes("verify")) {
+              router.push("/sign-in/verify-email");
+              return;
+            }
+
             setFormError(ctx.error.message);
           },
         },
@@ -145,7 +150,7 @@ const page = () => {
   };
 
   return (
-    <div className=" flex justify-center items-center w-full h-screen">
+    <div className="flex justify-center items-center w-full h-screen">
       <div className="w-full container flex flex-col justify-center items-center gap-4 ">
         <h1>Test authentication</h1>
 
@@ -176,14 +181,24 @@ const page = () => {
             placeholder="********"
             error={errors.password}
           />
+          <p>
+            Forgot your password?{" "}
+            <Link
+              href={"/sign-in/forgot-password"}
+              className="text-blue-600 underline underline-offset-2"
+            >
+              {" "}
+              reset password
+            </Link>
+          </p>
 
-          <button
+          <Button
             type="submit"
-            className="bg-green-500 mt-6 text-white p-2 rounded hover:opacity-80 cursor-pointer"
             disabled={isLoading}
+            className="bg-green-500 mt-6"
           >
-            {isLoading ? "submitting . . ." : "Sign In with email"}
-          </button>
+            {isLoading ? "Submitting..." : "Sign In"}
+          </Button>
         </form>
 
         <p>
@@ -193,7 +208,7 @@ const page = () => {
             className="text-blue-600 underline underline-offset-2"
           >
             {" "}
-            Sign Up
+            sign Up
           </Link>
         </p>
 
