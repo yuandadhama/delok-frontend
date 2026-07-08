@@ -5,7 +5,7 @@ import Input from "@/src/component/ui/Input";
 import { authClient } from "@/src/lib/auth-client";
 import { useState } from "react";
 
-export default function ForgotPasswordPage() {
+const page = () => {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
 
@@ -50,4 +50,6 @@ export default function ForgotPasswordPage() {
       </div>
     </div>
   );
-}
+};
+
+export default page;

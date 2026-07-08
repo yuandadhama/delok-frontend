@@ -59,7 +59,8 @@ const page = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center w-full h-screen">
+    <div className="flex flex-col justify-center items-center w-full h-screen">
+      <h1 className="mb-6 font-bold">Create your new password</h1>
       <div className="w-full container flex flex-col justify-center items-center gap-4">
         {formError && (
           <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
