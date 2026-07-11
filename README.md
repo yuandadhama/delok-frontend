@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# What is Delok?
 
-## Getting Started
+> Delok is an observability platform that helps developers collect, store, and investigate application logs from multiple projects in a single place.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## How does it work?
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> Every application that needs to be monitored installs the Delok SDK.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The SDK is responsible for collecting events defined by developers, such as:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* `payment_completed`
+* `payment_failed`
+* `user_login`
 
-## Learn More
+The SDK then sends these events to the Ingestion API using the project's API Key.
 
-To learn more about Next.js, take a look at the following resources:
+## What does the Ingestion API do?
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> The Ingestion API validates the API Key, identifies the target project, and normalizes incoming data so that all logs follow a consistent structure.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For example, every log will contain:
 
-## Deploy on Vercel
+* `timestamp`
+* `level`
+* `environment`
+* `event`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+even if the developer only provides part of the required information.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## What happens next?
+
+> The logs are stored and made available for searching, filtering, and visualization through the Delok dashboard.
+
+---
+
+## Why is it designed this way?
+
+> A consistent log structure enables efficient searching, filtering, aggregation, and future AI-powered analysis.
+> 
+
+---
+
+
+# Apa itu Delok?
+
+> Delok adalah platform observability yang membantu developer mengumpulkan, menyimpan, dan menginvestigasi log aplikasi dari berbagai project dalam satu tempat.
+> 
+
+---
+
+## Bagaimana cara kerjanya?
+
+> Setiap aplikasi yang ingin dipantau menginstal Delok SDK.
+> 
+
+SDK bertugas mengumpulkan event yang dibuat developer, misalnya:
+
+- payment_completed
+- payment_failed
+- user_login
+
+SDK mengirim event tersebut ke Ingestion API menggunakan API Key milik Project.
+
+## Apa yang dilakukan Ingestion API?
+
+> Ingestion API memvalidasi API Key, mengetahui Project tujuan, lalu melakukan normalisasi agar semua log memiliki struktur yang konsisten.
+> 
+
+Misalnya semua log memiliki:
+
+- timestamp
+- level
+- environment
+- event
+
+meskipun developer hanya mengirim sebagian datanya.
+
+---
+
+## Setelah itu?
+
+> Log disimpan sehingga dapat dicari, difilter, dan divisualisasikan melalui dashboard Delok.
+> 
+
+---
+
+## Mengapa dibuat seperti ini?
+
+> Karena struktur log yang konsisten memungkinkan pencarian, filtering, agregasi, hingga analisis AI di masa depan.
+>
