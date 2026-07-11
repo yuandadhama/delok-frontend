@@ -5,6 +5,7 @@
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
 import { authClient } from "@/src/lib/auth-client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
@@ -108,7 +109,11 @@ export default function Dashboard() {
         <h2 className="text-2xl font-bold">Your Organization</h2>
         <ul>
           {organizations.map((organization) => (
-            <li key={organization.id}>{organization.name}</li>
+            <li key={organization.id}>
+              <Link href={`/dashboard/organization/${organization.id}`}>
+                {organization.name}
+              </Link>
+            </li>
           ))}
         </ul>
       </div>
