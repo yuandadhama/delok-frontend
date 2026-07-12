@@ -27,7 +27,6 @@ export default function Dashboard() {
     });
     const data = await response.json();
     setOrganizations(data.data);
-    console.log("fetched organization data: " + JSON.stringify(data));
   };
 
   useEffect(() => {
