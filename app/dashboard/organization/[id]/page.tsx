@@ -1,16 +1,48 @@
 // /app/dashboard/organization/[id]
 
-const page = async ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = await params;
-  console.log("fetching data");
-  const response = await fetch(`http://localhost:8000/api/organization/${id}`, {
-    credentials: "include",
-  });
-  console.log(`response: ${response}`);
-  const data = await response.json();
-  console.log(`data: ${JSON.stringify(data)}`);
+// import { cookies } from "next/headers";
 
-  const { name } = data.data;
+"use client";
+
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const page = () => {
+  // const session = await cookies();
+
+  const [name, setName] = useState("");
+  const params = useParams();
+
+  const { id } = params;
+
+  const fetchData = async () => {
+    try {
+      console.log("fetching data");
+      const response = await fetch(
+        `http://localhost:8000/api/organization/${id}`,
+        {
+          credentials: "include",
+        },
+      );
+      console.log(`response: ${response}`);
+      const data = await response.json();
+      console.log(`data: ${JSON.stringify(data)}`);
+
+      const { name } = data.data;
+
+      setName(name);
+    } catch (e) {
+      console.log("organization not found");
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  });
+
+  if (!name) {
+    return <div>Organization not found</div>;
+  }
 
   return (
     <div className="flex justify-center  w-full h-screen">
