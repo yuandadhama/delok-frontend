@@ -46,17 +46,14 @@ export default function Dashboard() {
     try {
       e.preventDefault();
 
-      const response = await fetch(
-        "http://localhost:8000/api/organization/create",
-        {
-          method: "post",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: organizationName,
-          }),
-        },
-      );
+      const response = await fetch("http://localhost:8000/api/organization", {
+        method: "post",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: organizationName,
+        }),
+      });
 
       const data = await response.json();
 
