@@ -5,9 +5,10 @@
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
 import { authClient } from "@/src/lib/auth-client";
+import { delok } from "@/src/lib/delok";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type Organization = {
   id: string;
@@ -18,6 +19,25 @@ export default function Dashboard() {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
 
+  const hasLogged = useRef(false);
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    if (hasLogged.current) return;
+
+    hasLogged.current = true;
+
+    delok.info({
+      event: "user_open_dashboard",
+      message: "User opened dashboard page",
+      payload: {
+        userId: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+      },
+    });
+  }, [session]);
   // Controlled input for the "create organization" form
   const [organizationName, setOrganizationName] = useState("");
   // List of organizations the current user belongs to
@@ -39,10 +59,10 @@ export default function Dashboard() {
       const response = await fetch("http://localhost:8000/api/organization", {
         credentials: "include",
       });
-      const data = await response.json();
+      const result = await response.json();
       // Fallback to an empty array if data.data is null/undefined,
       // so .map() below doesn't throw
-      setOrganizations(data.data ?? []);
+      setOrganizations(result.data ?? []);
     } catch (e) {
       console.error("failed to fetch organizations", e);
     } finally {
@@ -53,11 +73,12 @@ export default function Dashboard() {
   // Only fetch organizations once we know who the user is
   useEffect(() => {
     if (!session?.user?.id) return;
+
     fetchOrganization();
   }, [session]);
 
   // Handler for submitting the "create organization" form
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent full page reload
     if (!organizationName.trim()) return; // guard: don't submit an empty name
 
@@ -77,6 +98,13 @@ export default function Dashboard() {
 
       if (response.ok) {
         // Success: reset the input & refresh the organization list
+        delok.info({
+          event: "organization_created",
+          message: "delok sdk works",
+          payload: {
+            name: organizationName,
+          },
+        });
         setOrganizationName("");
         await fetchOrganization();
       } else {

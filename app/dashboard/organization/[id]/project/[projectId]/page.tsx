@@ -133,13 +133,13 @@ const Page = () => {
     setLoadingLogs(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/logs/project/${projectId}`,
+        `http://localhost:8000/api/log/project/${projectId}`,
         { credentials: "include" },
       );
       const result = await response.json();
       setLogEvents(result.data ?? []);
     } catch (e) {
-      if (e instanceof Error) console.error(e.message);
+      if (e instanceof Error) console.log(e.message);
     } finally {
       setLoadingLogs(false);
     }

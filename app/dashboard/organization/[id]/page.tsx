@@ -3,6 +3,7 @@
 
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
+import { delok } from "@/src/lib/delok";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -95,7 +96,10 @@ const Page = () => {
   }, [id]);
 
   // Handler for submitting the "create project" form
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+    delok.info({
+      event: "form create project submitted",
+    });
     e.preventDefault(); // prevent full page reload
     if (!projectName.trim()) return; // guard: don't submit an empty name
 
