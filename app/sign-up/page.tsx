@@ -2,7 +2,7 @@
 
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
-import { signUpSchema } from "@/src/features/auth/schema";
+import { signUpSchema } from "@/src/features/auth/auth.schema";
 import { authClient } from "@/src/lib/auth-client";
 import Link from "next/link";
 

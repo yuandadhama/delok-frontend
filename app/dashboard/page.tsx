@@ -4,6 +4,7 @@
 
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
+import { organizationSchema } from "@/src/features/organization/organization.schema";
 import { authClient } from "@/src/lib/auth-client";
 import { delok } from "@/src/lib/delok";
 import Link from "next/link";
@@ -80,7 +81,15 @@ export default function Dashboard() {
   // Handler for submitting the "create organization" form
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent full page reload
-    if (!organizationName.trim()) return; // guard: don't submit an empty name
+
+    const result = organizationSchema.safeParse({
+      name: organizationName,
+    });
+
+    if (!result.success) {
+      setError(result.error.issues[0].message);
+      return;
+    }
 
     setSubmitting(true);
     setError("");
@@ -89,9 +98,7 @@ export default function Dashboard() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: organizationName,
-        }),
+        body: JSON.stringify(result.data),
       });
 
       const data = await response.json();
