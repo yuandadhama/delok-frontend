@@ -2,6 +2,8 @@
 
 "use client";
 
+import Button from "@/src/component/ui/Button";
+import Input from "@/src/component/ui/Input";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -111,6 +113,18 @@ const Page = () => {
   const [loadingProject, setLoadingProject] = useState(true);
   const [loadingLogs, setLoadingLogs] = useState(false);
 
+  // Project settings
+  const [editingProjectName, setEditingProjectName] = useState("");
+
+  // Update project
+  const [updatingProject, setUpdatingProject] = useState(false);
+
+  // Delete project
+  const [deletingProject, setDeletingProject] = useState(false);
+
+  // General error
+  const [error, setError] = useState("");
+
   const fetchProjectById = async () => {
     setLoadingProject(true);
     try {
@@ -121,6 +135,7 @@ const Page = () => {
       const result = await response.json();
       const { name, apiKeys } = result.data;
       setProjectName(name);
+      setEditingProjectName(name);
       setApiKeys(apiKeys ?? []);
     } catch (e) {
       if (e instanceof Error) console.error(e.message);
@@ -145,6 +160,88 @@ const Page = () => {
     }
   };
 
+  /**
+   * Update project name.
+   */
+  const handleUpdateProject = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!editingProjectName.trim()) return;
+
+    setUpdatingProject(true);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/project/${projectId}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: editingProjectName,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setProjectName(data.data.name);
+
+        alert("Project updated successfully");
+      } else {
+        setError(data.message ?? "Failed to update project");
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Something went wrong");
+    } finally {
+      setUpdatingProject(false);
+    }
+  };
+
+  /**
+   * Delete project.
+   */
+  const handleDeleteProject = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this project?",
+    );
+
+    if (!confirmed) return;
+
+    setDeletingProject(true);
+    setError("");
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/project/${projectId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Project deleted");
+
+        window.history.back();
+      } else {
+        setError(data.message ?? "Failed to delete project");
+      }
+    } catch (error) {
+      console.error(error);
+      setError("Something went wrong");
+    } finally {
+      setDeletingProject(false);
+    }
+  };
+
   useEffect(() => {
     if (!projectId) return;
     fetchProjectById();
@@ -163,6 +260,37 @@ const Page = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             {loadingProject ? "Loading..." : projectName || "Untitled Project"}
           </h1>
+        </div>
+
+        {/* Project settings */}
+        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Project Settings</h2>
+
+          <form onSubmit={handleUpdateProject} className="flex flex-col gap-3">
+            <Input
+              label="Project Name"
+              name="projectName"
+              value={editingProjectName}
+              onChange={(e) => setEditingProjectName(e.target.value)}
+              placeholder="Project name"
+            />
+
+            {error && <p className="text-sm text-red-600">{error}</p>}
+
+            <Button disabled={updatingProject} className="bg-blue-600">
+              {updatingProject ? "Updating..." : "Update Project"}
+            </Button>
+          </form>
+
+          <div className="mt-6 border-t pt-4">
+            <Button
+              onClick={handleDeleteProject}
+              disabled={deletingProject}
+              className="bg-red-600"
+            >
+              {deletingProject ? "Deleting..." : "Delete Project"}
+            </Button>
+          </div>
         </div>
 
         <div>

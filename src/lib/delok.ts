@@ -2,6 +2,6 @@ import { Delok } from "delok";
 
 export const delok = new Delok({
   apiKey:
-    "dlok_038eb0209e703cf34e0b2e197808b0627f283a12d072a00a7a2bfef9f2061e69",
+    "dlok_201999cda8aba3c0059848a69be886fa4e2c9089c32f85f94bf349cadfd69b40",
   environment: "development",
 });
