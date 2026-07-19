@@ -102,7 +102,7 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
 };
 
 const Page = () => {
-  const params = useParams<{ id: string; projectId: string }>();
+  const params = useParams<{ organizationId: string; projectId: string }>();
   const { projectId } = params;
 
   const [projectName, setProjectName] = useState("");

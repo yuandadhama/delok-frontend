@@ -16,6 +16,12 @@ type Project = {
 };
 
 const Page = () => {
+  // Organization update form
+  const [organizationName, setOrganizationName] = useState("");
+  const [updating, setUpdating] = useState(false);
+
+  // Delete organization
+  const [deleting, setDeleting] = useState(false);
   // Organization name, set once the fetch succeeds
   const [name, setName] = useState("");
   // Controlled input for the "create project" form
@@ -35,8 +41,8 @@ const Page = () => {
   const [error, setError] = useState("");
 
   // Grab :id from the URL, e.g. /dashboard/organization/abc123
-  const params = useParams<{ id: string }>();
-  const id = params.id;
+  const params = useParams<{ organizationId: string }>();
+  const organizationId = params.organizationId;
 
   // Fetch organization details based on the id in the URL
   const fetchOrganizationData = async () => {
@@ -44,7 +50,7 @@ const Page = () => {
     setOrgNotFound(false);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/organization/${id}`,
+        `http://localhost:8000/api/organization/${organizationId}`,
         { credentials: "include" }, // send session cookie to the backend
       );
 
@@ -55,8 +61,11 @@ const Page = () => {
       }
 
       const data = await response.json();
+
       const { name } = data.data;
+
       setName(name);
+      setOrganizationName(name);
     } catch (e) {
       // Network/parsing errors are also treated as "not found" to keep the UI consistent
       console.error("organization not found", e);
@@ -71,7 +80,7 @@ const Page = () => {
     setLoadingProjects(true);
     try {
       const response = await fetch(
-        `http://localhost:8000/api/project/organization/${id}`,
+        `http://localhost:8000/api/organizations/${organizationId}/projects`,
         { credentials: "include" },
       );
 
@@ -86,14 +95,93 @@ const Page = () => {
     }
   };
 
+  /**
+   * Update organization name.
+   */
+  const handleUpdateOrganization = async (
+    e: React.SubmitEvent<HTMLFormElement>,
+  ) => {
+    e.preventDefault();
+
+    if (!organizationName.trim()) return;
+
+    setUpdating(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/organization/${organizationId}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: organizationName,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setName(data.data.name);
+        alert("Organization updated");
+      } else {
+        alert(data.message ?? "Failed to update organization");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  /**
+   * Delete organization.
+   */
+  const handleDeleteOrganization = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this organization?",
+    );
+
+    if (!confirmed) return;
+
+    setDeleting(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/organization/${organizationId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        },
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        window.location.href = "/dashboard";
+      } else {
+        alert(data.message ?? "Failed to delete organization");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   // Fetch organization & project data as soon as the URL id is available.
   // Both are independent, so they can run in parallel (no need to wait on each other).
   useEffect(() => {
-    if (!id) return;
+    if (!organizationId) return;
 
     fetchOrganizationData();
     fetchProjectData();
-  }, [id]);
+  }, [organizationId]);
 
   // Handler for submitting the "create project" form
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -106,15 +194,17 @@ const Page = () => {
     setSubmitting(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:8000/api/project", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: projectName,
-          organizationId: id,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:8000/api/organizations/${organizationId}/projects`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: projectName,
+          }),
+        },
+      );
 
       const data = await response.json();
 
@@ -159,8 +249,42 @@ const Page = () => {
       <div className="w-full container flex flex-col gap-6 p-8">
         {/* Header: organization id & name */}
         <div>
-          <h1 className="text-sm text-gray-400">Organization ID: {id}</h1>
+          <h1 className="text-sm text-gray-400">
+            Organization ID: {organizationId}
+          </h1>
           <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
+        </div>
+
+        {/* Organization Management */}
+        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Organization Settings</h2>
+
+          <form
+            onSubmit={handleUpdateOrganization}
+            className="flex flex-col gap-3"
+          >
+            <Input
+              label="Organization Name"
+              name="organizationName"
+              value={organizationName}
+              onChange={(e) => setOrganizationName(e.target.value)}
+              placeholder="Organization name"
+            />
+
+            <Button disabled={updating} className="bg-blue-600">
+              {updating ? "Updating..." : "Update Organization"}
+            </Button>
+          </form>
+
+          <div className="mt-6 border-t pt-4">
+            <Button
+              onClick={handleDeleteOrganization}
+              disabled={deleting}
+              className="bg-red-600"
+            >
+              {deleting ? "Deleting..." : "Delete Organization"}
+            </Button>
+          </div>
         </div>
 
         {/* Form to create a new project */}
@@ -209,7 +333,7 @@ const Page = () => {
               <li key={project.id}>
                 {/* Clicking a project name navigates to its detail page */}
                 <Link
-                  href={`/dashboard/organization/${id}/project/${project.id}`}
+                  href={`/dashboard/organization/${organizationId}/project/${project.id}`}
                   className="block bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md hover:border-gray-300 transition-shadow font-medium text-gray-800"
                 >
                   {project.name}
