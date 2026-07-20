@@ -213,6 +213,8 @@ const Page = () => {
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
   const [environment, setEnvironment] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   // Metadata pagination dari backend
   const [pagination, setPagination] = useState({
@@ -223,13 +225,17 @@ const Page = () => {
     hasPreviousPage: false,
   });
 
-  const hasActiveFilters = Boolean(search || level || environment);
+  const hasActiveFilters = Boolean(
+    search || level || environment || from || to,
+  );
 
   const clearFilters = () => {
     setPage(1);
     setSearch("");
     setLevel("");
     setEnvironment("");
+    setFrom("");
+    setTo("");
   };
 
   const fetchProjectById = async () => {
@@ -259,6 +265,8 @@ const Page = () => {
 
       params.set("page", String(page));
       params.set("limit", String(limit));
+      if (from) params.set("from", from);
+      if (to) params.set("to", to);
 
       if (search) params.set("search", search);
       if (level) params.set("level", level);
@@ -288,7 +296,7 @@ const Page = () => {
   /**
    * Update project name.
    */
-  const handleUpdateProject = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleUpdateProject = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!editingProjectName.trim()) return;
@@ -374,7 +382,7 @@ const Page = () => {
     if (!projectId) return;
 
     fetchLogEvents();
-  }, [projectId, page, search, level, environment]);
+  }, [projectId, page, search, level, environment, from, to]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -504,6 +512,26 @@ const Page = () => {
               <option value="staging">Staging</option>
               <option value="production">Production</option>
             </select>
+
+            <input
+              type="date"
+              value={from}
+              onChange={(e) => {
+                setPage(1);
+                setFrom(e.target.value);
+              }}
+              className="rounded-md border border-gray-200 bg-white px-2 py-1.5 text-[12.5px]"
+            />
+
+            <input
+              type="date"
+              value={to}
+              onChange={(e) => {
+                setPage(1);
+                setTo(e.target.value);
+              }}
+              className="rounded-md border border-gray-200 bg-white px-2 py-1.5 text-[12.5px]"
+            />
 
             {hasActiveFilters && (
               <button
