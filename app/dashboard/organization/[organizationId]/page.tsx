@@ -229,7 +229,7 @@ const Page = () => {
   // This prevents "Organization not found" from flashing before the data arrives.
   if (loadingOrg) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-gray-400">
+      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-400">
         Loading organization...
       </div>
     );
@@ -238,103 +238,115 @@ const Page = () => {
   // Fetch finished but the organization genuinely doesn't exist / fetch failed
   if (orgNotFound || !name) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-gray-500">
+      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-500">
         Organization not found
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-gray-50">
-      <div className="w-full container flex flex-col gap-6 p-8">
-        {/* Header: organization id & name */}
-        <div>
-          <h1 className="text-sm text-gray-400">
-            Organization ID: {organizationId}
-          </h1>
-          <h1 className="text-3xl font-bold text-gray-900">{name}</h1>
-        </div>
-
-        {/* Organization Management */}
-        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Organization Settings</h2>
-
-          <form
-            onSubmit={handleUpdateOrganization}
-            className="flex flex-col gap-3"
-          >
-            <Input
-              label="Organization Name"
-              name="organizationName"
-              value={organizationName}
-              onChange={(e) => setOrganizationName(e.target.value)}
-              placeholder="Organization name"
-            />
-
-            <Button disabled={updating} className="bg-blue-600">
-              {updating ? "Updating..." : "Update Organization"}
-            </Button>
-          </form>
-
-          <div className="mt-6 border-t pt-4">
-            <Button
-              onClick={handleDeleteOrganization}
-              disabled={deleting}
-              className="bg-red-600"
-            >
-              {deleting ? "Deleting..." : "Delete Organization"}
-            </Button>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto flex gap-5 px-6 py-8">
+        {/* Left column: org settings & create project */}
+        <div className="w-64 shrink-0 flex flex-col gap-4">
+          <div>
+            <p className="text-[11px] text-gray-400">
+              Organization ID: {organizationId}
+            </p>
+            <h1 className="text-lg font-semibold text-gray-900 truncate">
+              {name}
+            </h1>
           </div>
-        </div>
 
-        {/* Form to create a new project */}
-        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Input
-              label="Create New Project"
-              name="name"
-              placeholder="Project name"
-              onChange={(e) => setProjectName(e.target.value)}
-              value={projectName}
-            />
-            {/* Only render the error message when there is one */}
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <Button
-              className="bg-green-600 mt-2 disabled:opacity-50"
-              // Disable the button while submitting or when the input is empty
-              disabled={submitting || !projectName.trim()}
+          {/* Organization Management */}
+          <div className="bg-white border border-gray-100 rounded-lg p-3">
+            <h2 className="text-xs font-semibold text-gray-700 mb-2">
+              Organization Settings
+            </h2>
+
+            <form
+              onSubmit={handleUpdateOrganization}
+              className="flex flex-col gap-2"
             >
-              {submitting ? "Creating..." : "Create"}
-            </Button>
-          </form>
+              <Input
+                label="Organization Name"
+                name="organizationName"
+                value={organizationName}
+                onChange={(e) => setOrganizationName(e.target.value)}
+                placeholder="Organization name"
+              />
+
+              <Button
+                disabled={updating}
+                className="bg-gray-900 text-xs py-1.5"
+              >
+                {updating ? "Updating..." : "Update Organization"}
+              </Button>
+            </form>
+
+            <div className=" border-t border-gray-100 pt-2.5">
+              <Button
+                onClick={handleDeleteOrganization}
+                disabled={deleting}
+                className="w-full  border border-red-200 bg-red-600 text-xs py-1.5 hover:bg-red-500"
+              >
+                {deleting ? "Deleting..." : "Delete Organization"}
+              </Button>
+            </div>
+          </div>
+
+          {/* Create project */}
+          <div className="bg-white border border-gray-100 rounded-lg p-3">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+              <Input
+                label="Create New Project"
+                name="name"
+                placeholder="Project name"
+                onChange={(e) => setProjectName(e.target.value)}
+                value={projectName}
+              />
+              {/* Only render the error message when there is one */}
+              {error && <p className="text-xs text-red-500">{error}</p>}
+              <Button
+                className="bg-gray-900 text-xs py-1.5 disabled:opacity-50"
+                // Disable the button while submitting or when the input is empty
+                disabled={submitting || !projectName.trim()}
+              >
+                {submitting ? "Creating..." : "Create"}
+              </Button>
+            </form>
+          </div>
+
+          {/* Space reserved for future features */}
+          {/* e.g. members, billing, usage overview */}
         </div>
 
-        {/* List of projects in this organization */}
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+        {/* Right column: projects list */}
+        <div className="flex-1 min-w-0">
+          <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
             Projects in {name}
           </h2>
 
           {/* State: still loading projects */}
           {loadingProjects && (
-            <p className="text-sm text-gray-400">Loading projects...</p>
+            <p className="text-xs text-gray-400">Loading projects...</p>
           )}
 
           {/* State: loading finished but there are no projects */}
           {!loadingProjects && projects.length === 0 && (
-            <p className="text-sm text-gray-400 italic">
-              No projects yet. Create one above.
+            <p className="text-xs text-gray-400 italic">
+              No projects yet. Create one on the left.
             </p>
           )}
 
           {/* State: projects available */}
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-1.5">
             {projects.map((project) => (
               <li key={project.id}>
                 {/* Clicking a project name navigates to its detail page */}
                 <Link
                   href={`/dashboard/organization/${organizationId}/project/${project.id}`}
-                  className="block bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md hover:border-gray-300 transition-shadow font-medium text-gray-800"
+                  className="block bg-white border border-gray-100 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-200 transition-colors"
                 >
                   {project.name}
                 </Link>

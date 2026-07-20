@@ -13,9 +13,9 @@ export default function Button({
     <button
       className={`
         px-4
+        text-white
         py-2
         rounded
-        text-white
         font-medium
         cursor-pointer
         transition

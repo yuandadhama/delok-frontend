@@ -145,7 +145,7 @@ export default function Dashboard() {
   // Session is still being resolved by better-auth
   if (isPending) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-gray-400">
+      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-400">
         Loading...
       </div>
     );
@@ -154,24 +154,26 @@ export default function Dashboard() {
   // No session at all: user isn't authenticated
   if (!session) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-gray-500">
+      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-500">
         You are not logged in
       </div>
     );
   }
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-gray-50">
-      <div className="w-full container flex flex-col gap-6 p-8">
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-6xl mx-auto flex flex-col gap-5 px-6 py-8">
         {/* Header: welcome message + logout button */}
         <header className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-500">Welcome, {session.user.name}</p>
+            <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
+            <p className="text-sm text-gray-400">
+              Welcome, {session.user.name}
+            </p>
           </div>
 
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:opacity-80 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-xs font-medium text-gray-500 border border-gray-200 bg-white px-3 py-1.5 rounded hover:bg-gray-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             onClick={handleLogout}
             disabled={loggingOut}
           >
@@ -179,59 +181,66 @@ export default function Dashboard() {
           </button>
         </header>
 
-        {/* Form to create a new organization */}
-        <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <Input
-              label="Create New Organization"
-              name="name"
-              placeholder="Organization name"
-              onChange={(e) => setOrganizationName(e.target.value)}
-              value={organizationName}
-            />
-            {/* Only render the error message when there is one */}
-            {error && <p className="text-sm text-red-600">{error}</p>}
-            <Button
-              className="bg-green-600 mt-2 disabled:opacity-50"
-              disabled={submitting || !organizationName.trim()}
-            >
-              {submitting ? "Creating..." : "Create"}
-            </Button>
-          </form>
-        </div>
-
-        {/* List of organizations the user belongs to */}
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">
-            Your Organizations
-          </h2>
-
-          {/* State: still loading organizations */}
-          {loadingOrganizations && (
-            <p className="text-sm text-gray-400">Loading organizations...</p>
-          )}
-
-          {/* State: loading finished but there are no organizations */}
-          {!loadingOrganizations && organizations.length === 0 && (
-            <p className="text-sm text-gray-400 italic">
-              No organizations yet. Create one above.
-            </p>
-          )}
-
-          {/* State: organizations available */}
-          <ul className="flex flex-col gap-2">
-            {organizations.map((organization) => (
-              <li key={organization.id}>
-                {/* Clicking an organization navigates to its detail page */}
-                <Link
-                  href={`/dashboard/organization/${organization.id}`}
-                  className="block bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm hover:shadow-md hover:border-gray-300 transition-shadow font-medium text-gray-800"
+        <div className="flex gap-5">
+          {/* Left column: create organization */}
+          <div className="w-64 shrink-0 flex flex-col gap-4">
+            <div className="bg-white border border-gray-100 rounded-lg p-3">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+                <Input
+                  label="Create New Organization"
+                  name="name"
+                  placeholder="Organization name"
+                  onChange={(e) => setOrganizationName(e.target.value)}
+                  value={organizationName}
+                />
+                {/* Only render the error message when there is one */}
+                {error && <p className="text-xs text-red-500">{error}</p>}
+                <Button
+                  className="bg-gray-900 text-xs py-1.5 disabled:opacity-50"
+                  disabled={submitting || !organizationName.trim()}
                 >
-                  {organization.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+                  {submitting ? "Creating..." : "Create"}
+                </Button>
+              </form>
+            </div>
+
+            {/* Space reserved for future features */}
+            {/* e.g. account settings, billing overview */}
+          </div>
+
+          {/* Right column: organizations list */}
+          <div className="flex-1 min-w-0">
+            <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+              Your Organizations
+            </h2>
+
+            {/* State: still loading organizations */}
+            {loadingOrganizations && (
+              <p className="text-xs text-gray-400">Loading organizations...</p>
+            )}
+
+            {/* State: loading finished but there are no organizations */}
+            {!loadingOrganizations && organizations.length === 0 && (
+              <p className="text-xs text-gray-400 italic">
+                No organizations yet. Create one on the left.
+              </p>
+            )}
+
+            {/* State: organizations available */}
+            <ul className="flex flex-col gap-1.5">
+              {organizations.map((organization) => (
+                <li key={organization.id}>
+                  {/* Clicking an organization navigates to its detail page */}
+                  <Link
+                    href={`/dashboard/organization/${organization.id}`}
+                    className="block bg-white border border-gray-100 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-200 transition-colors"
+                  >
+                    {organization.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </div>
