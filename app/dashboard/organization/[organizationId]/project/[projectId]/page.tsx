@@ -8,9 +8,13 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type ApiKey = {
-  key: string;
+  id: string;
+  name: string;
+  keyPrefix: string;
+  createdAt: string;
+  lastUsedAt: string | null;
+  revokedAt: string | null;
 };
-
 type LogEvent = {
   id: string;
   projectId: string;
@@ -25,16 +29,16 @@ type LogEvent = {
 
 // Only 4 severities exist in this system: info, warn, error, fatal.
 const LEVEL_BADGE_STYLES: Record<string, string> = {
-  info: "bg-blue-50 text-blue-600 border-blue-200",
-  warn: "bg-amber-50 text-amber-600 border-amber-200",
-  error: "bg-red-50 text-red-600 border-red-200",
+  info: "bg-sky-50 text-sky-700 border-sky-200",
+  warn: "bg-amber-50 text-amber-700 border-amber-200",
+  error: "bg-red-50 text-red-700 border-red-200",
   fatal: "bg-rose-600 text-white border-rose-600",
 };
 
 // Left accent bar per row so the list can be scanned by eye without
 // reading every badge.
 const LEVEL_ACCENT_STYLES: Record<string, string> = {
-  info: "border-l-blue-400",
+  info: "border-l-sky-400",
   warn: "border-l-amber-400",
   error: "border-l-red-400",
   fatal: "border-l-rose-600",
@@ -42,10 +46,10 @@ const LEVEL_ACCENT_STYLES: Record<string, string> = {
 
 const getLevelBadgeStyle = (level: string) =>
   LEVEL_BADGE_STYLES[level.toLowerCase()] ??
-  "bg-gray-50 text-gray-500 border-gray-200";
+  "bg-slate-50 text-slate-500 border-slate-200";
 
 const getLevelAccentStyle = (level: string) =>
-  LEVEL_ACCENT_STYLES[level.toLowerCase()] ?? "border-l-gray-300";
+  LEVEL_ACCENT_STYLES[level.toLowerCase()] ?? "border-l-slate-300";
 
 const formatDate = (iso: string) => {
   const date = new Date(iso);
@@ -55,13 +59,30 @@ const formatDate = (iso: string) => {
   });
 };
 
+// --- design tokens (className presets kept local so styling stays one
+// source of truth without touching the shared Button/Input components) ---
+
+const EYEBROW =
+  "text-[11px] font-semibold uppercase tracking-wide text-slate-400";
+const CARD = "bg-white border border-slate-200 rounded-xl shadow-sm";
+const BTN_PRIMARY =
+  "bg-slate-900 text-white text-xs font-medium py-2 rounded-lg hover:bg-slate-800 active:bg-slate-950 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+const BTN_DANGER =
+  "w-full border bg-red-700 border-red-200 text-xs font-medium py-2 rounded-lg  active:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+const BTN_ACCENT =
+  "w-full flex items-center justify-center gap-1.5 text-xs font-medium bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-500 active:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+const ICON_BTN =
+  "inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium hover:bg-slate-100 cursor-pointer  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20";
+const FIELD =
+  "rounded-lg border border-slate-200 bg-white text-[12.5px] text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-colors";
+
 // --- tiny inline icons (kept dependency-free) ---------------------------
 
 const SearchIcon = () => (
   <svg
     viewBox="0 0 20 20"
     fill="none"
-    className="h-3.5 w-3.5 text-gray-400"
+    className="h-3.5 w-3.5 text-slate-400"
     aria-hidden="true"
   >
     <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
@@ -102,11 +123,28 @@ const ChevronIcon = ({ direction }: { direction: "left" | "right" }) => (
   </svg>
 );
 
+const CaretIcon = ({ open }: { open: boolean }) => (
+  <svg
+    viewBox="0 0 20 20"
+    fill="none"
+    className={`h-3 w-3 transition-transform ${open ? "rotate-90" : ""}`}
+    aria-hidden="true"
+  >
+    <path
+      d="M7 5l5 5-5 5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 const InboxIcon = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
-    className="h-6 w-6 text-gray-300"
+    className="h-6 w-6 text-slate-300"
     aria-hidden="true"
   >
     <path
@@ -115,6 +153,46 @@ const InboxIcon = () => (
       strokeWidth="1.4"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg
+    viewBox="0 0 20 20"
+    fill="none"
+    className="h-3.5 w-3.5"
+    aria-hidden="true"
+  >
+    <path
+      d="M10 4v12M4 10h12"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const CopyIcon = () => (
+  <svg
+    viewBox="0 0 20 20"
+    fill="none"
+    className="h-3.5 w-3.5"
+    aria-hidden="true"
+  >
+    <rect
+      x="7"
+      y="7"
+      width="9"
+      height="9"
+      rx="1.5"
+      stroke="currentColor"
+      strokeWidth="1.4"
+    />
+    <path
+      d="M13 7V5.5A1.5 1.5 0 0 0 11.5 4h-6A1.5 1.5 0 0 0 4 5.5v6A1.5 1.5 0 0 0 5.5 13H7"
+      stroke="currentColor"
+      strokeWidth="1.4"
     />
   </svg>
 );
@@ -130,28 +208,28 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
 
   return (
     <div
-      className={`rounded-md border border-gray-100 border-l-2 ${getLevelAccentStyle(
+      className={`rounded-lg border border-slate-100 border-l-[3px] ${getLevelAccentStyle(
         logEvent.level,
-      )} bg-white px-2.5 py-1.5 transition-colors hover:border-gray-200 hover:shadow-sm`}
+      )} bg-white px-3 py-2 transition-shadow hover:shadow-sm`}
     >
       <div className="flex flex-wrap items-center justify-between gap-1.5">
-        <div className="flex items-center gap-1.5 min-w-0">
+        <div className="flex min-w-0 items-center gap-2">
           <span
-            className={`shrink-0 px-1 py-0.5 rounded text-[9px] font-semibold border uppercase tracking-wide ${getLevelBadgeStyle(
+            className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide border ${getLevelBadgeStyle(
               logEvent.level,
             )}`}
           >
             {logEvent.level}
           </span>
-          <span className="text-[13px] font-medium text-gray-800 truncate">
+          <span className="truncate text-[13px] font-medium text-slate-800">
             {logEvent.event}
           </span>
-          <span className="shrink-0 text-[10px] text-gray-400 px-1 py-0.5 rounded bg-gray-50">
+          <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
             {logEvent.environment}
           </span>
         </div>
         <span
-          className="shrink-0 text-[10px] text-gray-400"
+          className="shrink-0 font-mono text-[10px] text-slate-400"
           title={`Received: ${formatDate(logEvent.receivedAt)}`}
         >
           {formatDate(logEvent.occurredAt)}
@@ -159,21 +237,22 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
       </div>
 
       {logEvent.message && (
-        <p className="mt-0.5 text-[12px] text-gray-500 leading-snug truncate">
+        <p className="mt-1 truncate text-[12px] leading-snug text-slate-500">
           {logEvent.message}
         </p>
       )}
 
       {hasPayload && (
-        <div className="mt-1">
+        <div className="mt-1.5">
           <button
             onClick={() => setExpanded((prev) => !prev)}
-            className="text-[10px] font-medium text-gray-400 hover:text-gray-600"
+            className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20 rounded"
           >
-            {expanded ? "hide payload" : "See payload"}
+            <CaretIcon open={expanded} />
+            {expanded ? "Hide payload" : "See payload"}
           </button>
           {expanded && (
-            <pre className="mt-1 max-h-56 overflow-auto rounded bg-gray-900 p-2 text-[10px] leading-relaxed text-gray-100">
+            <pre className="mt-1.5 max-h-56 overflow-auto rounded-lg bg-slate-900 p-2.5 font-mono text-[10px] leading-relaxed text-slate-100">
               {JSON.stringify(logEvent.payload, null, 2)}
             </pre>
           )}
@@ -216,6 +295,17 @@ const Page = () => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
+  const [creatingApiKey, setCreatingApiKey] = useState(false);
+  const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+
+  const [apiKeyName, setApiKeyName] = useState("");
+  const [editingApiKeyId, setEditingApiKeyId] = useState<string | null>(null);
+  const [editingApiKeyName, setEditingApiKeyName] = useState("");
+
+  // Purely presentational: shows "Copied" feedback on the generated-key
+  // panel. Does not affect any request/response flow.
+  const [keyCopied, setKeyCopied] = useState(false);
+
   // Metadata pagination dari backend
   const [pagination, setPagination] = useState({
     page: 1,
@@ -240,18 +330,29 @@ const Page = () => {
 
   const fetchProjectById = async () => {
     setLoadingProject(true);
+
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/project/${projectId}`,
-        { credentials: "include" },
-      );
-      const result = await response.json();
-      const { name, apiKeys } = result.data;
-      setProjectName(name);
-      setEditingProjectName(name);
-      setApiKeys(apiKeys ?? []);
+      const [projectResponse, apiKeyResponse] = await Promise.all([
+        fetch(`http://localhost:8000/api/project/${projectId}`, {
+          credentials: "include",
+        }),
+        fetch(`http://localhost:8000/api/projects/${projectId}/api-keys`, {
+          credentials: "include",
+        }),
+      ]);
+
+      if (!projectResponse.ok || !apiKeyResponse.ok) {
+        throw new Error("Failed loading project");
+      }
+
+      const projectResult = await projectResponse.json();
+      const apiKeyResult = await apiKeyResponse.json();
+
+      setProjectName(projectResult.data.name);
+      setEditingProjectName(projectResult.data.name);
+      setApiKeys(apiKeyResult.data ?? []);
     } catch (e) {
-      if (e instanceof Error) console.error(e.message);
+      console.error(e);
     } finally {
       setLoadingProject(false);
     }
@@ -373,6 +474,74 @@ const Page = () => {
     }
   };
 
+  const handleCreateApiKey = async () => {
+    setCreatingApiKey(true);
+
+    try {
+      const response = await fetch(
+        `http://localhost:8000/api/projects/${projectId}/api-keys`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: "Default SDK Key",
+          }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setGeneratedKey(result.data.key);
+
+        fetchProjectById();
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setCreatingApiKey(false);
+    }
+  };
+
+  const handleRenameApiKey = async (id: string) => {
+    const response = await fetch(`http://localhost:8000/api/api-key/${id}`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: editingApiKeyName,
+      }),
+    });
+
+    if (response.ok) {
+      fetchProjectById();
+      setEditingApiKeyId(null);
+    }
+  };
+
+  const handleRevokeApiKey = async (id: string) => {
+    const confirm = window.confirm("Revoke this API key?");
+
+    if (!confirm) return;
+
+    const response = await fetch(
+      `http://localhost:8000/api/api-key/${id}/revoke`,
+      {
+        method: "PATCH",
+        credentials: "include",
+      },
+    );
+
+    if (response.ok) {
+      fetchProjectById();
+    }
+  };
+
   useEffect(() => {
     if (!projectId) return;
     fetchProjectById();
@@ -385,73 +554,179 @@ const Page = () => {
   }, [projectId, page, search, level, environment, from, to]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto flex gap-5 px-6 py-8">
+    <div className="min-h-screen bg-slate-50">
+      <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8 lg:flex-row">
         {/* Left column: settings & keys */}
-        <div className="w-64 shrink-0 flex flex-col gap-4">
+        <div className="flex w-full shrink-0 flex-col gap-4 lg:w-64">
           <div>
-            <p className="text-[11px] text-gray-400">Project ID: {projectId}</p>
-            <h1 className="text-lg font-semibold text-gray-900 truncate">
-              {loadingProject
-                ? "Loading..."
-                : projectName || "Untitled Project"}
-            </h1>
+            <p className="font-mono text-[11px] text-slate-400">{projectId}</p>
+            {loadingProject ? (
+              <div className="mt-1 h-6 w-40 animate-pulse rounded bg-slate-200" />
+            ) : (
+              <h1 className="truncate text-lg font-semibold text-slate-900">
+                {projectName || "Untitled project"}
+              </h1>
+            )}
           </div>
 
           {/* Project settings */}
-          <div className="bg-white border border-gray-100 rounded-lg p-3">
-            <h2 className="text-xs font-semibold text-gray-700 mb-2">
-              Project Settings
-            </h2>
+          <div className={`${CARD} p-3.5`}>
+            <h2 className={`${EYEBROW} mb-2.5`}>Project settings</h2>
 
             <form
               onSubmit={handleUpdateProject}
-              className="flex flex-col gap-2"
+              className="flex flex-col gap-2.5"
             >
               <Input
-                label="Project Name"
+                label="Project name"
                 name="projectName"
                 value={editingProjectName}
                 onChange={(e) => setEditingProjectName(e.target.value)}
                 placeholder="Project name"
               />
 
-              {error && <p className="text-xs text-red-500">{error}</p>}
+              {error && (
+                <p className="rounded-md bg-red-50 px-2 py-1.5 text-[11px] text-red-600">
+                  {error}
+                </p>
+              )}
 
-              <Button
-                disabled={updatingProject}
-                className="bg-gray-900 text-white text-xs py-1.5 rounded-md hover:bg-gray-800 transition-colors"
-              >
-                {updatingProject ? "Updating..." : "Update Project"}
+              <Button disabled={updatingProject} className={BTN_PRIMARY}>
+                {updatingProject ? "Updating…" : "Update project"}
               </Button>
             </form>
 
-            <div className="border-t border-gray-100 mt-2.5 pt-2.5">
+            <div className="mt-3 border-t border-slate-100 pt-3">
               <Button
                 onClick={handleDeleteProject}
                 disabled={deletingProject}
-                className="w-full border border-red-200 bg-red-600 text-xs py-1.5 rounded-md hover:bg-red-500 transition-colors"
+                className={BTN_DANGER}
               >
-                {deletingProject ? "Deleting..." : "Delete Project"}
+                {deletingProject ? "Deleting…" : "Delete project"}
               </Button>
             </div>
           </div>
 
+          {/* dlok_028590d7a60774ab4b7dcf9e39b6c10db70d616d4e227c67d07fccf57e0d8a2d */}
           {/* API Keys */}
-          <div>
-            <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">
-              API Keys
-            </h2>
+          <div className={`${CARD} p-3.5`}>
+            <div className="mb-2.5 flex items-center justify-between">
+              <h2 className={EYEBROW}>API keys</h2>
+              <span className="text-[10px] text-slate-300">
+                {apiKeys.length}
+              </span>
+            </div>
+
+            <Button
+              onClick={handleCreateApiKey}
+              disabled={creatingApiKey}
+              className={`${BTN_ACCENT} mb-3`}
+            >
+              <PlusIcon />
+              {creatingApiKey ? "Generating…" : "Generate API key"}
+            </Button>
+
+            {generatedKey && (
+              <div className="mb-3 rounded-lg border border-dashed border-slate-700 bg-slate-900 p-2.5">
+                <p className="text-[10px] text-slate-400">
+                  Copy this key now — it will not be shown again.
+                </p>
+
+                <div className="mt-1.5 flex items-center gap-2">
+                  <code className="flex-1 break-all font-mono text-[11px] text-white">
+                    {generatedKey}
+                  </code>
+
+                  <button
+                    className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium text-indigo-300 hover:bg-white/5 hover:text-indigo-200 transition-colors"
+                    onClick={() => {
+                      navigator.clipboard.writeText(generatedKey);
+                      setKeyCopied(true);
+                      setTimeout(() => setKeyCopied(false), 1500);
+                    }}
+                  >
+                    <CopyIcon />
+                    {keyCopied ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {apiKeys.length === 0 ? (
-              <p className="text-xs text-gray-400 italic">No API keys found</p>
+              <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-center">
+                <p className="text-xs text-slate-400">No API key created yet</p>
+              </div>
             ) : (
-              <ul className="flex flex-col gap-1">
+              <ul className="flex flex-col gap-1.5">
                 {apiKeys.map((apiKey) => (
                   <li
-                    key={apiKey.key}
-                    className="font-mono text-[10px] bg-white border border-gray-100 rounded px-1.5 py-1 text-gray-600 truncate"
+                    key={apiKey.id}
+                    className="rounded-lg border border-slate-100 px-2.5 py-2"
                   >
-                    {apiKey.key}
+                    <div className="flex flex-col gap-1">
+                      {editingApiKeyId === apiKey.id ? (
+                        <div className="flex gap-1.5">
+                          <input
+                            value={editingApiKeyName}
+                            onChange={(e) =>
+                              setEditingApiKeyName(e.target.value)
+                            }
+                            autoFocus
+                            className={`${FIELD} flex-1 px-2 py-1`}
+                          />
+
+                          <button
+                            onClick={() => handleRenameApiKey(apiKey.id)}
+                            className="rounded-md bg-slate-900 px-2 py-1 text-[11px] font-medium text-white hover:bg-slate-800 transition-colors"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="truncate text-[12.5px] font-medium text-slate-800">
+                            {apiKey.name}
+                          </span>
+
+                          {!apiKey.revokedAt && (
+                            <button
+                              onClick={() => {
+                                setEditingApiKeyId(apiKey.id);
+                                setEditingApiKeyName(apiKey.name);
+                              }}
+                              className={ICON_BTN}
+                            >
+                              Rename
+                            </button>
+                          )}
+                        </div>
+                      )}
+
+                      <span className="font-mono text-[10px] text-slate-400">
+                        {apiKey.keyPrefix}********
+                      </span>
+
+                      {apiKey.revokedAt ? (
+                        <span className="inline-flex w-fit items-center rounded bg-red-50 px-1.5 py-0.5 text-[10px] font-medium text-red-600">
+                          Revoked {formatDate(apiKey.revokedAt)}
+                        </span>
+                      ) : (
+                        <div className="flex items-center justify-between pt-0.5">
+                          <span className="text-[10px] text-slate-400">
+                            Last used:{" "}
+                            {apiKey.lastUsedAt
+                              ? formatDate(apiKey.lastUsedAt)
+                              : "Never"}
+                          </span>
+                          <button
+                            onClick={() => handleRevokeApiKey(apiKey.id)}
+                            className={`${ICON_BTN} text-red-500 hover:bg-red-50 hover:text-red-600`}
+                          >
+                            Revoke
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -463,11 +738,13 @@ const Page = () => {
         </div>
 
         {/* Right column: logs */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {/* Compact filter toolbar — a single slim row instead of a big card */}
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            <div className="relative flex-1 min-w-45">
-              <span className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2">
+          <div
+            className={`${CARD} mb-3 flex flex-wrap items-center gap-1.5 p-2`}
+          >
+            <div className="relative min-w-45 flex-1">
+              <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2">
                 <SearchIcon />
               </span>
               <input
@@ -477,8 +754,8 @@ const Page = () => {
                   setPage(1);
                   setSearch(e.target.value);
                 }}
-                placeholder="Search event or message..."
-                className="w-full rounded-md border border-gray-200 bg-white pl-7 pr-2.5 py-1.5 text-[12.5px] text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-900/15 focus:border-gray-300"
+                placeholder="Search event or message…"
+                className={`${FIELD} w-full py-1.5 pl-8 pr-2.5`}
               />
             </div>
 
@@ -489,7 +766,7 @@ const Page = () => {
                 setPage(1);
                 setLevel(e.target.value);
               }}
-              className="rounded-md border border-gray-200 bg-white px-2 py-1.5 text-[12.5px] text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-900/15"
+              className={`${FIELD} px-2 py-1.5 text-slate-600`}
             >
               <option value="">All levels</option>
               <option value="info">Info</option>
@@ -505,7 +782,7 @@ const Page = () => {
                 setPage(1);
                 setEnvironment(e.target.value);
               }}
-              className="rounded-md border border-gray-200 bg-white px-2 py-1.5 text-[12.5px] text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-900/15"
+              className={`${FIELD} px-2 py-1.5 text-slate-600`}
             >
               <option value="">All environments</option>
               <option value="development">Development</option>
@@ -514,29 +791,31 @@ const Page = () => {
             </select>
 
             <input
+              aria-label="From date"
               type="date"
               value={from}
               onChange={(e) => {
                 setPage(1);
                 setFrom(e.target.value);
               }}
-              className="rounded-md border border-gray-200 bg-white px-2 py-1.5 text-[12.5px]"
+              className={`${FIELD} px-2 py-1.5`}
             />
 
             <input
+              aria-label="To date"
               type="date"
               value={to}
               onChange={(e) => {
                 setPage(1);
                 setTo(e.target.value);
               }}
-              className="rounded-md border border-gray-200 bg-white px-2 py-1.5 text-[12.5px]"
+              className={`${FIELD} px-2 py-1.5`}
             />
 
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-[12px] text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
+                className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-[12px] font-medium text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20"
               >
                 <ClearIcon />
                 Clear
@@ -544,13 +823,15 @@ const Page = () => {
             )}
           </div>
 
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide">
-              Logs Found{" "}
-              <span className="font-bold text-black">{pagination.total}</span>
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className={EYEBROW}>
+              Logs found{" "}
+              <span className="font-bold text-slate-900">
+                {pagination.total}
+              </span>
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-gray-400">
+              <span className="text-[11px] text-slate-400">
                 Page {pagination.page} of {pagination.totalPages}
               </span>
               <div className="flex items-center gap-1">
@@ -558,7 +839,7 @@ const Page = () => {
                   disabled={!pagination.hasPreviousPage}
                   onClick={() => setPage((prev) => prev - 1)}
                   aria-label="Previous page"
-                  className="flex items-center justify-center rounded-md border border-gray-200 bg-white p-1 text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
+                  className="flex items-center justify-center rounded-md border border-slate-200 bg-white p-1 text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20"
                 >
                   <ChevronIcon direction="left" />
                 </button>
@@ -566,7 +847,7 @@ const Page = () => {
                   disabled={!pagination.hasNextPage}
                   onClick={() => setPage((prev) => prev + 1)}
                   aria-label="Next page"
-                  className="flex items-center justify-center rounded-md border border-gray-200 bg-white p-1 text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 transition-colors"
+                  className="flex items-center justify-center rounded-md border border-slate-200 bg-white p-1 text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20"
                 >
                   <ChevronIcon direction="right" />
                 </button>
@@ -575,20 +856,20 @@ const Page = () => {
           </div>
 
           {loadingLogs && (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-10 animate-pulse rounded-md bg-gray-100"
+                  className="h-14 animate-pulse rounded-lg bg-slate-100"
                 />
               ))}
             </div>
           )}
 
           {!loadingLogs && logEvents.length === 0 && (
-            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-gray-200 bg-white py-10">
+            <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 bg-white py-12">
               <InboxIcon />
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-slate-400">
                 {hasActiveFilters
                   ? "No logs match these filters"
                   : "No logs yet"}
@@ -596,7 +877,7 @@ const Page = () => {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="text-[11px] font-medium text-gray-500 hover:text-gray-700 underline cursor-pointer"
+                  className="cursor-pointer text-[11px] font-medium text-slate-500 underline hover:text-slate-700"
                 >
                   Clear filters
                 </button>
@@ -605,7 +886,7 @@ const Page = () => {
           )}
 
           {!loadingLogs && logEvents.length > 0 && (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               {logEvents.map((logEvent) => (
                 <LogEventRow key={logEvent.id} logEvent={logEvent} />
               ))}
