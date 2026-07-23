@@ -4,6 +4,8 @@
 
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
+import { apiKeySchema } from "@/src/features/api-key/api-key.schema";
+import { z } from "better-auth";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -283,6 +285,7 @@ const Page = () => {
 
   // General error
   const [error, setError] = useState("");
+  const [apiKeyError, setApiKeyError] = useState("");
 
   // Pagination
   const [page, setPage] = useState(1);
@@ -295,16 +298,15 @@ const Page = () => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
+  // Modal untuk generate API key
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
+  const [modalApiKeyName, setModalApiKeyName] = useState("");
   const [creatingApiKey, setCreatingApiKey] = useState(false);
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [keyCopied, setKeyCopied] = useState(false);
 
-  const [apiKeyName, setApiKeyName] = useState("");
   const [editingApiKeyId, setEditingApiKeyId] = useState<string | null>(null);
   const [editingApiKeyName, setEditingApiKeyName] = useState("");
-
-  // Purely presentational: shows "Copied" feedback on the generated-key
-  // panel. Does not affect any request/response flow.
-  const [keyCopied, setKeyCopied] = useState(false);
 
   // Metadata pagination dari backend
   const [pagination, setPagination] = useState({
@@ -474,8 +476,22 @@ const Page = () => {
     }
   };
 
-  const handleCreateApiKey = async () => {
+  const handleCreateApiKey = async (name: string) => {
     setCreatingApiKey(true);
+    setApiKeyError("");
+
+    // Validate name with schema
+    const validationResult = apiKeySchema.safeParse({
+      name: name.trim(),
+    });
+
+    if (!validationResult.success) {
+      setApiKeyError(validationResult.error.issues[0].message);
+      setCreatingApiKey(false);
+      return;
+    }
+
+    const validatedName = validationResult.data.name;
 
     try {
       const response = await fetch(
@@ -487,20 +503,23 @@ const Page = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name: "Default SDK Key",
+            name: validatedName,
           }),
         },
       );
 
-      const result = await response.json();
+      const responseData = await response.json();
 
       if (response.ok) {
-        setGeneratedKey(result.data.key);
-
+        setGeneratedKey(responseData.data.key);
+        setModalApiKeyName("");
         fetchProjectById();
+      } else {
+        setApiKeyError(responseData.message ?? "Failed to create API key");
       }
     } catch (error) {
       console.error(error);
+      setApiKeyError("Something went wrong");
     } finally {
       setCreatingApiKey(false);
     }
@@ -618,39 +637,17 @@ const Page = () => {
             </div>
 
             <Button
-              onClick={handleCreateApiKey}
-              disabled={creatingApiKey}
+              onClick={() => {
+                setShowGenerateModal(true);
+                setModalApiKeyName("");
+                setApiKeyError("");
+                setGeneratedKey(null);
+              }}
               className={`${BTN_ACCENT} mb-3`}
             >
               <PlusIcon />
-              {creatingApiKey ? "Generating…" : "Generate API key"}
+              Generate API key
             </Button>
-
-            {generatedKey && (
-              <div className="mb-3 rounded-lg border border-dashed border-slate-700 bg-slate-900 p-2.5">
-                <p className="text-[10px] text-slate-400">
-                  Copy this key now — it will not be shown again.
-                </p>
-
-                <div className="mt-1.5 flex items-center gap-2">
-                  <code className="flex-1 break-all font-mono text-[11px] text-white">
-                    {generatedKey}
-                  </code>
-
-                  <button
-                    className="inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium text-indigo-300 hover:bg-white/5 hover:text-indigo-200 transition-colors"
-                    onClick={() => {
-                      navigator.clipboard.writeText(generatedKey);
-                      setKeyCopied(true);
-                      setTimeout(() => setKeyCopied(false), 1500);
-                    }}
-                  >
-                    <CopyIcon />
-                    {keyCopied ? "Copied" : "Copy"}
-                  </button>
-                </div>
-              </div>
-            )}
 
             {apiKeys.length === 0 ? (
               <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-center">
@@ -894,6 +891,108 @@ const Page = () => {
           )}
         </div>
       </div>
+
+      {/* Modal Generate API Key */}
+      {showGenerateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 px-4">
+          <div className="w-full max-w-sm rounded-xl bg-white shadow-lg">
+            {!generatedKey ? (
+              // Step 1: Input nama API key
+              <div className="p-6">
+                <h2 className="mb-1 text-lg font-semibold text-slate-900">
+                  Generate API Key
+                </h2>
+                <p className="mb-4 text-sm text-slate-500">
+                  Enter a name for your new API key
+                </p>
+
+                <div className="mb-4">
+                  <label className="mb-2 block text-xs font-medium text-slate-700">
+                    API Key Name
+                  </label>
+                  <input
+                    type="text"
+                    value={modalApiKeyName}
+                    onChange={(e) => setModalApiKeyName(e.target.value)}
+                    placeholder="e.g., Production Key"
+                    autoFocus
+                    className={`${FIELD} w-full px-3 py-2`}
+                  />
+                </div>
+
+                {apiKeyError && (
+                  <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-xs text-red-600">
+                    {apiKeyError}
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setShowGenerateModal(false);
+                      setGeneratedKey(null);
+                      setModalApiKeyName("");
+                      setKeyCopied(false);
+                      setApiKeyError("");
+                    }}
+                    className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleCreateApiKey(modalApiKeyName)}
+                    disabled={creatingApiKey || !modalApiKeyName.trim()}
+                    className={`${BTN_PRIMARY} flex-1 cursor-pointer`}
+                  >
+                    {creatingApiKey ? "Generating…" : "Generate"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // Step 2: Display generated key
+              <div className="p-6">
+                <h2 className="mb-1 text-lg font-semibold text-slate-900">
+                  API Key Generated
+                </h2>
+                <p className="mb-4 text-sm text-slate-500">
+                  Copy this key now — it will not be shown again.
+                </p>
+
+                <div className="mb-4 rounded-lg border border-dashed border-slate-700 bg-slate-900 p-3">
+                  <code className="break-all font-mono text-xs text-white">
+                    {`${generatedKey.slice(0, 12)}*********************`}
+                  </code>
+                </div>
+                {/* dlok_3eca9f2756244d1212c52acf239377f7274c793343fcde2bdd5d6b46b5480e8c */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(generatedKey);
+                    setKeyCopied(true);
+                    setTimeout(() => setKeyCopied(false), 1500);
+                  }}
+                  className={`w-full mb-3 flex items-center justify-center gap-2 rounded-lg border border-indigo-300 cursor-pointer bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition-colors`}
+                >
+                  <CopyIcon />
+                  {keyCopied ? "Copied!" : "Copy Key"}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowGenerateModal(false);
+                    setGeneratedKey(null);
+                    setModalApiKeyName("");
+                    setKeyCopied(false);
+                    setApiKeyError("");
+                  }}
+                  className={`${BTN_PRIMARY} w-full cursor-pointer`}
+                >
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
