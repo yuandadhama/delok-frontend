@@ -2,9 +2,14 @@
 
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
+import { resetPasswordSchema } from "@/src/features/auth/auth.schema";
 import { authClient } from "@/src/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { z } from "zod";
+
+type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
+type ResetPasswordErrors = Partial<Record<keyof ResetPasswordForm, string>>;
 
 const page = () => {
   const router = useRouter();
@@ -15,8 +20,7 @@ const page = () => {
     return <div>Invalid reset link</div>;
   }
 
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState<ResetPasswordErrors>({});
 
   // Store form error from backend
   const [formError, setFormError] = useState("");
@@ -31,13 +35,29 @@ const page = () => {
       setIsLoading(true);
 
       setFormError("");
+      setErrors({});
 
-      if (password !== confirmPassword) {
-        setFormError("Password does not match");
+      const formData = new FormData(e.currentTarget);
+      const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirmPassword") as string;
+
+      const result = resetPasswordSchema.safeParse({
+        password,
+        confirmPassword,
+      });
+
+      if (!result.success) {
+        const fieldErrors: ResetPasswordErrors = {};
+
+        result.error.issues.forEach((issue) => {
+          const field = issue.path[0] as keyof ResetPasswordErrors;
+          fieldErrors[field] = issue.message;
+        });
+
+        setErrors(fieldErrors);
         return;
       }
 
-      console.log(`token: ${token}`);
       const { data } = await authClient.resetPassword({
         newPassword: password,
         token,
@@ -50,8 +70,6 @@ const page = () => {
           },
         },
       });
-
-      console.log(data);
     } catch (e) {
       console.error(e);
     } finally {
@@ -76,15 +94,15 @@ const page = () => {
             name="password"
             type="password"
             placeholder="*********"
-            onChange={(e) => setPassword(e.target.value)}
+            error={errors.password}
           />
 
           <Input
             label="Confirm password"
-            name="password"
+            name="confirmPassword"
             type="password"
             placeholder="*********"
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={errors.confirmPassword}
           />
 
           <Button type="submit" className="bg-green-600" disabled={isLoading}>

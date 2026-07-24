@@ -152,9 +152,6 @@ const page = () => {
   return (
     <div className="flex justify-center items-center w-full h-screen">
       <div className="w-full container flex flex-col justify-center items-center gap-4 ">
-        <h1>Test authentication</h1>
-
-        {isLoading ? "loading" : "not loading"}
         {/* email sign up */}
         <form
           onSubmit={handleSubmit}
@@ -225,7 +222,6 @@ const page = () => {
         >
           Login with github
         </button>
-        <Button className="bg-black">Test login button</Button>
       </div>
     </div>
   );

@@ -80,12 +80,14 @@ const page = () => {
       const name = formData.get("name") as string;
       const email = formData.get("email") as string;
       const password = formData.get("password") as string;
+      const confirmPassword = formData.get("confirmPassword") as string;
 
       // Validate using zod schema
       const result = signUpSchema.safeParse({
         name,
         email,
         password,
+        confirmPassword,
       });
 
       /**
@@ -118,29 +120,19 @@ const page = () => {
       /**
        * Create account using Better Auth
        */
-      await authClient.signUp.email({
+      const response = await authClient.signUp.email({
         name,
         email,
         password,
-        fetchOptions: {
-          /**
-           * Redirect after successful registration
-           */
-          onSuccess: () => {
-            router.push("/sign-up/verify-email");
-          },
-
-          /**
-           * Handle backend error
-           *
-           * Example:
-           * "email already exists"
-           */
-          onError: (ctx) => {
-            setFormError(ctx.error.message);
-          },
-        },
       });
+
+      if (response.error) {
+        setFormError(response.error.message ?? "Error when sign up");
+        return;
+      }
+
+      console.log(response);
+      // router.push("/sign-up/verify-email");
     } catch (e) {
       if (e instanceof Error) console.error(e.message);
     } finally {
@@ -152,9 +144,6 @@ const page = () => {
   return (
     <div className=" flex justify-center items-center w-full h-screen">
       <div className="w-full container flex flex-col justify-center items-center gap-4 ">
-        <h1>Test authentication</h1>
-
-        {isLoading ? "loading" : "not loading"}
         {/* email sign up */}
         <form
           onSubmit={handleSubmit}
@@ -186,6 +175,14 @@ const page = () => {
             type="password"
             placeholder="********"
             error={errors.password}
+          />
+
+          <Input
+            label="Confirm Password"
+            name="confirmPassword"
+            type="password"
+            placeholder="********"
+            error={errors.confirmPassword}
           />
 
           <button
@@ -221,7 +218,6 @@ const page = () => {
         >
           Login with github
         </button>
-        <Button className="bg-black">Test login button</Button>
       </div>
     </div>
   );
