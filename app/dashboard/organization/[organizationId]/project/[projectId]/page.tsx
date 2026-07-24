@@ -1,4 +1,4 @@
-// app/dashboard/organization/[id]/project/[projectId]
+// app/dashboard/organization/[organizationId]/project/[projectId]
 
 "use client";
 
@@ -27,6 +27,12 @@ type LogEvent = {
   occurredAt: string;
   receivedAt: string;
   payload: Record<string, unknown> | null;
+};
+
+type Project = {
+  id: string;
+  name: string;
+  organizationId: string;
 };
 
 // Only 4 severities exist in this system: info, warn, error, fatal.
@@ -266,7 +272,9 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
 
 const Page = () => {
   const params = useParams<{ organizationId: string; projectId: string }>();
-  const { projectId } = params;
+  const { projectId, organizationId } = params;
+
+  const [projectNotFound, setProjectNotFound] = useState(false);
 
   const [projectName, setProjectName] = useState("");
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
@@ -334,27 +342,49 @@ const Page = () => {
     setLoadingProject(true);
 
     try {
-      const [projectResponse, apiKeyResponse] = await Promise.all([
-        fetch(`http://localhost:8000/api/project/${projectId}`, {
+      const response = await fetch(
+        `http://localhost:8000/api/project/${projectId}`,
+        {
           credentials: "include",
-        }),
-        fetch(`http://localhost:8000/api/projects/${projectId}/api-keys`, {
-          credentials: "include",
-        }),
-      ]);
+        },
+      );
 
-      if (!projectResponse.ok || !apiKeyResponse.ok) {
-        throw new Error("Failed loading project");
+      if (!response.ok) {
+        setProjectNotFound(true);
+        console.error("error fetching projects/:id");
+        return null;
       }
 
-      const projectResult = await projectResponse.json();
-      const apiKeyResult = await apiKeyResponse.json();
+      const responseApiKeys = await fetch(
+        `http://localhost:8000/api/projects/${projectId}/api-keys`,
+        {
+          credentials: "include",
+        },
+      );
 
-      setProjectName(projectResult.data.name);
-      setEditingProjectName(projectResult.data.name);
-      setApiKeys(apiKeyResult.data ?? []);
+      const result = await response.json();
+      const resultApiKeys = await responseApiKeys.json();
+
+      const project: Project = result.data;
+
+      if (project.organizationId !== organizationId) {
+        console.error("Organization mismatch", {
+          projectOrganizationId: project.organizationId,
+          routeOrganizationId: organizationId,
+        });
+        setProjectNotFound(true);
+        return null;
+      }
+
+      setProjectName(project.name);
+      setEditingProjectName(project.name);
+      setApiKeys(resultApiKeys.data ?? []);
+
+      return project;
     } catch (e) {
       console.error(e);
+      setProjectNotFound(true);
+      return null;
     } finally {
       setLoadingProject(false);
     }
@@ -563,14 +593,44 @@ const Page = () => {
 
   useEffect(() => {
     if (!projectId) return;
+
     fetchProjectById();
   }, [projectId]);
 
   useEffect(() => {
+    if (projectNotFound) return;
     if (!projectId) return;
 
     fetchLogEvents();
-  }, [projectId, page, search, level, environment, from, to]);
+  }, [page, search, level, environment, from, to]);
+
+  if (projectNotFound) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Project not found
+          </h1>
+
+          <p className="mt-2 text-sm text-gray-500">
+            This project doesn't belong to organization or you don't have
+            permission to access it.
+          </p>
+
+          <Button
+            className="mt-6 bg-blue-600"
+            onClick={() =>
+              window.location.assign(
+                `/dashboard/organization/${organizationId}`,
+              )
+            }
+          >
+            Back to Organization
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
