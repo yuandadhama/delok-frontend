@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-const emailSchema = z.string().email();
+const emailSchema = z.email();
 
 export default function AuthErrorPage() {
   const params = useSearchParams();
