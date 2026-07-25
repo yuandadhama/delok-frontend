@@ -47,6 +47,12 @@ const page = () => {
     authClient.signIn.social({
       provider: "google",
       callbackURL: "http://localhost:3000/dashboard",
+      fetchOptions: {
+        onError: (error) => {
+          console.log(error);
+          router.push("/");
+        },
+      },
     });
   };
 
@@ -132,7 +138,7 @@ const page = () => {
       }
 
       console.log(response);
-      // router.push("/sign-up/verify-email");
+      router.push("/sign-up/verify-email");
     } catch (e) {
       if (e instanceof Error) console.error(e.message);
     } finally {
