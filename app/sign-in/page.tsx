@@ -132,17 +132,14 @@ const page = () => {
            * "invalid email or password"
            */
           onError: (ctx) => {
-            if (ctx.error.message.includes("verify")) {
-              router.push("/sign-in/verify-email");
-              return;
-            }
-
-            setFormError(ctx.error.message);
+            setFormError(ctx.error.errorDetail.message);
           },
         },
       });
     } catch (e) {
-      if (e instanceof Error) console.error(e.message);
+      console.log("error message");
+      console.log(typeof e);
+      if (e instanceof Error) console.log(e);
     } finally {
       // Stop loading state
       setIsLoading(false);
