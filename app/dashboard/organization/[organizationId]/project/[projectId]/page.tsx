@@ -5,7 +5,7 @@
 import Button from "@/src/component/ui/Button";
 import Input from "@/src/component/ui/Input";
 import { apiKeySchema } from "@/src/features/api-key/api-key.schema";
-import { z } from "better-auth";
+import { createWebSocket } from "@/src/lib/websocket";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -603,6 +603,40 @@ const Page = () => {
 
     fetchLogEvents();
   }, [page, search, level, environment, from, to]);
+
+  useEffect(() => {
+    if (!projectId) return;
+
+    const socket = createWebSocket();
+
+    socket.onopen = () => {
+      console.log("Realtime connected");
+    };
+
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+
+      if (message.type !== "log.created") return;
+
+      setLogEvents((previous) => [
+        message.data,
+        ...previous.slice(0, limit - 1),
+      ]);
+
+      setPagination((previous) => ({
+        ...previous,
+        total: previous.total + 1,
+      }));
+    };
+
+    socket.onclose = () => {
+      console.log("Realtime disconnected");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [projectId]);
 
   if (projectNotFound) {
     return (

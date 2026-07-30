@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "better-auth": "^1.6.23",
-    "delok": "file:../delok-sdk/delok-1.0.0.tgz",
+    "delok": "file:../delok-sdk/delok.tgz",
     "next": "16.2.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
