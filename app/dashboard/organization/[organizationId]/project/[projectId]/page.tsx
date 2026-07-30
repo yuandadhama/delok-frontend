@@ -611,12 +611,23 @@ const Page = () => {
 
     socket.onopen = () => {
       console.log("Realtime connected");
+
+      socket.send(
+        JSON.stringify({
+          type: "project.subscribe",
+          data: {
+            projectId,
+          },
+        }),
+      );
     };
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
-
+      console.log(`message comming ${message}`);
       if (message.type !== "log.created") return;
+
+      if (message.data.projectId !== projectId) return;
 
       setLogEvents((previous) => [
         message.data,
