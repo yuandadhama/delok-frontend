@@ -2,10 +2,10 @@
 
 "use client";
 
-import Button from "@/src/component/ui/Button";
-import Input from "@/src/component/ui/Input";
-import { apiKeySchema } from "@/src/features/api-key/api-key.schema";
-import { createWebSocket } from "@/src/lib/websocket";
+import Button from "@/src/components/ui/Button";
+import Input from "@/src/components/ui/Input";
+import { apiKeySchema } from "@/src/domains/api-key/api-key.schema";
+import { createWebSocket } from "@/src/lib/websocket/websocket";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -36,28 +36,30 @@ type Project = {
 };
 
 // Only 4 severities exist in this system: info, warn, error, fatal.
+// Mapped onto the design system's semantic status tokens rather than
+// raw palette colors, so theme changes propagate automatically.
 const LEVEL_BADGE_STYLES: Record<string, string> = {
-  info: "bg-sky-50 text-sky-700 border-sky-200",
-  warn: "bg-amber-50 text-amber-700 border-amber-200",
-  error: "bg-red-50 text-red-700 border-red-200",
-  fatal: "bg-rose-600 text-white border-rose-600",
+  info: "bg-info/10 text-info border-info/30",
+  warn: "bg-warning/10 text-warning border-warning/30",
+  error: "bg-danger/10 text-danger border-danger/30",
+  fatal: "bg-danger text-primary-foreground border-danger",
 };
 
 // Left accent bar per row so the list can be scanned by eye without
 // reading every badge.
 const LEVEL_ACCENT_STYLES: Record<string, string> = {
-  info: "border-l-sky-400",
-  warn: "border-l-amber-400",
-  error: "border-l-red-400",
-  fatal: "border-l-rose-600",
+  info: "border-l-info",
+  warn: "border-l-warning",
+  error: "border-l-danger",
+  fatal: "border-l-danger",
 };
 
 const getLevelBadgeStyle = (level: string) =>
   LEVEL_BADGE_STYLES[level.toLowerCase()] ??
-  "bg-slate-50 text-slate-500 border-slate-200";
+  "bg-surface-hover text-muted-foreground border-border";
 
 const getLevelAccentStyle = (level: string) =>
-  LEVEL_ACCENT_STYLES[level.toLowerCase()] ?? "border-l-slate-300";
+  LEVEL_ACCENT_STYLES[level.toLowerCase()] ?? "border-l-border";
 
 const formatDate = (iso: string) => {
   const date = new Date(iso);
@@ -71,18 +73,18 @@ const formatDate = (iso: string) => {
 // source of truth without touching the shared Button/Input components) ---
 
 const EYEBROW =
-  "text-[11px] font-semibold uppercase tracking-wide text-slate-400";
-const CARD = "bg-white border border-slate-200 rounded-xl shadow-sm";
+  "text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
+const CARD = "bg-surface border border-border rounded-lg shadow-sm";
 const BTN_PRIMARY =
-  "bg-slate-900 text-white text-xs font-medium py-2 rounded-lg hover:bg-slate-800 active:bg-slate-950 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  "bg-primary text-primary-foreground text-xs font-medium py-2 rounded-md hover:opacity-90 active:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed";
 const BTN_DANGER =
-  "w-full border bg-red-700 border-red-200 text-xs font-medium py-2 rounded-lg  active:bg-red-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  "w-full border border-danger/30 bg-danger/10 text-danger text-xs font-medium py-2 rounded-md hover:bg-danger/20 active:bg-danger/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 const BTN_ACCENT =
-  "w-full flex items-center justify-center gap-1.5 text-xs font-medium bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-500 active:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+  "w-full flex items-center justify-center gap-1.5 text-xs font-medium bg-primary text-primary-foreground py-2 rounded-md hover:opacity-90 active:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed";
 const ICON_BTN =
-  "inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[11px] font-medium hover:bg-slate-100 cursor-pointer  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20";
+  "inline-flex items-center gap-1 rounded-sm px-1.5 py-1 text-[11px] font-medium text-muted-foreground hover:bg-surface-hover hover:text-foreground cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30";
 const FIELD =
-  "rounded-lg border border-slate-200 bg-white text-[12.5px] text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-colors";
+  "rounded-md border border-border bg-surface text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-colors";
 
 // --- tiny inline icons (kept dependency-free) ---------------------------
 
@@ -90,7 +92,7 @@ const SearchIcon = () => (
   <svg
     viewBox="0 0 20 20"
     fill="none"
-    className="h-3.5 w-3.5 text-slate-400"
+    className="h-3.5 w-3.5 text-muted-foreground"
     aria-hidden="true"
   >
     <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
@@ -152,7 +154,7 @@ const InboxIcon = () => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
-    className="h-6 w-6 text-slate-300"
+    className="h-6 w-6 text-muted-foreground/60"
     aria-hidden="true"
   >
     <path
@@ -216,28 +218,28 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
 
   return (
     <div
-      className={`rounded-lg border border-slate-100 border-l-[3px] ${getLevelAccentStyle(
+      className={`rounded-md border border-border border-l-[3px] ${getLevelAccentStyle(
         logEvent.level,
-      )} bg-white px-3 py-2 transition-shadow hover:shadow-sm`}
+      )} bg-surface px-3 py-2 transition-colors hover:bg-surface-hover`}
     >
       <div className="flex flex-wrap items-center justify-between gap-1.5">
         <div className="flex min-w-0 items-center gap-2">
           <span
-            className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide border ${getLevelBadgeStyle(
+            className={`shrink-0 rounded-sm px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide border ${getLevelBadgeStyle(
               logEvent.level,
             )}`}
           >
             {logEvent.level}
           </span>
-          <span className="truncate text-[13px] font-medium text-slate-800">
+          <span className="truncate text-[13px] font-medium text-foreground">
             {logEvent.event}
           </span>
-          <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-500">
+          <span className="shrink-0 rounded-sm bg-surface-hover px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
             {logEvent.environment}
           </span>
         </div>
         <span
-          className="shrink-0 font-mono text-[10px] text-slate-400"
+          className="shrink-0 font-mono text-[10px] text-muted-foreground"
           title={`Received: ${formatDate(logEvent.receivedAt)}`}
         >
           {formatDate(logEvent.occurredAt)}
@@ -245,7 +247,7 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
       </div>
 
       {logEvent.message && (
-        <p className="mt-1 truncate text-[12px] leading-snug text-slate-500">
+        <p className="mt-1 truncate text-[12px] leading-snug text-muted-foreground">
           {logEvent.message}
         </p>
       )}
@@ -254,13 +256,13 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
         <div className="mt-1.5">
           <button
             onClick={() => setExpanded((prev) => !prev)}
-            className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 hover:text-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20 rounded"
+            className="inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-sm"
           >
             <CaretIcon open={expanded} />
             {expanded ? "Hide payload" : "See payload"}
           </button>
           {expanded && (
-            <pre className="mt-1.5 max-h-56 overflow-auto rounded-lg bg-slate-900 p-2.5 font-mono text-[10px] leading-relaxed text-slate-100">
+            <pre className="mt-1.5 max-h-56 overflow-auto rounded-md border border-border bg-background p-2.5 font-mono text-[10px] leading-relaxed text-foreground">
               {JSON.stringify(logEvent.payload, null, 2)}
             </pre>
           )}
@@ -651,19 +653,19 @@ const Page = () => {
 
   if (projectNotFound) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-          <h1 className="text-xl font-semibold text-gray-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="max-w-md rounded-lg border border-border bg-surface p-8 text-center shadow-sm">
+          <h1 className="text-xl font-semibold text-foreground">
             Project not found
           </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-muted-foreground">
             This project doesn't belong to organization or you don't have
             permission to access it.
           </p>
 
           <Button
-            className="mt-6 bg-blue-600"
+            className="mt-6 bg-primary text-primary-foreground hover:opacity-90"
             onClick={() =>
               window.location.assign(
                 `/dashboard/organization/${organizationId}`,
@@ -678,16 +680,18 @@ const Page = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background">
       <div className="mx-auto flex max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6 sm:py-8 lg:flex-row">
         {/* Left column: settings & keys */}
         <div className="flex w-full shrink-0 flex-col gap-4 lg:w-64">
           <div>
-            <p className="font-mono text-[11px] text-slate-400">{projectId}</p>
+            <p className="font-mono text-[11px] text-muted-foreground">
+              {projectId}
+            </p>
             {loadingProject ? (
-              <div className="mt-1 h-6 w-40 animate-pulse rounded bg-slate-200" />
+              <div className="mt-1 h-6 w-40 animate-pulse rounded-md bg-surface-hover" />
             ) : (
-              <h1 className="truncate text-lg font-semibold text-slate-900">
+              <h1 className="truncate text-lg font-semibold text-foreground">
                 {projectName || "Untitled project"}
               </h1>
             )}
@@ -710,7 +714,7 @@ const Page = () => {
               />
 
               {error && (
-                <p className="rounded-md bg-red-50 px-2 py-1.5 text-[11px] text-red-600">
+                <p className="rounded-md bg-danger/10 px-2 py-1.5 text-[11px] text-danger">
                   {error}
                 </p>
               )}
@@ -720,7 +724,7 @@ const Page = () => {
               </Button>
             </form>
 
-            <div className="mt-3 border-t border-slate-100 pt-3">
+            <div className="mt-3 border-t border-border pt-3">
               <Button
                 onClick={handleDeleteProject}
                 disabled={deletingProject}
@@ -736,7 +740,7 @@ const Page = () => {
           <div className={`${CARD} p-3.5`}>
             <div className="mb-2.5 flex items-center justify-between">
               <h2 className={EYEBROW}>API keys</h2>
-              <span className="text-[10px] text-slate-300">
+              <span className="text-[10px] text-muted-foreground/70">
                 {apiKeys.length}
               </span>
             </div>
@@ -755,15 +759,17 @@ const Page = () => {
             </Button>
 
             {apiKeys.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-3 text-center">
-                <p className="text-xs text-slate-400">No API key created yet</p>
+              <div className="rounded-md border border-dashed border-border bg-background p-3 text-center">
+                <p className="text-xs text-muted-foreground">
+                  No API key created yet
+                </p>
               </div>
             ) : (
               <ul className="flex flex-col gap-1.5">
                 {apiKeys.map((apiKey) => (
                   <li
                     key={apiKey.id}
-                    className="rounded-lg border border-slate-100 px-2.5 py-2"
+                    className="rounded-md border border-border px-2.5 py-2"
                   >
                     <div className="flex flex-col gap-1">
                       {editingApiKeyId === apiKey.id ? (
@@ -779,14 +785,14 @@ const Page = () => {
 
                           <button
                             onClick={() => handleRenameApiKey(apiKey.id)}
-                            className="rounded-md bg-slate-900 px-2 py-1 text-[11px] font-medium text-white hover:bg-slate-800 transition-colors"
+                            className="rounded-md bg-primary px-2 py-1 text-[11px] font-medium text-primary-foreground hover:opacity-90 transition-opacity"
                           >
                             Save
                           </button>
                         </div>
                       ) : (
                         <div className="flex items-center justify-between gap-2">
-                          <span className="truncate text-[12.5px] font-medium text-slate-800">
+                          <span className="truncate text-[12.5px] font-medium text-foreground">
                             {apiKey.name}
                           </span>
 
@@ -804,17 +810,17 @@ const Page = () => {
                         </div>
                       )}
 
-                      <span className="font-mono text-[10px] text-slate-400">
+                      <span className="font-mono text-[10px] text-muted-foreground">
                         {apiKey.keyPrefix}********
                       </span>
 
                       {apiKey.revokedAt ? (
-                        <span className="inline-flex w-fit items-center rounded bg-red-50 px-1.5 py-0.5 text-[10px] font-medium text-red-600">
+                        <span className="inline-flex w-fit items-center rounded-sm bg-danger/10 px-1.5 py-0.5 text-[10px] font-medium text-danger">
                           Revoked {formatDate(apiKey.revokedAt)}
                         </span>
                       ) : (
                         <div className="flex items-center justify-between pt-0.5">
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[10px] text-muted-foreground">
                             Last used:{" "}
                             {apiKey.lastUsedAt
                               ? formatDate(apiKey.lastUsedAt)
@@ -822,7 +828,7 @@ const Page = () => {
                           </span>
                           <button
                             onClick={() => handleRevokeApiKey(apiKey.id)}
-                            className={`${ICON_BTN} text-red-500 hover:bg-red-50 hover:text-red-600`}
+                            className={`${ICON_BTN} text-danger hover:bg-danger/10 hover:text-danger`}
                           >
                             Revoke
                           </button>
@@ -868,7 +874,7 @@ const Page = () => {
                 setPage(1);
                 setLevel(e.target.value);
               }}
-              className={`${FIELD} px-2 py-1.5 text-slate-600`}
+              className={`${FIELD} px-2 py-1.5 text-foreground`}
             >
               <option value="">All levels</option>
               <option value="info">Info</option>
@@ -884,7 +890,7 @@ const Page = () => {
                 setPage(1);
                 setEnvironment(e.target.value);
               }}
-              className={`${FIELD} px-2 py-1.5 text-slate-600`}
+              className={`${FIELD} px-2 py-1.5 text-foreground`}
             >
               <option value="">All environments</option>
               <option value="development">Development</option>
@@ -917,7 +923,7 @@ const Page = () => {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-[12px] font-medium text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20"
+                className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1.5 text-[12px] font-medium text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
               >
                 <ClearIcon />
                 Clear
@@ -928,12 +934,12 @@ const Page = () => {
           <div className="mb-2 flex items-center justify-between">
             <h2 className={EYEBROW}>
               Logs found{" "}
-              <span className="font-bold text-slate-900">
+              <span className="font-bold text-foreground">
                 {pagination.total}
               </span>
             </h2>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-muted-foreground">
                 Page {pagination.page} of {pagination.totalPages}
               </span>
               <div className="flex items-center gap-1">
@@ -941,7 +947,7 @@ const Page = () => {
                   disabled={!pagination.hasPreviousPage}
                   onClick={() => setPage((prev) => prev - 1)}
                   aria-label="Previous page"
-                  className="flex items-center justify-center rounded-md border border-slate-200 bg-white p-1 text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20"
+                  className="flex items-center justify-center rounded-md border border-border bg-surface p-1 text-muted-foreground transition-colors hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 >
                   <ChevronIcon direction="left" />
                 </button>
@@ -949,7 +955,7 @@ const Page = () => {
                   disabled={!pagination.hasNextPage}
                   onClick={() => setPage((prev) => prev + 1)}
                   aria-label="Next page"
-                  className="flex items-center justify-center rounded-md border border-slate-200 bg-white p-1 text-slate-500 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/20"
+                  className="flex items-center justify-center rounded-md border border-border bg-surface p-1 text-muted-foreground transition-colors hover:bg-surface-hover disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 >
                   <ChevronIcon direction="right" />
                 </button>
@@ -962,16 +968,16 @@ const Page = () => {
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="h-14 animate-pulse rounded-lg bg-slate-100"
+                  className="h-14 animate-pulse rounded-md bg-surface-hover"
                 />
               ))}
             </div>
           )}
 
           {!loadingLogs && logEvents.length === 0 && (
-            <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-200 bg-white py-12">
+            <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-surface py-12">
               <InboxIcon />
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-muted-foreground">
                 {hasActiveFilters
                   ? "No logs match these filters"
                   : "No logs yet"}
@@ -979,7 +985,7 @@ const Page = () => {
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="cursor-pointer text-[11px] font-medium text-slate-500 underline hover:text-slate-700"
+                  className="cursor-pointer text-[11px] font-medium text-muted-foreground underline hover:text-foreground"
                 >
                   Clear filters
                 </button>
@@ -999,20 +1005,20 @@ const Page = () => {
 
       {/* Modal Generate API Key */}
       {showGenerateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 px-4">
-          <div className="w-full max-w-sm rounded-xl bg-white shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+          <div className="w-full max-w-sm rounded-lg border border-border bg-surface shadow-lg">
             {!generatedKey ? (
               // Step 1: Input nama API key
               <div className="p-6">
-                <h2 className="mb-1 text-lg font-semibold text-slate-900">
+                <h2 className="mb-1 text-lg font-semibold text-foreground">
                   Generate API Key
                 </h2>
-                <p className="mb-4 text-sm text-slate-500">
+                <p className="mb-4 text-sm text-muted-foreground">
                   Enter a name for your new API key
                 </p>
 
                 <div className="mb-4">
-                  <label className="mb-2 block text-xs font-medium text-slate-700">
+                  <label className="mb-2 block text-xs font-medium text-foreground">
                     API Key Name
                   </label>
                   <input
@@ -1026,7 +1032,7 @@ const Page = () => {
                 </div>
 
                 {apiKeyError && (
-                  <div className="mb-4 rounded-md bg-red-50 px-3 py-2 text-xs text-red-600">
+                  <div className="mb-4 rounded-md bg-danger/10 px-3 py-2 text-xs text-danger">
                     {apiKeyError}
                   </div>
                 )}
@@ -1040,7 +1046,7 @@ const Page = () => {
                       setKeyCopied(false);
                       setApiKeyError("");
                     }}
-                    className="flex-1 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="flex-1 rounded-md border border-border bg-surface px-4 py-2 text-sm font-medium text-foreground hover:bg-surface-hover transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -1056,15 +1062,15 @@ const Page = () => {
             ) : (
               // Step 2: Display generated key
               <div className="p-6">
-                <h2 className="mb-1 text-lg font-semibold text-slate-900">
+                <h2 className="mb-1 text-lg font-semibold text-foreground">
                   API Key Generated
                 </h2>
-                <p className="mb-4 text-sm text-slate-500">
+                <p className="mb-4 text-sm text-muted-foreground">
                   Copy this key now — it will not be shown again.
                 </p>
 
-                <div className="mb-4 rounded-lg border border-dashed border-slate-700 bg-slate-900 p-3">
-                  <code className="break-all font-mono text-xs text-white">
+                <div className="mb-4 rounded-md border border-dashed border-border bg-background p-3">
+                  <code className="break-all font-mono text-xs text-foreground">
                     {`${generatedKey.slice(0, 12)}*********************`}
                   </code>
                 </div>
@@ -1075,7 +1081,7 @@ const Page = () => {
                     setKeyCopied(true);
                     setTimeout(() => setKeyCopied(false), 1500);
                   }}
-                  className={`w-full mb-3 flex items-center justify-center gap-2 rounded-lg border border-indigo-300 cursor-pointer bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition-colors`}
+                  className={`w-full mb-3 flex items-center justify-center gap-2 rounded-md border border-primary/30 cursor-pointer bg-primary/10 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/20 transition-colors`}
                 >
                   <CopyIcon />
                   {keyCopied ? "Copied!" : "Copy Key"}

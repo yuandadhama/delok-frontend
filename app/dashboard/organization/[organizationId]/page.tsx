@@ -1,8 +1,8 @@
 // /app/dashboard/organization/[id]
 "use client";
 
-import Button from "@/src/component/ui/Button";
-import Input from "@/src/component/ui/Input";
+import Button from "@/src/components/ui/Button";
+import Input from "@/src/components/ui/Input";
 import { delok } from "@/src/lib/delok";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -229,7 +229,7 @@ const Page = () => {
   // This prevents "Organization not found" from flashing before the data arrives.
   if (loadingOrg) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-400">
+      <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
         Loading organization...
       </div>
     );
@@ -238,29 +238,29 @@ const Page = () => {
   // Fetch finished but the organization genuinely doesn't exist / fetch failed
   if (orgNotFound || !name) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-500">
+      <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
         Organization not found
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto flex gap-5 px-6 py-8">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="max-w-6xl mx-auto flex gap-6 px-6 py-8">
         {/* Left column: org settings & create project */}
         <div className="w-64 shrink-0 flex flex-col gap-4">
           <div>
-            <p className="text-[11px] text-gray-400">
+            <p className="text-[11px] font-mono text-muted-foreground">
               Organization ID: {organizationId}
             </p>
-            <h1 className="text-lg font-semibold text-gray-900 truncate">
+            <h1 className="text-lg font-semibold text-foreground truncate tracking-tight">
               {name}
             </h1>
           </div>
 
           {/* Organization Management */}
-          <div className="bg-white border border-gray-100 rounded-lg p-3">
-            <h2 className="text-xs font-semibold text-gray-700 mb-2">
+          <div className="bg-surface border border-border rounded-xl p-3 shadow-sm flex flex-col gap-3">
+            <h2 className="text-xs font-semibold text-foreground">
               Organization Settings
             </h2>
 
@@ -278,17 +278,17 @@ const Page = () => {
 
               <Button
                 disabled={updating}
-                className="bg-gray-900 text-xs py-1.5"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs py-1.5 rounded-md font-medium transition-colors disabled:opacity-50"
               >
                 {updating ? "Updating..." : "Update Organization"}
               </Button>
             </form>
 
-            <div className=" border-t border-gray-100 pt-2.5">
+            <div className="border-t border-border pt-2.5">
               <Button
                 onClick={handleDeleteOrganization}
                 disabled={deleting}
-                className="w-full  border border-red-200 bg-red-600 text-xs py-1.5 hover:bg-red-500"
+                className="w-full border border-danger/20 bg-danger/10 text-danger hover:bg-danger/20 text-xs py-1.5 rounded-md font-medium transition-colors disabled:opacity-50"
               >
                 {deleting ? "Deleting..." : "Delete Organization"}
               </Button>
@@ -296,7 +296,7 @@ const Page = () => {
           </div>
 
           {/* Create project */}
-          <div className="bg-white border border-gray-100 rounded-lg p-3">
+          <div className="bg-surface border border-border rounded-xl p-3 shadow-sm">
             <form onSubmit={handleSubmit} className="flex flex-col gap-2">
               <Input
                 label="Create New Project"
@@ -306,9 +306,11 @@ const Page = () => {
                 value={projectName}
               />
               {/* Only render the error message when there is one */}
-              {error && <p className="text-xs text-red-500">{error}</p>}
+              {error && (
+                <p className="text-xs text-danger font-medium">{error}</p>
+              )}
               <Button
-                className="bg-gray-900 text-xs py-1.5 disabled:opacity-50"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs py-1.5 rounded-md font-medium transition-colors disabled:opacity-50"
                 // Disable the button while submitting or when the input is empty
                 disabled={submitting || !projectName.trim()}
               >
@@ -323,30 +325,32 @@ const Page = () => {
 
         {/* Right column: projects list */}
         <div className="flex-1 min-w-0">
-          <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+          <h2 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
             Projects in {name}
           </h2>
 
           {/* State: still loading projects */}
           {loadingProjects && (
-            <p className="text-xs text-gray-400">Loading projects...</p>
+            <p className="text-xs text-muted-foreground animate-pulse">
+              Loading projects...
+            </p>
           )}
 
           {/* State: loading finished but there are no projects */}
           {!loadingProjects && projects.length === 0 && (
-            <p className="text-xs text-gray-400 italic">
+            <p className="text-xs text-muted-foreground italic">
               No projects yet. Create one on the left.
             </p>
           )}
 
           {/* State: projects available */}
-          <ul className="flex flex-col gap-1.5">
+          <ul className="flex flex-col gap-2">
             {projects.map((project) => (
               <li key={project.id}>
                 {/* Clicking a project name navigates to its detail page */}
                 <Link
                   href={`/dashboard/organization/${organizationId}/project/${project.id}`}
-                  className="block bg-white border border-gray-100 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-200 transition-colors"
+                  className="block bg-surface border border-border rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:border-primary/50 hover:bg-surface-hover transition-all"
                 >
                   {project.name}
                 </Link>

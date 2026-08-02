@@ -1,9 +1,9 @@
 "use client";
 
-import Button from "@/src/component/ui/Button";
-import Input from "@/src/component/ui/Input";
-import { signInSchema } from "@/src/features/auth/auth.schema";
-import { authClient } from "@/src/lib/auth-client";
+import Button from "@/src/components/ui/Button";
+import Input from "@/src/components/ui/Input";
+import { signInSchema } from "@/src/domains/auth/auth.schema";
+import { authClient } from "@/src/lib/auth/auth-client";
 import Link from "next/link";
 
 import { useRouter } from "next/navigation";

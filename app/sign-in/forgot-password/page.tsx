@@ -1,8 +1,8 @@
 "use client";
 
-import Button from "@/src/component/ui/Button";
-import Input from "@/src/component/ui/Input";
-import { authClient } from "@/src/lib/auth-client";
+import Button from "@/src/components/ui/Button";
+import Input from "@/src/components/ui/Input";
+import { authClient } from "@/src/lib/auth/auth-client";
 import { useEffect, useState } from "react";
 
 const page = () => {

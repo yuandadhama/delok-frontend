@@ -2,10 +2,10 @@
 
 "use client";
 
-import Button from "@/src/component/ui/Button";
-import Input from "@/src/component/ui/Input";
-import { organizationSchema } from "@/src/features/organization/organization.schema";
-import { authClient } from "@/src/lib/auth-client";
+import Button from "@/src/components/ui/Button";
+import Input from "@/src/components/ui/Input";
+import { organizationSchema } from "@/src/domains/organization/organization.schema";
+import { authClient } from "@/src/lib/auth/auth-client";
 import { delok } from "@/src/lib/delok";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,9 +24,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!session?.user?.id) return;
-
     if (hasLogged.current) return;
-
     hasLogged.current = true;
 
     delok.info({
@@ -39,21 +37,14 @@ export default function Dashboard() {
       },
     });
   }, [session]);
-  // Controlled input for the "create organization" form
-  const [organizationName, setOrganizationName] = useState("");
-  // List of organizations the current user belongs to
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
 
-  // Loading state for the organizations fetch (separate from session's own isPending)
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [loadingOrganizations, setLoadingOrganizations] = useState(true);
-  // Whether the create-organization form is currently submitting
   const [submitting, setSubmitting] = useState(false);
-  // Error message shown when creating an organization fails
   const [error, setError] = useState("");
-  // Whether logout is in progress, to prevent double clicks
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // Fetch all organizations belonging to the logged-in user
   const fetchOrganization = async () => {
     setLoadingOrganizations(true);
     try {
@@ -61,8 +52,6 @@ export default function Dashboard() {
         credentials: "include",
       });
       const result = await response.json();
-      // Fallback to an empty array if data.data is null/undefined,
-      // so .map() below doesn't throw
       setOrganizations(result.data ?? []);
     } catch (e) {
       console.error("failed to fetch organizations", e);
@@ -71,16 +60,13 @@ export default function Dashboard() {
     }
   };
 
-  // Only fetch organizations once we know who the user is
   useEffect(() => {
     if (!session?.user?.id) return;
-
     fetchOrganization();
   }, [session]);
 
-  // Handler for submitting the "create organization" form
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault(); // prevent full page reload
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
     const result = organizationSchema.safeParse({
       name: organizationName,
@@ -104,7 +90,6 @@ export default function Dashboard() {
       const data = await response.json();
 
       if (response.ok) {
-        // Success: reset the input & refresh the organization list
         delok.info({
           event: "organization_created",
           message: "delok sdk works",
@@ -115,7 +100,6 @@ export default function Dashboard() {
         setOrganizationName("");
         await fetchOrganization();
       } else {
-        // Server responded with an error: surface it to the user
         setError(data?.message ?? "Failed to create organization");
       }
     } catch (e) {
@@ -126,7 +110,6 @@ export default function Dashboard() {
     }
   };
 
-  // Handler for logging out via authClient
   const handleLogout = () => {
     setLoggingOut(true);
     authClient.signOut({
@@ -135,45 +118,47 @@ export default function Dashboard() {
           router.push("/");
         },
         onError: () => {
-          // Reset the button if logout fails, so the user can retry
           setLoggingOut(false);
         },
       },
     });
   };
 
-  // Session is still being resolved by better-auth
   if (isPending) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-400">
-        Loading...
+      <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
+        Loading session...
       </div>
     );
   }
 
-  // No session at all: user isn't authenticated
   if (!session) {
     return (
-      <div className="flex justify-center items-center w-full h-screen text-sm text-gray-500">
+      <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
         You are not logged in
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto flex flex-col gap-5 px-6 py-8">
-        {/* Header: welcome message + logout button */}
-        <header className="flex justify-between items-center">
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="max-w-6xl mx-auto flex flex-col gap-6 px-6 py-8">
+        {/* Header: Welcome Message + Logout Button */}
+        <header className="flex justify-between items-center border-b border-border pb-4">
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
-            <p className="text-sm text-gray-400">
-              Welcome, {session.user.name}
+            <h1 className="text-base font-semibold text-foreground tracking-tight">
+              Dashboard
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Welcome back,{" "}
+              <span className="text-foreground font-medium">
+                {session.user.name}
+              </span>
             </p>
           </div>
 
           <button
-            className="text-xs font-medium text-gray-500 border border-gray-200 bg-white px-3 py-1.5 rounded hover:bg-gray-100 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="text-xs font-medium text-muted-foreground border border-border bg-surface px-3 py-1.5 rounded-md hover:bg-surface-hover hover:text-foreground cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             onClick={handleLogout}
             disabled={loggingOut}
           >
@@ -181,61 +166,79 @@ export default function Dashboard() {
           </button>
         </header>
 
-        <div className="flex gap-5">
-          {/* Left column: create organization */}
-          <div className="w-64 shrink-0 flex flex-col gap-4">
-            <div className="bg-white border border-gray-100 rounded-lg p-3">
-              <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        {/* Main Content Area */}
+        <div className="flex gap-6">
+          {/* Left Column: Create Organization Form */}
+          <div className="w-72 shrink-0 flex flex-col gap-4">
+            <div className="bg-surface border border-border rounded-xl p-4 shadow-sm">
+              <h2 className="text-xs font-semibold text-foreground mb-3 tracking-wide uppercase">
+                Create Workspace
+              </h2>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <Input
-                  label="Create New Organization"
+                  label="Organization Name"
                   name="name"
-                  placeholder="Organization name"
+                  placeholder="e.g. Acme Inc"
                   onChange={(e) => setOrganizationName(e.target.value)}
                   value={organizationName}
                 />
-                {/* Only render the error message when there is one */}
-                {error && <p className="text-xs text-red-500">{error}</p>}
+
+                {error && (
+                  <p className="text-xs text-danger font-medium">{error}</p>
+                )}
+
                 <Button
-                  className="bg-gray-900 text-xs py-1.5 disabled:opacity-50"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs py-2 rounded-md font-medium transition-colors disabled:opacity-50"
                   disabled={submitting || !organizationName.trim()}
                 >
-                  {submitting ? "Creating..." : "Create"}
+                  {submitting ? "Creating..." : "Create Organization"}
                 </Button>
               </form>
             </div>
-
-            {/* Space reserved for future features */}
-            {/* e.g. account settings, billing overview */}
           </div>
 
-          {/* Right column: organizations list */}
+          {/* Right Column: Organizations List */}
           <div className="flex-1 min-w-0">
-            <h2 className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-              Your Organizations
-            </h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Your Organizations
+              </h2>
+              <span className="text-xs font-mono text-muted-foreground">
+                {organizations.length} total
+              </span>
+            </div>
 
-            {/* State: still loading organizations */}
+            {/* State: Loading Organizations */}
             {loadingOrganizations && (
-              <p className="text-xs text-gray-400">Loading organizations...</p>
+              <div className="bg-surface border border-border rounded-xl p-6 text-center">
+                <p className="text-xs text-muted-foreground animate-pulse">
+                  Loading organizations...
+                </p>
+              </div>
             )}
 
-            {/* State: loading finished but there are no organizations */}
+            {/* State: Empty List */}
             {!loadingOrganizations && organizations.length === 0 && (
-              <p className="text-xs text-gray-400 italic">
-                No organizations yet. Create one on the left.
-              </p>
+              <div className="bg-surface border border-border rounded-xl p-8 text-center flex flex-col items-center gap-2">
+                <p className="text-xs text-muted-foreground">
+                  No organizations found. Get started by creating your first
+                  workspace on the left.
+                </p>
+              </div>
             )}
 
-            {/* State: organizations available */}
-            <ul className="flex flex-col gap-1.5">
+            {/* State: Organizations Available */}
+            <ul className="flex flex-col gap-2">
               {organizations.map((organization) => (
                 <li key={organization.id}>
-                  {/* Clicking an organization navigates to its detail page */}
                   <Link
                     href={`/dashboard/organization/${organization.id}`}
-                    className="block bg-white border border-gray-100 rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:border-gray-200 transition-colors"
+                    className="flex items-center justify-between bg-surface border border-border rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:border-primary/50 hover:bg-surface-hover transition-all group"
                   >
-                    {organization.name}
+                    <span>{organization.name}</span>
+                    <span className="text-xs text-muted-foreground font-mono group-hover:text-primary transition-colors">
+                      View →
+                    </span>
                   </Link>
                 </li>
               ))}

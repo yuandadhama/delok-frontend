@@ -1,1 +1,69 @@
 @import "tailwindcss";
+
+@import "tailwindcss";
+
+/* ==========================================================================
+   1. SEMANTIC VARIABLES (Runtime values for Light/Dark Mode)
+   ========================================================================== */
+:root {
+  /* Dark Mode First (Default) - Zinc Palette */
+  --background: #09090b;
+  --surface: #121215;
+  --surface-hover: #1c1c21;
+  --foreground: #fafafa;
+  --muted-foreground: #a1a1aa;
+  --border: #27272a;
+
+  /* Brand Primary (Indigo) */
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+
+  /* Status Colors (Color Carries Meaning) */
+  --success: #22c55e; /* OK / Healthy */
+  --warning: #f59e0b; /* WARN log */
+  --danger: #ef4444; /* ERROR / Fatal */
+  --info: #06b6d4; /* INFO log */
+
+  /* Radius System (8pt Grid based) */
+  --radius: 0.5rem; /* 8px default */
+}
+
+/* Optional Light Mode Override */
+.light {
+  --background: #ffffff;
+  --surface: #f4f4f5;
+  --surface-hover: #e4e4e7;
+  --foreground: #09090b;
+  --muted-foreground: #71717a;
+  --border: #e4e4e7;
+}
+
+/* ==========================================================================
+   2. TAILWIND V4 THEME BRIDGE
+   ========================================================================== */
+@theme inline {
+  /* Colors */
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), "Inter", sans-serif;
+  --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
+
+  /* Radii mapping */
+  --radius-sm: calc(var(--radius) - 2px); /* 6px */
+  --radius-md: var(--radius); /* 8px */
+  --radius-lg: calc(var(--radius) + 4px); /* 12px */
+}
