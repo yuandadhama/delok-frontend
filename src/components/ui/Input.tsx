@@ -1,99 +1,125 @@
-import React, { useMemo, useState } from "react";
+import { forwardRef, InputHTMLAttributes, useMemo, useState } from "react";
+import clsx from "clsx";
 
 type InputProps = {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
+  label?: string;
   error?: string;
-  value?: string;
-  onChange?: (e: any) => void;
-};
+  helperText?: string;
+} & InputHTMLAttributes<HTMLInputElement>;
 
-export default function Input({
-  label,
-  name,
-  type = "text",
-  placeholder,
-  error,
-  value,
-  onChange,
-}: InputProps) {
-  const isPassword = useMemo(() => type === "password", [type]);
-  const [showPassword, setShowPassword] = useState(false);
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, helperText, type = "text", className, ...props }, ref) => {
+    const isPassword = useMemo(() => type === "password", [type]);
 
-  const resolvedType = isPassword ? (showPassword ? "text" : "password") : type;
+    const [showPassword, setShowPassword] = useState(false);
 
-  return (
-    <div className="flex flex-col gap-1">
-      <label htmlFor={name} className="font-medium">
-        {label}
-      </label>
+    const resolvedType = isPassword
+      ? showPassword
+        ? "text"
+        : "password"
+      : type;
 
-      <div className="relative">
-        <input
-          id={name}
-          name={name}
-          type={resolvedType}
-          value={value}
-          placeholder={placeholder}
-          onChange={onChange}
-          className="
-            border
-            rounded
-            px-3
-            py-2
-            outline-none
-            focus:ring-2
-            focus:ring-blue-500
-            w-full
-            pr-10
-          "
-          required
-        />
-
-        {isPassword && (
-          <button
-            type="button"
-            onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? "Hide password" : "Show password"}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-900"
+    return (
+      <div className="space-y-1">
+        {label && (
+          <label
+            htmlFor={props.id}
+            className="text-sm font-medium text-foreground"
           >
-            {showPassword ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-5 w-5 cursor-pointer"
-              >
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" />
-                <path d="M9.88 9.88a3 3 0 0 0 4.24 4.24" />
-                <path d="M20 20 4 4" />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-5 w-5 cursor-pointer"
-              >
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            )}
-          </button>
+            {label}
+          </label>
         )}
-      </div>
 
-      <div className="text-red-600">{error}</div>
-    </div>
-  );
-}
+        <div className="relative">
+          <input
+            ref={ref}
+            type={resolvedType}
+            className={clsx(
+              "w-full",
+
+              "rounded-md",
+
+              "border",
+
+              "border-border",
+
+              "bg-surface",
+
+              "text-foreground",
+
+              "placeholder:text-muted-foreground",
+
+              "px-3",
+
+              "py-2",
+
+              "outline-none",
+
+              "transition",
+
+              "focus:ring-2",
+
+              "focus:ring-primary",
+
+              "focus:border-primary",
+
+              error && "border-danger focus:ring-danger",
+
+              className,
+            )}
+            {...props}
+          />
+
+          {isPassword && (
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className=" absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            >
+              {showPassword ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5 cursor-pointer"
+                >
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" />
+                  <path d="M9.88 9.88a3 3 0 0 0 4.24 4.24" />
+                  <path d="M20 20 4 4" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-5 w-5 cursor-pointer"
+                >
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              )}
+            </button>
+          )}
+        </div>
+
+        {helperText && !error && (
+          <p className="text-xs text-muted-foreground">{helperText}</p>
+        )}
+
+        {error && <p className="text-xs text-danger">{error}</p>}
+      </div>
+    );
+  },
+);
+
+Input.displayName = "Input";
+
+export default Input;
