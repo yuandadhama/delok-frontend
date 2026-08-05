@@ -5,13 +5,13 @@ import Input from "@/src/components/ui/Input";
 import { resetPasswordSchema } from "@/src/domains/auth/schemas/auth.schema";
 import { authClient } from "@/src/lib/auth/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { z } from "zod";
 
 type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 type ResetPasswordErrors = Partial<Record<keyof ResetPasswordForm, string>>;
 
-const page = () => {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParam = useSearchParams();
   const token = searchParam.get("token");
@@ -112,6 +112,12 @@ const page = () => {
       </div>
     </div>
   );
-};
+}
 
-export default page;
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
+}

@@ -1,105 +1,58 @@
-// /app/dashboard/organization/[id]
+// /[organizationSlug]
 "use client";
 
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
-import { delok } from "@/src/lib/delok";
+import { useOrganization } from "@/src/domains/organization";
+import { projectSchema, useProjects } from "@/src/domains/project";
+import { ROUTES } from "@/src/constants/routes";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-// Project shape used by this page's list.
-// Only the fields the UI actually needs (id for link/key, name for label).
-type Project = {
-  id: string;
-  name: string;
-};
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 
 const Page = () => {
+  const router = useRouter();
+  const params = useParams<{ organizationSlug: string }>();
+  const organizationSlug = params.organizationSlug;
+
+  const {
+    organization,
+    isPending: loadingOrg,
+    isError: orgError,
+    updateOrganization,
+    deleteOrganization,
+  } = useOrganization(organizationSlug);
+
+  const {
+    projects,
+    isLoading: loadingProjects,
+    isPending: pendingProjects,
+    createProject,
+  } = useProjects(organizationSlug);
+
   // Organization update form
   const [organizationName, setOrganizationName] = useState("");
   const [updating, setUpdating] = useState(false);
 
   // Delete organization
   const [deleting, setDeleting] = useState(false);
-  // Organization name, set once the fetch succeeds
-  const [name, setName] = useState("");
+
   // Controlled input for the "create project" form
   const [projectName, setProjectName] = useState("");
-  // List of projects belonging to this organization
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  // Separate loading states for organization & projects,
-  // so each section can have its own loading indicator
-  const [loadingOrg, setLoadingOrg] = useState(true);
-  const [orgNotFound, setOrgNotFound] = useState(false);
-  const [loadingProjects, setLoadingProjects] = useState(true);
-
-  // Whether the form is currently submitting (to disable the button & show feedback)
-  const [submitting, setSubmitting] = useState(false);
   // Error message shown when project creation fails
   const [error, setError] = useState("");
 
-  // Grab :id from the URL, e.g. /dashboard/organization/abc123
-  const params = useParams<{ organizationId: string }>();
-  const organizationId = params.organizationId;
+  // Whether the form is currently submitting (to disable the button & show feedback)
+  const [submitting, setSubmitting] = useState(false);
 
-  // Fetch organization details based on the id in the URL
-  const fetchOrganizationData = async () => {
-    setLoadingOrg(true);
-    setOrgNotFound(false);
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/organization/${organizationId}`,
-        { credentials: "include" }, // send session cookie to the backend
-      );
-
-      // If the response isn't 2xx (e.g. 404), treat it as "not found"
-      if (!response.ok) {
-        setOrgNotFound(true);
-        return;
-      }
-
-      const data = await response.json();
-
-      const { name } = data.data;
-
-      setName(name);
-      setOrganizationName(name);
-    } catch (e) {
-      // Network/parsing errors are also treated as "not found" to keep the UI consistent
-      console.error("organization not found", e);
-      setOrgNotFound(true);
-    } finally {
-      setLoadingOrg(false);
-    }
-  };
-
-  // Fetch all projects belonging to this organization
-  const fetchProjectData = async () => {
-    setLoadingProjects(true);
-    try {
-      const response = await fetch(
-        `http://localhost:8000/api/organizations/${organizationId}/projects`,
-        { credentials: "include" },
-      );
-
-      const data = await response.json();
-      // Fallback to an empty array if data.data is null/undefined,
-      // so the .map() below doesn't throw
-      setProjects(data.data ?? []);
-    } catch (e) {
-      console.error("projects not found", e);
-    } finally {
-      setLoadingProjects(false);
-    }
-  };
+  const name = organization?.name ?? "";
 
   /**
-   * Update organization name.
+   * Update organization name. Slug is regenerated server-side, so the
+   * URL identifier changes on success.
    */
   const handleUpdateOrganization = async (
-    e: React.SubmitEvent<HTMLFormElement>,
+    e: React.FormEvent<HTMLFormElement>,
   ) => {
     e.preventDefault();
 
@@ -108,31 +61,17 @@ const Page = () => {
     setUpdating(true);
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/organization/${organizationId}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: organizationName,
-          }),
-        },
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setName(data.data.name);
-        alert("Organization updated");
-      } else {
-        alert(data.message ?? "Failed to update organization");
+      const updated = await updateOrganization.mutateAsync({
+        name: organizationName,
+      });
+      // Slug is regenerated server-side, so navigate to the new slug URL.
+      if (updated.slug && updated.slug !== organizationSlug) {
+        router.replace(ROUTES.DASHBOARD.ORGANIZATION(updated.slug));
       }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      alert("Organization updated");
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setUpdating(false);
     }
@@ -151,82 +90,48 @@ const Page = () => {
     setDeleting(true);
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/organization/${organizationId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        window.location.href = "/dashboard";
-      } else {
-        alert(data.message ?? "Failed to delete organization");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      await deleteOrganization.mutateAsync();
+      window.location.href = ROUTES.DASHBOARD.ROOT;
+    } catch (err) {
+      console.error(err);
+      alert(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setDeleting(false);
     }
   };
 
-  // Fetch organization & project data as soon as the URL id is available.
-  // Both are independent, so they can run in parallel (no need to wait on each other).
-  useEffect(() => {
-    if (!organizationId) return;
-
-    fetchOrganizationData();
-    fetchProjectData();
-  }, [organizationId]);
-
   // Handler for submitting the "create project" form
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    delok.info({
-      event: "form create project submitted",
-    });
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent full page reload
     if (!projectName.trim()) return; // guard: don't submit an empty name
+
+    const result = projectSchema.safeParse({ name: projectName });
+
+    if (!result.success) {
+      setError(result.error.issues[0].message);
+      return;
+    }
 
     setSubmitting(true);
     setError("");
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/organizations/${organizationId}/projects`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: projectName,
-          }),
-        },
+      await createProject.mutateAsync(result.data);
+      // Success: reset the input (list refreshes via react-query)
+      setProjectName("");
+    } catch (err) {
+      // Server responded with an error: surface it to the user
+      console.error(err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
       );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Success: reset the input & refresh the project list
-        setProjectName("");
-        await fetchProjectData();
-      } else {
-        // Server responded with an error: surface it to the user
-        setError(data?.message ?? "Failed to create project");
-      }
-    } catch (e) {
-      // Unexpected/network error
-      console.error(e);
-      setError("Something went wrong. Please try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
   // While the organization data is still being fetched, show a loading state.
-  // This prevents "Organization not found" from flashing before the data arrives.
   if (loadingOrg) {
     return (
       <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
@@ -236,7 +141,7 @@ const Page = () => {
   }
 
   // Fetch finished but the organization genuinely doesn't exist / fetch failed
-  if (orgNotFound || !name) {
+  if (orgError || !organization) {
     return (
       <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
         Organization not found
@@ -251,7 +156,7 @@ const Page = () => {
         <div className="w-64 shrink-0 flex flex-col gap-4">
           <div>
             <p className="text-[11px] font-mono text-muted-foreground">
-              Organization ID: {organizationId}
+              Organization slug: {organizationSlug}
             </p>
             <h1 className="text-lg font-semibold text-foreground truncate tracking-tight">
               {name}
@@ -271,7 +176,7 @@ const Page = () => {
               <Input
                 label="Organization Name"
                 name="organizationName"
-                value={organizationName}
+                value={organizationName || organization.name}
                 onChange={(e) => setOrganizationName(e.target.value)}
                 placeholder="Organization name"
               />
@@ -330,14 +235,14 @@ const Page = () => {
           </h2>
 
           {/* State: still loading projects */}
-          {loadingProjects && (
+          {(loadingProjects || pendingProjects) && (
             <p className="text-xs text-muted-foreground animate-pulse">
               Loading projects...
             </p>
           )}
 
           {/* State: loading finished but there are no projects */}
-          {!loadingProjects && projects.length === 0 && (
+          {!loadingProjects && !pendingProjects && projects.length === 0 && (
             <p className="text-xs text-muted-foreground italic">
               No projects yet. Create one on the left.
             </p>
@@ -349,7 +254,7 @@ const Page = () => {
               <li key={project.id}>
                 {/* Clicking a project name navigates to its detail page */}
                 <Link
-                  href={`/dashboard/organization/${organizationId}/project/${project.id}`}
+                  href={ROUTES.DASHBOARD.PROJECT(organizationSlug, project.id)}
                   className="block bg-surface border border-border rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:border-primary/50 hover:bg-surface-hover transition-all"
                 >
                   {project.name}

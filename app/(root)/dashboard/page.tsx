@@ -4,21 +4,26 @@
 
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
-import { organizationSchema } from "@/src/domains/organization/organization.schema";
+import {
+  organizationSchema,
+  useOrganizations,
+} from "@/src/domains/organization";
 import { authClient } from "@/src/lib/auth/auth-client";
 import { delok } from "@/src/lib/delok";
+import { ROUTES } from "@/src/constants/routes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
-
-type Organization = {
-  id: string;
-  name: string;
-};
+import { useEffect, useRef, useState } from "react";
 
 export default function Dashboard() {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
+
+  const {
+    organizations,
+    isLoading: loadingOrganizations,
+    createOrganization,
+  } = useOrganizations();
 
   const hasLogged = useRef(false);
 
@@ -39,31 +44,9 @@ export default function Dashboard() {
   }, [session]);
 
   const [organizationName, setOrganizationName] = useState("");
-  const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [loadingOrganizations, setLoadingOrganizations] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
-
-  const fetchOrganization = async () => {
-    setLoadingOrganizations(true);
-    try {
-      const response = await fetch("http://localhost:8000/api/organization", {
-        credentials: "include",
-      });
-      const result = await response.json();
-      setOrganizations(result.data ?? []);
-    } catch (e) {
-      console.error("failed to fetch organizations", e);
-    } finally {
-      setLoadingOrganizations(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!session?.user?.id) return;
-    fetchOrganization();
-  }, [session]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,31 +63,23 @@ export default function Dashboard() {
     setSubmitting(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:8000/api/organization", {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
+      await createOrganization.mutateAsync(result.data);
+
+      delok.info({
+        event: "organization_created",
+        message: "delok sdk works",
+        payload: {
+          name: organizationName,
+        },
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        delok.info({
-          event: "organization_created",
-          message: "delok sdk works",
-          payload: {
-            name: organizationName,
-          },
-        });
-        setOrganizationName("");
-        await fetchOrganization();
-      } else {
-        setError(data?.message ?? "Failed to create organization");
-      }
+      setOrganizationName("");
     } catch (e) {
       console.error(e);
-      setError("Something went wrong. Please try again.");
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Something went wrong. Please try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -232,7 +207,7 @@ export default function Dashboard() {
               {organizations.map((organization) => (
                 <li key={organization.id}>
                   <Link
-                    href={`/dashboard/organization/${organization.id}`}
+                    href={ROUTES.DASHBOARD.ORGANIZATION(organization.slug)}
                     className="flex items-center justify-between bg-surface border border-border rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:border-primary/50 hover:bg-surface-hover transition-all group"
                   >
                     <span>{organization.name}</span>

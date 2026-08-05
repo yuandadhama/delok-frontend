@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# windows reserved device files (accidentally created via bash redirection)
+nul

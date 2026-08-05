@@ -1,12 +1,12 @@
 "use client";
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { z } from "zod";
 
 const emailSchema = z.email();
 
-export default function AuthErrorPage() {
+function AuthErrorContent() {
   const params = useSearchParams();
   const router = useRouter();
 
@@ -152,5 +152,13 @@ export default function AuthErrorPage() {
         </button>
       </div>
     </main>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthErrorContent />
+    </Suspense>
   );
 }

@@ -4,7 +4,9 @@
 
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
+import { ROUTES } from "@/src/constants/routes";
 import { apiKeySchema } from "@/src/domains/api-key/api-key.schema";
+import { ProjectService } from "@/src/domains/project";
 import { createWebSocket } from "@/src/lib/websocket/websocket";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -273,8 +275,8 @@ const LogEventRow = ({ logEvent }: { logEvent: LogEvent }) => {
 };
 
 const Page = () => {
-  const params = useParams<{ organizationId: string; projectId: string }>();
-  const { projectId, organizationId } = params;
+  const params = useParams<{ organizationSlug: string; projectId: string }>();
+  const { projectId, organizationSlug } = params;
 
   const [projectNotFound, setProjectNotFound] = useState(false);
 
@@ -344,19 +346,6 @@ const Page = () => {
     setLoadingProject(true);
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/project/${projectId}`,
-        {
-          credentials: "include",
-        },
-      );
-
-      if (!response.ok) {
-        setProjectNotFound(true);
-        console.error("error fetching projects/:id");
-        return null;
-      }
-
       const responseApiKeys = await fetch(
         `http://localhost:8000/api/projects/${projectId}/api-keys`,
         {
@@ -364,19 +353,9 @@ const Page = () => {
         },
       );
 
-      const result = await response.json();
       const resultApiKeys = await responseApiKeys.json();
 
-      const project: Project = result.data;
-
-      if (project.organizationId !== organizationId) {
-        console.error("Organization mismatch", {
-          projectOrganizationId: project.organizationId,
-          routeOrganizationId: organizationId,
-        });
-        setProjectNotFound(true);
-        return null;
-      }
+      const project: Project = await ProjectService.getById(projectId);
 
       setProjectName(project.name);
       setEditingProjectName(project.name);
@@ -440,31 +419,16 @@ const Page = () => {
     setError("");
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/project/${projectId}`,
-        {
-          method: "PATCH",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: editingProjectName,
-          }),
-        },
-      );
+      const project = await ProjectService.update(projectId, {
+        name: editingProjectName,
+      });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setProjectName(data.data.name);
-        alert("Project updated successfully");
-      } else {
-        setError(data.message ?? "Failed to update project");
-      }
+      setProjectName(project.name);
+      setEditingProjectName(project.name);
+      alert("Project updated successfully");
     } catch (error) {
       console.error(error);
-      setError("Something went wrong");
+      setError(error instanceof Error ? error.message : "Something went wrong");
     } finally {
       setUpdatingProject(false);
     }
@@ -484,25 +448,12 @@ const Page = () => {
     setError("");
 
     try {
-      const response = await fetch(
-        `http://localhost:8000/api/project/${projectId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        },
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert("Project deleted");
-        window.history.back();
-      } else {
-        setError(data.message ?? "Failed to delete project");
-      }
+      await ProjectService.delete(projectId);
+      alert("Project deleted");
+      window.history.back();
     } catch (error) {
       console.error(error);
-      setError("Something went wrong");
+      setError(error instanceof Error ? error.message : "Something went wrong");
     } finally {
       setDeletingProject(false);
     }
@@ -668,7 +619,7 @@ const Page = () => {
             className="mt-6 bg-primary text-primary-foreground hover:opacity-90"
             onClick={() =>
               window.location.assign(
-                `/dashboard/organization/${organizationId}`,
+                ROUTES.DASHBOARD.ORGANIZATION(organizationSlug),
               )
             }
           >

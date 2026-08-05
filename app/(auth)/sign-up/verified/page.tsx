@@ -1,4 +1,4 @@
-import Button from "@/src/component/ui/Button";
+import Button from "@/src/components/ui/Button";
 import Link from "next/link";
 
 const page = () => {
