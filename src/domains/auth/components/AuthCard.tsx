@@ -10,18 +10,7 @@ type Props = {
 
 export default function AuthCard({ title, subtitle, children }: Props) {
   return (
-    <div
-      className="
-      w-full
-      max-w-md
-      rounded-lg
-      border
-      border-border
-      bg-surface
-      p-8
-      shadow-lg
-    "
-    >
+    <div className="w-full max-w-md">
       <div className="flex flex-col items-center gap-3 mb-8 text-center">
         <Image
           src={Logo}
