@@ -1,13 +1,5 @@
-const page = async () => {
-  return (
-    <div>
-      <h1>Check your email</h1>
+import { VerifyEmailCard } from "@/src/domains/auth";
 
-      <p>We have sent a verification link to your email address.</p>
-
-      <p>Please open your inbox and click the verification link.</p>
-    </div>
-  );
-};
-
-export default page;
+export default function Page() {
+  return <VerifyEmailCard />;
+}

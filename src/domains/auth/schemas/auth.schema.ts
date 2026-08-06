@@ -14,6 +14,10 @@ export const signInSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 character"),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.email("Invalid email"),
+});
+
 export const resetPasswordSchema = z
   .object({
     password: passwordSchema,

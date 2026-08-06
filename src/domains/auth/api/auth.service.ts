@@ -15,6 +15,8 @@ import { authClient } from "@/src/lib/auth/auth-client";
  * - Keeps UI components focused on presentation.
  * - Makes testing and maintenance easier.
  */
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
 export class AuthService {
   /**
    * Register a new user using email and password.
@@ -25,6 +27,64 @@ export class AuthService {
    */
   static async signUp(data: { name: string; email: string; password: string }) {
     return authClient.signUp.email(data);
+  }
+
+  /**
+   * Sign in a user using email and password.
+   *
+   * This method forwards the request to Better Auth and provides
+   * optional success/error callbacks for the UI to react to.
+   */
+  static async signIn(data: { email: string; password: string }) {
+    return authClient.signIn.email({
+      email: data.email,
+      password: data.password,
+    });
+  }
+
+  /**
+   * Request a password reset email for the given email address.
+   */
+  static async requestPasswordReset(data: { email: string }) {
+    return authClient.requestPasswordReset({
+      email: data.email,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/sign-in/reset-password`,
+    });
+  }
+
+  /**
+   * Reset the user's password using the token from the reset email.
+   */
+  static async resetPassword(data: { newPassword: string; token: string }) {
+    return authClient.resetPassword({
+      newPassword: data.newPassword,
+      token: data.token,
+    });
+  }
+
+  /**
+   * Re-send a verification email for the given email address.
+   */
+  static async resendVerification(data: { email: string }) {
+    const response = await fetch(
+      `${API_BASE_URL}/api/auth/resend-verification`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: data.email }),
+      },
+    );
+
+    const payload = await response.json();
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      data: payload,
+    };
   }
 
   /**
