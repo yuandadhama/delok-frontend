@@ -57,8 +57,8 @@
   --color-info: var(--info);
 
   /* Fonts */
-  --font-sans: var(--font-geist-sans), "Inter", sans-serif;
-  --font-mono: var(--font-geist-mono), "JetBrains Mono", monospace;
+  --font-sans: var(--font-space-grotesk), "Inter", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
 
   /* Radii mapping */
   --radius-sm: calc(var(--radius) - 2px); /* 6px */

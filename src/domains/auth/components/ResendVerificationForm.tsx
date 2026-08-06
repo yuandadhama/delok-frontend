@@ -1,11 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
+import Button from "@/src/components/ui/Button";
+import Input from "@/src/components/ui/Input";
+
+import AuthCard from "./AuthCard";
+import AuthLayout from "./AuthLayout";
 import { useResendVerification } from "../hooks/useResendVerification";
 
 export default function ResendVerificationForm() {
-  const router = useRouter();
   const {
     email,
     setEmail,
@@ -18,32 +22,20 @@ export default function ResendVerificationForm() {
   } = useResendVerification();
 
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl border bg-white p-8 shadow-sm">
-        <h1 className="mt-6 text-center text-2xl font-semibold text-slate-900">
-          Verify your email
-        </h1>
-
-        <p className="mt-3 text-center text-sm text-slate-500 leading-6">
-          The Google account you&apos;re trying to use is associated with an
-          email address that hasn&apos;t been verified yet. Enter your email
-          below and we&apos;ll send another verification email.
-        </p>
-
+    <AuthLayout>
+      <AuthCard
+        title="Verify your email"
+        subtitle="The Google account you're using is associated with an unverified email. Enter it below and we'll send a new verification email."
+      >
         {success ? (
-          <div className="mt-6 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700 text-center">
+          <div className="rounded-md border border-success bg-success/10 p-3 text-sm text-success text-center">
             If an account requiring email verification exists, we&apos;ve sent a
             new verification email.
           </div>
         ) : (
-          <div className="mt-6">
-            <label
-              htmlFor="email"
-              className="text-sm font-medium text-slate-700"
-            >
-              Email
-            </label>
-            <input
+          <div className="space-y-4">
+            <Input
+              label="Email"
               id="email"
               type="email"
               value={email}
@@ -52,33 +44,30 @@ export default function ResendVerificationForm() {
                 if (fieldError) setFieldError(null);
               }}
               placeholder="you@example.com"
-              className="mt-1.5 w-full rounded-lg border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900"
+              error={fieldError ?? undefined}
             />
-            {fieldError && (
-              <p className="mt-1.5 text-sm text-red-600">{fieldError}</p>
-            )}
+
+            <Button
+              type="button"
+              className="w-full"
+              disabled={loading || countdown > 0}
+              onClick={resendVerification}
+            >
+              {loading
+                ? "Sending..."
+                : countdown > 0
+                  ? `Resend in ${countdown}s`
+                  : "Send verification email"}
+            </Button>
           </div>
         )}
 
-        <button
-          disabled={loading || countdown > 0}
-          onClick={resendVerification}
-          className="mt-6 w-full rounded-lg cursor-pointer bg-slate-900 py-3 text-white font-medium transition hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading
-            ? "Sending..."
-            : countdown > 0
-              ? `Resend in ${countdown}s`
-              : "Send verification email"}
-        </button>
-
-        <button
-          onClick={() => router.push("/sign-in")}
-          className="mt-3 w-full rounded-lg border cursor-pointer py-3 font-medium text-slate-700 hover:bg-slate-50"
-        >
-          Back to Sign In
-        </button>
-      </div>
-    </main>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          <Link href="/sign-in" className="text-primary hover:underline">
+            Back to Sign In
+          </Link>
+        </p>
+      </AuthCard>
+    </AuthLayout>
   );
 }

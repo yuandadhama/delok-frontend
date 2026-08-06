@@ -1,27 +1,50 @@
 "use client";
 
+import Link from "next/link";
+
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import AuthCard from "./AuthCard";
+import AuthLayout from "./AuthLayout";
 import { useResetPassword } from "../hooks/useResetPassword";
 
 export default function ResetPasswordForm() {
   const { token, errors, formError, isLoading, submit } = useResetPassword();
 
   if (!token) {
-    return <div>Invalid reset link</div>;
+    return (
+      <AuthLayout>
+        <AuthCard title="Invalid reset link">
+          <p className="text-center text-sm text-muted-foreground">
+            This reset link is invalid or has expired. Please request a new one.
+          </p>
+          <div className="mt-6 text-center">
+            <Link
+              href="/sign-in/forgot-password"
+              className="text-primary hover:underline"
+            >
+              Request a new reset link
+            </Link>
+          </div>
+        </AuthCard>
+      </AuthLayout>
+    );
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen">
-      <h1 className="mb-6 font-bold">Create your new password</h1>
-      <div className="w-full container flex flex-col justify-center items-center gap-4">
+    <AuthLayout>
+      <AuthCard
+        title="Create your new password"
+        subtitle="Enter your new password below"
+      >
         {formError && (
-          <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
+          <div className="mb-4 rounded-md border border-danger bg-danger/10 p-3 text-sm text-danger">
             {formError}
           </div>
         )}
-        <form onSubmit={submit} className="flex flex-col gap-2 w-full max-w-sm">
+
+        <form onSubmit={submit} className="space-y-4">
           <Input
             label="New password"
             name="password"
@@ -38,11 +61,11 @@ export default function ResetPasswordForm() {
             error={errors.confirmPassword}
           />
 
-          <Button type="submit" className="bg-green-600" disabled={isLoading}>
-            {isLoading ? "Submitting..." : "Submit"}
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Submitting..." : "Reset Password"}
           </Button>
         </form>
-      </div>
-    </div>
+      </AuthCard>
+    </AuthLayout>
   );
 }

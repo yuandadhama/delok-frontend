@@ -28,7 +28,7 @@ export function useForgotPassword() {
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (loading || countdown > 0) return;
@@ -56,6 +56,11 @@ export function useForgotPassword() {
       const { error } = await AuthService.requestPasswordReset({
         email: result.data.email,
       });
+
+      if (error?.status === 429) {
+        setFormError("Too many requests. Please try again later.");
+        return;
+      }
 
       if (error) {
         setFormError(

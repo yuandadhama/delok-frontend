@@ -24,7 +24,7 @@ export function useSignIn() {
     await AuthService.signInGithub();
   };
 
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
 

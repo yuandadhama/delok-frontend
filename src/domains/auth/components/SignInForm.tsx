@@ -5,18 +5,20 @@ import Link from "next/link";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import AuthCard from "./AuthCard";
+import AuthLayout from "./AuthLayout";
+import SocialLogin from "./SocialLogin";
 import { useSignIn } from "../hooks/useSignIn";
 
 export default function SignInForm() {
-  const { errors, formError, isLoading, submit, signInGoogle, signInGithub } =
-    useSignIn();
+  const { errors, formError, isLoading, submit } = useSignIn();
 
   return (
-    <div className="flex justify-center items-center w-full h-screen">
-      <div className="w-full container flex flex-col justify-center items-center gap-4">
-        <form onSubmit={submit} className="flex flex-col gap-2 w-full max-w-sm">
+    <AuthLayout>
+      <AuthCard title="Welcome back" subtitle="Sign in to your Delok account">
+        <form onSubmit={submit} className="space-y-4">
           {formError && (
-            <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded">
+            <div className="rounded-md border border-danger bg-danger/10 p-3 text-sm text-danger">
               {formError}
             </div>
           )}
@@ -37,50 +39,40 @@ export default function SignInForm() {
             error={errors.password}
           />
 
-          <p>
-            Forgot your password?{" "}
+          <div className="flex items-center justify-end">
             <Link
-              href={"/sign-in/forgot-password"}
-              className="text-blue-600 underline underline-offset-2"
+              href="/sign-in/forgot-password"
+              className="text-sm text-primary hover:underline"
             >
-              {" "}
-              reset password
+              Forgot your password?
             </Link>
-          </p>
+          </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="bg-green-500 mt-6"
-          >
-            {isLoading ? "Submitting..." : "Sign In"}
+          <Button type="submit" className="w-full" loading={isLoading}>
+            Sign In
           </Button>
         </form>
 
-        <p>
-          dont have an account?
-          <Link
-            href={"/sign-up"}
-            className="text-blue-600 underline underline-offset-2"
-          >
-            {" "}
-            sign Up
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center text-xs">
+            <span className="bg-surface px-2 text-muted-foreground">
+              or continue with
+            </span>
+          </div>
+        </div>
+
+        <SocialLogin />
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link href="/sign-up" className="text-primary hover:underline">
+            Sign Up
           </Link>
         </p>
-
-        <button
-          className="bg-blue-400 text-white p-2 rounded hover:opacity-80 cursor-pointer"
-          onClick={signInGoogle}
-        >
-          Login with google
-        </button>
-        <button
-          className="bg-black text-white p-2 rounded hover:opacity-80 cursor-pointer"
-          onClick={signInGithub}
-        >
-          Login with github
-        </button>
-      </div>
-    </div>
+      </AuthCard>
+    </AuthLayout>
   );
 }

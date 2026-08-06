@@ -1,8 +1,12 @@
 "use client";
 
+import Link from "next/link";
+
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import AuthCard from "./AuthCard";
+import AuthLayout from "./AuthLayout";
 import { useForgotPassword } from "../hooks/useForgotPassword";
 
 export default function ForgotPasswordForm() {
@@ -18,36 +22,38 @@ export default function ForgotPasswordForm() {
   } = useForgotPassword();
 
   return (
-    <div className="flex justify-center items-center w-full h-screen">
-      <div className="w-full container flex flex-col justify-center items-center gap-4">
+    <AuthLayout>
+      <AuthCard
+        title="Reset your password"
+        subtitle="Enter your email and we'll send you a reset link"
+      >
         {sent && (
-          <div className="w-full max-w-sm rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+          <div className="mb-4 rounded-md border border-success bg-success/10 p-3 text-sm text-success">
             Check your email for reset instructions.
           </div>
         )}
 
         {formError && (
-          <div className="w-full max-w-sm rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mb-4 rounded-md border border-danger bg-danger/10 p-3 text-sm text-danger">
             {formError}
           </div>
         )}
 
-        <form onSubmit={submit} className="flex flex-col gap-2 w-full max-w-sm">
+        <form onSubmit={submit} className="space-y-4">
           <Input
             name="email"
-            label="Input your email"
+            label="Email"
+            type="email"
             value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-            }}
-            placeholder="email"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="alan@turing.com"
             error={errors.email}
           />
 
           <Button
             type="submit"
-            disabled={loading || countdown > 0}
-            className="bg-green-600 disabled:opacity-50"
+            className="w-full"
+            disabled={loading || countdown > 0 || sent}
           >
             {loading
               ? "Sending..."
@@ -56,7 +62,14 @@ export default function ForgotPasswordForm() {
                 : "Send Reset Link"}
           </Button>
         </form>
-      </div>
-    </div>
+
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Remembered your password?{" "}
+          <Link href="/sign-in" className="text-primary hover:underline">
+            Back to Sign In
+          </Link>
+        </p>
+      </AuthCard>
+    </AuthLayout>
   );
 }

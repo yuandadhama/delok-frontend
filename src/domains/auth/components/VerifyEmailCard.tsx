@@ -1,15 +1,19 @@
+import AuthCard from "./AuthCard";
+import AuthLayout from "./AuthLayout";
+
 export default function VerifyEmailCard() {
   return (
-    <div className="flex flex-col items-center justify-center text-center">
-      <h1 className="text-2xl font-bold">Check your email</h1>
+    <AuthLayout>
+      <AuthCard title="Check your email">
+        <p className="text-center text-sm text-muted-foreground leading-6">
+          We have sent a verification link to your email address.
+        </p>
 
-      <p className="mt-3 text-muted-foreground">
-        We have sent a verification link to your email address.
-      </p>
-
-      <p className="mt-3 text-muted-foreground">
-        Please open your inbox and click the verification link.
-      </p>
-    </div>
+        <p className="mt-3 text-center text-sm text-muted-foreground leading-6">
+          Please open your inbox and click the verification link to activate
+          your account.
+        </p>
+      </AuthCard>
+    </AuthLayout>
   );
 }

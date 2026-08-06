@@ -18,7 +18,7 @@ export function useResetPassword() {
   const [formError, setFormError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
 
@@ -58,13 +58,16 @@ export function useResetPassword() {
       });
 
       if (error) {
+        if (error.status === 429) {
+          setFormError("Too many requests. Please try again later.");
+          return;
+        }
         setFormError(error.message ?? "Unable to reset password.");
         return;
       }
 
       router.push("/sign-in?reset=success");
     } catch (e) {
-      console.error(e);
       setFormError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);

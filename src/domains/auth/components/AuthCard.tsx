@@ -4,10 +4,11 @@ import Logo from "@/public/delok-light-logo.webp";
 
 type Props = {
   title: string;
+  subtitle?: string;
   children: ReactNode;
 };
 
-export default function AuthCard({ title, children }: Props) {
+export default function AuthCard({ title, subtitle, children }: Props) {
   return (
     <div
       className="
@@ -21,9 +22,20 @@ export default function AuthCard({ title, children }: Props) {
       shadow-lg
     "
     >
-      <div className="flex items-center gap-2 mb-6 justify-center">
-        <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-        <Image src={Logo} alt="Delok Logo" width={40} height={40} />
+      <div className="flex flex-col items-center gap-3 mb-8 text-center">
+        <Image
+          src={Logo}
+          alt="Delok Logo"
+          width={48}
+          height={48}
+          className="rounded-md"
+        />
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+          {subtitle && (
+            <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+          )}
+        </div>
       </div>
 
       {children}
