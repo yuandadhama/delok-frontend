@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import Button from "@/src/components/ui/Button";
 
+import { ROUTES } from "@/src/constants/routes";
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 
@@ -14,7 +16,7 @@ export default function EmailVerifiedCard() {
         </p>
 
         <div className="mt-6 text-center">
-          <Link href="/sign-in">
+          <Link href={ROUTES.AUTH.SIGN_IN}>
             <Button className="w-full">Sign In</Button>
           </Link>
         </div>

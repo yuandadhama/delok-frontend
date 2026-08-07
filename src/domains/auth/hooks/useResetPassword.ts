@@ -6,6 +6,7 @@ import { useState } from "react";
 import { resetPasswordSchema } from "../schemas/auth.schema";
 import type { ResetPasswordForm } from "../types/auth.type";
 import { AuthService } from "../api/auth.service";
+import { ROUTES } from "@/src/constants/routes";
 
 type ResetPasswordErrors = Partial<Record<keyof ResetPasswordForm, string>>;
 
@@ -66,7 +67,7 @@ export function useResetPassword() {
         return;
       }
 
-      router.push("/sign-in?reset=success");
+      router.push(`${ROUTES.AUTH.SIGN_IN}?reset=success`);
     } catch (e) {
       setFormError("Something went wrong. Please try again.");
     } finally {

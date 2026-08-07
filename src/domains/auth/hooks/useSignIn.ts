@@ -6,6 +6,7 @@ import { useState } from "react";
 import { signInSchema } from "../schemas/auth.schema";
 import type { SignInForm } from "../types/auth.type";
 import { AuthService } from "../api/auth.service";
+import { ROUTES } from "@/src/constants/routes";
 
 type SignInErrors = Partial<Record<keyof SignInForm, string>>;
 
@@ -50,17 +51,14 @@ export function useSignIn() {
         return;
       }
 
-      const { error } = await AuthService.signIn({
-        email,
-        password,
-      });
+      const { error } = await AuthService.signIn({ email, password });
 
       if (error) {
         setFormError(error.message ?? "Unable to sign in.");
         return;
       }
 
-      router.push("/dashboard");
+      router.push(ROUTES.DASHBOARD.ROOT);
     } catch (e) {
       console.error(e);
       setFormError("Something went wrong. Please try again.");

@@ -5,6 +5,8 @@ import Link from "next/link";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import { ROUTES } from "@/src/constants/routes";
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 import { useResendVerification } from "../hooks/useResendVerification";
@@ -63,7 +65,10 @@ export default function ResendVerificationForm() {
         )}
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          <Link href="/sign-in" className="text-primary hover:underline">
+          <Link
+            href={ROUTES.AUTH.SIGN_IN}
+            className="text-primary hover:underline"
+          >
             Back to Sign In
           </Link>
         </p>

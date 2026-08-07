@@ -5,6 +5,8 @@ import Link from "next/link";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import { ROUTES } from "@/src/constants/routes";
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 import SocialLogin from "./SocialLogin";
@@ -41,7 +43,7 @@ export default function SignInForm() {
 
           <div className="flex items-center justify-end">
             <Link
-              href="/sign-in/forgot-password"
+              href={ROUTES.AUTH.FORGOT_PASSWORD}
               className="text-sm text-primary hover:underline"
             >
               Forgot your password?
@@ -58,9 +60,7 @@ export default function SignInForm() {
             <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-surface px-2 text-muted-foreground">
-              or continue with
-            </span>
+            <span className="bg-surface px-2 text-muted-foreground">or</span>
           </div>
         </div>
 
@@ -68,7 +68,10 @@ export default function SignInForm() {
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <Link href="/sign-up" className="text-primary hover:underline">
+          <Link
+            href={ROUTES.AUTH.SIGN_UP}
+            className="text-primary hover:underline"
+          >
             Sign Up
           </Link>
         </p>

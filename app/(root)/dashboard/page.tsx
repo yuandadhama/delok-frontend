@@ -90,7 +90,7 @@ export default function Dashboard() {
     authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/");
+          router.push(ROUTES.HOME);
         },
         onError: () => {
           setLoggingOut(false);

@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/constants/routes";
 import { authClient } from "@/src/lib/auth/auth-client";
 
 /**
@@ -48,7 +49,7 @@ export class AuthService {
   static async requestPasswordReset(data: { email: string }) {
     return authClient.requestPasswordReset({
       email: data.email,
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/sign-in/reset-password`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.AUTH.RESET_PASSWORD}`,
     });
   }
 
@@ -96,7 +97,7 @@ export class AuthService {
   static async signInGoogle() {
     return authClient.signIn.social({
       provider: "google",
-      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.DASHBOARD.ROOT}`,
     });
   }
 
@@ -109,7 +110,7 @@ export class AuthService {
   static async signInGithub() {
     return authClient.signIn.social({
       provider: "github",
-      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`,
+      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.DASHBOARD.ROOT}`,
     });
   }
 }

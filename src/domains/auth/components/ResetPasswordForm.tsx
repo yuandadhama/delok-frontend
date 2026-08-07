@@ -5,6 +5,8 @@ import Link from "next/link";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import { ROUTES } from "@/src/constants/routes";
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 import { useResetPassword } from "../hooks/useResetPassword";
@@ -21,7 +23,7 @@ export default function ResetPasswordForm() {
           </p>
           <div className="mt-6 text-center">
             <Link
-              href="/sign-in/forgot-password"
+              href={ROUTES.AUTH.FORGOT_PASSWORD}
               className="text-primary hover:underline"
             >
               Request a new reset link

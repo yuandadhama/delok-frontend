@@ -5,6 +5,8 @@ import Link from "next/link";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 
+import { ROUTES } from "@/src/constants/routes";
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 import SocialLogin from "./SocialLogin";
@@ -67,9 +69,7 @@ export default function SignUpForm() {
             <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-surface px-2 text-muted-foreground">
-              or continue with
-            </span>
+            <span className="bg-surface px-2 text-muted-foreground">or</span>
           </div>
         </div>
 
@@ -77,7 +77,10 @@ export default function SignUpForm() {
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Already have an account?{" "}
-          <Link href="/sign-in" className="text-primary hover:underline">
+          <Link
+            href={ROUTES.AUTH.SIGN_IN}
+            className="text-primary hover:underline"
+          >
             Sign In
           </Link>
         </p>

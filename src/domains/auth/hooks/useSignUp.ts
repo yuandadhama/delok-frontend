@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { signUpSchema } from "../schemas/sign-up.schema";
 import type { SignUpForm } from "../types/auth.type";
 import { AuthService } from "../api/auth.service";
+import { ROUTES } from "@/src/constants/routes";
 
 export function useSignUp() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export function useSignUp() {
       return;
     }
 
-    router.push("/sign-up/verify-email");
+    router.push(ROUTES.AUTH.VERIFY_EMAIL);
   });
 
   return {
