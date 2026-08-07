@@ -2,7 +2,10 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectService } from "../api/project.service";
-import type { CreateProjectInput } from "../types/project.type";
+import type {
+  CreateProjectInput,
+  UpdateProjectInput,
+} from "../types/project.type";
 
 export function useProjects(organizationSlug: string | undefined) {
   const projectsKey = ["projects", organizationSlug] as const;
@@ -23,9 +26,26 @@ export function useProjects(organizationSlug: string | undefined) {
     },
   });
 
+  const updateProject = useMutation({
+    mutationFn: (input: { projectId: string } & UpdateProjectInput) =>
+      ProjectService.update(input.projectId, { name: input.name }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: projectsKey });
+    },
+  });
+
+  const deleteProject = useMutation({
+    mutationFn: (projectId: string) => ProjectService.delete(projectId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: projectsKey });
+    },
+  });
+
   return {
     projects: projects ?? [],
     ...query,
     createProject,
+    updateProject,
+    deleteProject,
   };
 }

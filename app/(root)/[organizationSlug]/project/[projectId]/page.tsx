@@ -6,7 +6,8 @@ import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 import { ROUTES } from "@/src/constants/routes";
 import { apiKeySchema } from "@/src/domains/api-key/api-key.schema";
-import { ProjectService } from "@/src/domains/project";
+import { ProjectService, useProjects } from "@/src/domains/project";
+import { delok } from "@/src/lib/delok";
 import { createWebSocket } from "@/src/lib/websocket/websocket";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -280,6 +281,8 @@ const Page = () => {
 
   const [projectNotFound, setProjectNotFound] = useState(false);
 
+  const { updateProject, deleteProject } = useProjects(organizationSlug);
+
   const [projectName, setProjectName] = useState("");
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [logEvents, setLogEvents] = useState<LogEvent[]>([]);
@@ -419,8 +422,19 @@ const Page = () => {
     setError("");
 
     try {
-      const project = await ProjectService.update(projectId, {
+      const project = await updateProject.mutateAsync({
+        projectId,
         name: editingProjectName,
+      });
+
+      delok.info({
+        event: "project_updated",
+        message: "Project updated",
+        payload: {
+          organizationSlug,
+          projectId,
+          name: project.name,
+        },
       });
 
       setProjectName(project.name);
@@ -448,7 +462,17 @@ const Page = () => {
     setError("");
 
     try {
-      await ProjectService.delete(projectId);
+      await deleteProject.mutateAsync(projectId);
+
+      delok.info({
+        event: "project_deleted",
+        message: "Project deleted",
+        payload: {
+          organizationSlug,
+          projectId,
+        },
+      });
+
       alert("Project deleted");
       window.history.back();
     } catch (error) {

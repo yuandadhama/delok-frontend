@@ -194,7 +194,23 @@ export default function Dashboard() {
 
             {/* State: Empty List */}
             {!loadingOrganizations && organizations.length === 0 && (
-              <div className="bg-surface border border-border rounded-xl p-8 text-center flex flex-col items-center gap-2">
+              <div className="bg-surface border border-dashed border-border rounded-xl p-10 text-center flex flex-col items-center gap-3">
+                <span className="flex items-center justify-center h-10 w-10 rounded-full bg-surface-hover text-muted-foreground">
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    className="h-5 w-5"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 4.5A1.5 1.5 0 0 1 4.5 3h4l2 2h5A1.5 1.5 0 0 1 17 6.5v9a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 15.5v-11Z"
+                      stroke="currentColor"
+                      strokeWidth="1.3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
                 <p className="text-xs text-muted-foreground">
                   No organizations found. Get started by creating your first
                   workspace on the left.

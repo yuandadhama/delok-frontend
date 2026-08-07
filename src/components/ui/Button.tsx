@@ -25,24 +25,26 @@ export default function Button({
       className={clsx(
         "rounded-md font-medium transition-all duration-200 cursor-pointer",
         "disabled:opacity-50 disabled:pointer-events-none",
-        "focus:outline-none focus:ring-2 focus:ring-primary",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
 
         {
           "px-3 py-2 text-sm": size === "sm",
           "px-4 py-2 text-sm": size === "md",
           "px-5 py-3 text-base": size === "lg",
 
-          "bg-primary text-primary-foreground hover:opacity-90":
+          "bg-primary text-primary-foreground hover:opacity-90 focus-visible:ring-primary":
             variant === "primary",
 
-          "bg-surface border border-border text-foreground hover:bg-surface-hover":
+          "bg-surface border border-border text-foreground hover:bg-surface-hover focus-visible:ring-primary":
             variant === "secondary",
 
-          "bg-danger text-white hover:opacity-90": variant === "danger",
+          "bg-danger text-white hover:opacity-90 focus-visible:ring-danger":
+            variant === "danger",
 
-          "bg-success text-white hover:opacity-90": variant === "success",
+          "bg-success text-white hover:opacity-90 focus-visible:ring-success":
+            variant === "success",
 
-          "bg-transparent text-foreground hover:bg-surface-hover":
+          "bg-transparent text-foreground hover:bg-surface-hover focus-visible:ring-primary":
             variant === "ghost",
         },
 
