@@ -153,7 +153,7 @@ export default function Dashboard() {
                 <Input
                   label="Organization Name"
                   name="name"
-                  placeholder="e.g. Acme Inc"
+                  placeholder="e.g. Delok Inc."
                   onChange={(e) => setOrganizationName(e.target.value)}
                   value={organizationName}
                 />

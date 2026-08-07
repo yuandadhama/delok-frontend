@@ -1,7 +1,7 @@
 "use client";
 
-import Sidebar from "@/src/components/layout/Sidebar";
-import Topbar from "@/src/components/layout/Topbar";
+import { Sidebar } from "@/src/components/layout/sidebar";
+import { Topbar } from "@/src/components/layout/topbar";
 import { useOrganization } from "@/src/domains/organization";
 import { useParams } from "next/navigation";
 

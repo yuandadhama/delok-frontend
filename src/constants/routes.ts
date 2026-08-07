@@ -22,6 +22,8 @@ export const ROUTES = {
     ORGANIZATION_SETTINGS: (organizationSlug: string) =>
       `/${organizationSlug}/settings`,
 
+    PROJECTS: (organizationSlug: string) => `/${organizationSlug}/projects`,
+
     PROJECT: (organizationSlug: string, projectId: string) =>
       `/${organizationSlug}/project/${projectId}`,
   },
