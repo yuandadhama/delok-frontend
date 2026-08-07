@@ -122,7 +122,7 @@ export default function Dashboard() {
         <header className="flex justify-between items-center border-b border-border pb-4">
           <div>
             <h1 className="text-base font-semibold text-foreground tracking-tight">
-              Dashboard
+              Workspace
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
               Welcome back,{" "}
