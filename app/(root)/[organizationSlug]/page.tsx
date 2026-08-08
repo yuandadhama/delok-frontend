@@ -11,7 +11,7 @@ const Page = () => {
     <div className="flex h-full flex-col items-center justify-center gap-1 text-center">
       <p className="text-sm font-medium text-foreground">Workspace overview</p>
       <p className="text-xs text-muted-foreground">
-        This page is under development for {organizationSlug}.
+        This page is under development :)
       </p>
     </div>
   );

@@ -1,29 +1,29 @@
-import Image from "next/image";
-import DelokTextLogo from "@/public/delok-light-teks_logo.webp";
-import DelokLogo from "@/public/delok-light-logo.webp";
+import { OrganizationSwitcher } from "@/src/components/layout/sidebar/OrganizationSwitcher";
 
 type SidebarHeaderProps = {
+  organizationSlug: string;
   organizationName: string;
   collapsed: boolean;
 };
 
-export function SidebarHeader({ collapsed }: SidebarHeaderProps) {
+export function SidebarHeader({
+  organizationSlug,
+  organizationName,
+  collapsed,
+}: SidebarHeaderProps) {
   return (
-    <div className="px-4 py-4 border-b border-border flex items-center gap-2.5">
+    <div
+      className={`border-b border-border px-3 py-4 flex items-center ${collapsed ? "justify-center" : "gap-2.5"}`}
+    >
       {!collapsed ? (
-        <Image
-          src={DelokTextLogo}
-          alt="Delok Logo"
-          width={100}
-          className="text-sm font-semibold text-foreground truncate tracking-tight mb-0.5"
+        <OrganizationSwitcher
+          organizationSlug={organizationSlug}
+          organizationName={organizationName}
         />
       ) : (
-        <Image
-          src={DelokLogo}
-          alt="Delok Logo"
-          width={100}
-          className="text-sm font-semibold text-foreground truncate tracking-tight mb-0.5"
-        />
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary">
+          {organizationName.charAt(0).toUpperCase()}
+        </div>
       )}
     </div>
   );

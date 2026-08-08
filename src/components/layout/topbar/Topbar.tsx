@@ -1,9 +1,10 @@
 "use client";
 
 import { authClient } from "@/src/lib/auth/auth-client";
-import { OrganizationSwitcher } from "./OrganizationSwitcher";
+import { OrganizationSwitcher } from "../sidebar/OrganizationSwitcher";
 import { UserMenu } from "./UserMenu";
-import { SearchButton } from "./SearchButton";
+import DelokTextLogo from "@/public/delok-light-teks_logo.webp";
+import Image from "next/image";
 
 type TopbarProps = {
   organizationSlug: string;
@@ -15,13 +16,12 @@ export function Topbar({ organizationSlug, organizationName }: TopbarProps) {
 
   return (
     <header className="h-14 shrink-0 flex items-center justify-between px-5 bg-surface border-b border-border">
-      <div className="flex items-center gap-3">
-        <OrganizationSwitcher
-          organizationSlug={organizationSlug}
-          organizationName={organizationName}
-        />
-        <SearchButton />
-      </div>
+      <Image
+        src={DelokTextLogo}
+        alt="Delok Text Logo"
+        width={120}
+        height={28}
+      />
 
       <UserMenu
         userName={session?.user?.name}

@@ -17,19 +17,37 @@ const COLLAPSED_WIDTH = 50;
 
 export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
   const pathname = usePathname();
+
   const [pinned, setPinned] = useState(true);
   const [hovered, setHovered] = useState(false);
 
+  // Expanded when pinned OR temporarily hovered.
   const collapsed = !pinned && !hovered;
+
+  const handleToggle = () => {
+    if (pinned) {
+      // Collapse permanently.
+      // Reset hover so the sidebar closes immediately
+      // even if the mouse is still inside the sidebar.
+      setPinned(false);
+      setHovered(false);
+    } else {
+      // Pin/open the sidebar permanently.
+      setPinned(true);
+    }
+  };
 
   return (
     <aside
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH }}
+      style={{
+        width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH,
+      }}
       className="shrink-0 bg-surface border-r border-border flex flex-col transition-[width] duration-200 ease-in-out"
     >
       <SidebarHeader
+        organizationSlug={organizationSlug}
         organizationName={organizationName}
         collapsed={collapsed}
       />
@@ -41,7 +59,7 @@ export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
       />
 
       <button
-        onClick={() => setPinned((prev) => !prev)}
+        onClick={handleToggle}
         title={pinned ? "Collapse sidebar" : "Pin sidebar"}
         className="flex items-center gap-2.5 px-3 py-2 mx-2 mb-2 text-xs font-medium text-muted-foreground rounded-md hover:bg-surface-hover hover:text-foreground transition-colors cursor-pointer"
       >
@@ -50,6 +68,7 @@ export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
         ) : (
           <PanelLeftOpen className="h-4 w-4 shrink-0" />
         )}
+
         {!collapsed && (
           <span className="truncate">{pinned ? "Collapse" : "Expand"}</span>
         )}

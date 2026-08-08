@@ -1,5 +1,3 @@
-import { CircleUser } from "lucide-react";
-
 type UserAvatarProps = {
   name?: string | null;
   size?: "sm" | "md";

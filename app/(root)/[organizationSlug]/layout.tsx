@@ -36,7 +36,7 @@ export default function OrganizationLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex">
+    <div className="h-screen bg-background text-foreground flex">
       <Sidebar
         organizationSlug={organizationSlug}
         organizationName={organization.name}
