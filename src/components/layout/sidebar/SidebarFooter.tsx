@@ -10,7 +10,7 @@ export function SidebarFooter({ collapsed }: SidebarFooterProps) {
   return (
     <div className="px-2 py-3 border-t border-border">
       <Link
-        href={ROUTES.DASHBOARD.ROOT}
+        href={ROUTES.WORKSPACE.ROOT}
         title={collapsed ? "All workspaces" : undefined}
         className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-muted-foreground rounded-md hover:bg-surface-hover hover:text-foreground transition-colors"
       >

@@ -58,7 +58,7 @@ export function useSignIn() {
         return;
       }
 
-      router.push(ROUTES.DASHBOARD.ROOT);
+      router.push(ROUTES.WORKSPACE.ROOT);
     } catch (e) {
       console.error(e);
       setFormError("Something went wrong. Please try again.");

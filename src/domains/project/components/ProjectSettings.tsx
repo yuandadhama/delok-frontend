@@ -1,3 +1,5 @@
+// src/domains/project/components/ProjectSettings.tsx
+
 "use client";
 
 import { useState } from "react";

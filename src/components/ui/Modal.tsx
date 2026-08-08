@@ -43,20 +43,16 @@ export default function Modal({
     >
       <div
         className={clsx(
-          "w-full max-w-sm rounded-lg border border-border bg-surface shadow-lg",
+          "w-full max-w-sm rounded-lg border border-border p-4 bg-surface shadow-lg",
           className,
         )}
         onClick={(e) => e.stopPropagation()}
       >
         {title && (
-          <div className="p-6 pb-0">
-            <h2 className="mb-1 text-lg font-semibold text-foreground">
-              {title}
-            </h2>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">{title}</h2>
             {description && (
-              <p className="mb-4 text-sm text-muted-foreground">
-                {description}
-              </p>
+              <p className="text-sm text-muted-foreground">{description}</p>
             )}
           </div>
         )}

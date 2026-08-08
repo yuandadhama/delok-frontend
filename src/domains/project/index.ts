@@ -1,6 +1,20 @@
-export { ProjectService } from "./api/project.service";
+export {
+  CreateProjectModal,
+  ProjectCard,
+  ProjectList,
+  ProjectListSkeleton,
+  ProjectEmptyState,
+  ProjectSettings,
+} from "./components";
+
 export { useProjects } from "./hooks/useProjects";
-export { projectSchema } from "./project.schema";
+
+export { ProjectService } from "./api/project.service";
+
+export { projectSchema } from "./schemas/project.schema";
+
+export type { ProjectFormValues } from "./schemas/project.schema";
+
 export type {
   Project,
   CreateProjectInput,

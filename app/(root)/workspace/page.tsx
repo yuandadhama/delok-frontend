@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-export default function Dashboard() {
+export default function Workspace() {
   const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
 
@@ -48,7 +48,7 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const result = organizationSchema.safeParse({
@@ -223,7 +223,7 @@ export default function Dashboard() {
               {organizations.map((organization) => (
                 <li key={organization.id}>
                   <Link
-                    href={ROUTES.DASHBOARD.ORGANIZATION(organization.slug)}
+                    href={ROUTES.WORKSPACE.ORGANIZATION(organization.slug)}
                     className="flex items-center justify-between bg-surface border border-border rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:border-primary/50 hover:bg-surface-hover transition-all group"
                   >
                     <span>{organization.name}</span>

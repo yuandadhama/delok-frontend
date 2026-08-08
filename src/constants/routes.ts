@@ -14,17 +14,19 @@ export const ROUTES = {
     RESET_PASSWORD: "/sign-in/reset-password",
   },
 
-  DASHBOARD: {
-    ROOT: "/dashboard",
+  WORKSPACE: {
+    ROOT: "/workspace",
 
-    ORGANIZATION: (organizationSlug: string) => `/${organizationSlug}`,
+    ORGANIZATION: (organizationSlug: string) =>
+      `/workspace/${organizationSlug}`,
 
     ORGANIZATION_SETTINGS: (organizationSlug: string) =>
-      `/${organizationSlug}/settings`,
+      `/workspace/${organizationSlug}/settings`,
 
-    PROJECTS: (organizationSlug: string) => `/${organizationSlug}/projects`,
+    PROJECTS: (organizationSlug: string) =>
+      `/workspace/${organizationSlug}/projects`,
 
     PROJECT: (organizationSlug: string, projectId: string) =>
-      `/${organizationSlug}/project/${projectId}`,
+      `/workspace/${organizationSlug}/projects/${projectId}`,
   },
 } as const;

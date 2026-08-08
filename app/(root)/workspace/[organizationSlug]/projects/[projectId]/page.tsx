@@ -1,4 +1,4 @@
-// app/dashboard/organization/[organizationId]/project/[projectId]
+// app/dashboard/organization/[organizationId]/projects/[projectId]/page.tsx
 
 "use client";
 
@@ -8,12 +8,9 @@ import { apiKeySchema } from "@/src/domains/api-key/api-key.schema";
 import { ProjectService, useProjects } from "@/src/domains/project";
 import { delok } from "@/src/lib/delok";
 import { createWebSocket } from "@/src/lib/websocket/websocket";
-import {
-  ApiKeyList,
-  type ApiKey,
-} from "@/src/components/features/api-keys/ApiKeyList";
-import { LogsPanel } from "@/src/components/features/logs/LogsPanel";
-import { ProjectSettings } from "@/src/components/features/project/ProjectSettings";
+import { ApiKeyList, type ApiKey } from "@/src/domains/api-key";
+import { LogsPanel } from "@/src/domains/log";
+import { ProjectSettings } from "@/src/domains/project";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -211,7 +208,7 @@ const Page = () => {
       },
     });
 
-    window.location.assign(ROUTES.DASHBOARD.PROJECTS(organizationSlug));
+    window.location.assign(ROUTES.WORKSPACE.PROJECTS(organizationSlug));
   }, [deleteProject, projectId, organizationSlug]);
 
   const handleCreateApiKey = useCallback(
@@ -296,7 +293,7 @@ const Page = () => {
             className="mt-6 bg-primary text-primary-foreground hover:opacity-90"
             onClick={() =>
               window.location.assign(
-                ROUTES.DASHBOARD.ORGANIZATION(organizationSlug),
+                ROUTES.WORKSPACE.ORGANIZATION(organizationSlug),
               )
             }
           >

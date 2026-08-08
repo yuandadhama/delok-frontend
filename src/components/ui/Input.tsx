@@ -57,7 +57,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
               "transition",
 
-              "focus:ring-2",
+              "focus:ring-1",
 
               "focus:ring-primary",
 

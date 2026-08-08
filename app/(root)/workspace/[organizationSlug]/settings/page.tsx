@@ -54,7 +54,7 @@ const Page = () => {
       });
 
       if (updated.slug && updated.slug !== organizationSlug) {
-        router.replace(ROUTES.DASHBOARD.ORGANIZATION(updated.slug));
+        router.replace(ROUTES.WORKSPACE.ORGANIZATION(updated.slug));
       }
       setOrganizationName("");
     } catch (err) {
@@ -84,7 +84,7 @@ const Page = () => {
         },
       });
 
-      window.location.href = ROUTES.DASHBOARD.ROOT;
+      window.location.href = ROUTES.WORKSPACE.ROOT;
     } catch (err) {
       console.error(err);
     } finally {

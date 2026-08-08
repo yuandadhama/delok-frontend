@@ -1,6 +1,8 @@
 // app/[organizationSlug] - Workspace Overview
 "use client";
 
+import { ROUTES } from "@/src/constants/routes";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 const Page = () => {
@@ -13,6 +15,12 @@ const Page = () => {
       <p className="text-xs text-muted-foreground">
         This page is under development :)
       </p>
+      <Link
+        href={ROUTES.WORKSPACE.PROJECTS(organizationSlug)}
+        className="underline text-blue-500"
+      >
+        Go to projects page
+      </Link>
     </div>
   );
 };
