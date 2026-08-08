@@ -3,6 +3,7 @@
 import { Sidebar } from "@/src/components/layout/sidebar";
 import { Topbar } from "@/src/components/layout/topbar";
 import { useOrganization } from "@/src/domains/organization";
+
 import { useParams } from "next/navigation";
 
 export default function OrganizationLayout({

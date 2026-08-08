@@ -1,9 +1,14 @@
-export { OrganizationService } from "./api/organization.service";
+export {
+  CreateOrganizationModal,
+  OrganizationCard,
+  OrganizationList,
+  OrganizationListSkeleton,
+  OrganizationEmptyState,
+} from "./components";
+
+export { organizationSchema } from "./schemas/organization.schema";
+
 export { useOrganizations } from "./hooks/useOrganizations";
 export { useOrganization } from "./hooks/useOrganization";
-export { organizationSchema } from "./organization.schema";
-export type {
-  Organization,
-  CreateOrganizationInput,
-  UpdateOrganizationInput,
-} from "./types/organization.type";
+
+export type { Organization } from "./types/organization.type";
