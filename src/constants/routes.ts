@@ -28,5 +28,8 @@ export const ROUTES = {
 
     PROJECT: (organizationSlug: string, projectId: string) =>
       `/workspace/${organizationSlug}/projects/${projectId}`,
+
+    PROJECT_SETTINGS: (organizationSlug: string, projectId: string) =>
+      `/workspace/${organizationSlug}/projects/${projectId}/settings`,
   },
 } as const;

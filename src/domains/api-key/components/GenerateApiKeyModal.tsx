@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Copy } from "lucide-react";
 import Modal from "@/src/components/ui/Modal";
-import { apiKeySchema } from "@/src/domains/api-key/api-key.schema";
+import { apiKeySchema } from "@/src/domains/api-key/schemas/api-key.schema";
 
 type GenerateApiKeyModalProps = {
   open: boolean;

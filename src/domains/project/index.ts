@@ -1,19 +1,21 @@
 export {
+  ProjectSettings,
+  ProjectHeader,
+  ProjectBreadcrumb,
   CreateProjectModal,
   ProjectCard,
+  ProjectEmptyState,
   ProjectList,
   ProjectListSkeleton,
-  ProjectEmptyState,
-  ProjectSettings,
 } from "./components";
-
-export { useProjects } from "./hooks/useProjects";
 
 export { ProjectService } from "./api/project.service";
 
-export { projectSchema } from "./schemas/project.schema";
+export { useProjects } from "./hooks/useProjects";
 
-export type { ProjectFormValues } from "./schemas/project.schema";
+export { useProject } from "./hooks/useProject";
+
+export { projectSchema } from "./schemas/project.schema";
 
 export type {
   Project,

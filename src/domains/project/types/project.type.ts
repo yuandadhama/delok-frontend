@@ -4,6 +4,8 @@ export type Project = {
   id: string;
   name: string;
   organizationId: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type CreateProjectInput = {
