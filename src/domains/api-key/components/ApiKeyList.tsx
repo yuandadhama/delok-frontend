@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { KeyRound, Plus } from "lucide-react";
 
-import Card from "@/src/components/ui/Card";
+import Button from "@/src/components/ui/Button";
+import ConfirmModal from "@/src/components/ui/ConfirmModal";
 import EmptyState from "@/src/components/ui/EmptyState";
 import Skeleton from "@/src/components/ui/Skeleton";
 
@@ -18,14 +19,11 @@ type ApiKeyListProps = {
   onRevoke: (id: string) => Promise<void>;
 };
 
-const EYEBROW =
-  "text-[11px] font-semibold uppercase tracking-wide text-muted-foreground";
-
-const ICON_BTN =
-  "inline-flex items-center gap-1 rounded-sm px-1.5 py-1 text-[11px] font-medium text-muted-foreground hover:bg-surface-hover hover:text-foreground cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30";
-
 const FIELD =
-  "rounded-md border border-border bg-surface text-[12.5px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-colors";
+  "rounded-md border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-colors";
+
+const ACTION =
+  "rounded-md px-2 py-1 text-xs font-medium transition-colors cursor-pointer";
 
 const formatDate = (iso: string) => {
   const date = new Date(iso);
@@ -51,6 +49,8 @@ export function ApiKeyList({
 
   const [renaming, setRenaming] = useState(false);
 
+  const [revokingKey, setRevokingKey] = useState<ApiKey | null>(null);
+
   const handleRename = async (id: string) => {
     const name = editingApiKeyName.trim();
 
@@ -67,64 +67,64 @@ export function ApiKeyList({
     }
   };
 
-  const handleRevoke = async (id: string) => {
-    const confirmed = window.confirm("Revoke this API key?");
-
-    if (!confirmed) return;
-
-    await onRevoke(id);
-  };
-
   return (
-    <Card>
+    <section className="space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <h2 className={EYEBROW}>API keys</h2>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">
+            API keys
+            {!isLoading && (
+              <span className="ml-2 font-mono text-xs font-normal text-muted-foreground">
+                {apiKeys.length}
+              </span>
+            )}
+          </h2>
 
-        {!isLoading && (
-          <span className="text-[10px] font-mono text-muted-foreground">
-            {apiKeys.length}
-          </span>
-        )}
+          <p className="mt-1 text-xs text-muted-foreground">
+            API keys authenticate requests made to this project.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={() => setShowGenerateModal(true)}
+          disabled={isLoading}
+          className="flex items-center gap-2"
+        >
+          Generate key
+          <Plus className="h-3.5 w-3.5" />
+        </Button>
       </div>
-
-      {/* Generate button */}
-      <button
-        type="button"
-        onClick={() => setShowGenerateModal(true)}
-        disabled={isLoading}
-        className="w-full mb-3 flex items-center justify-center gap-1.5 text-xs font-medium bg-primary text-primary-foreground py-2 rounded-md hover:opacity-90 active:opacity-100 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-      >
-        <Plus className="h-3.5 w-3.5" />
-        Generate API key
-      </button>
 
       {/* Loading */}
       {isLoading ? (
         <div className="flex flex-col gap-1.5">
           {Array.from({ length: 3 }).map((_, index) => (
-            <Skeleton key={index} className="h-16" />
+            <Skeleton key={index} className="h-14" />
           ))}
         </div>
       ) : apiKeys.length === 0 ? (
         /* Empty */
         <EmptyState
           icon={<KeyRound className="h-5 w-5" />}
-          description="No API key created yet"
-          className="py-6"
+          description="No API keys yet. Generate one to get started."
+          className="py-10"
         />
       ) : (
         /* API key list */
-        <ul className="flex flex-col gap-1.5">
+        <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface">
           {apiKeys.map((apiKey) => (
             <li
               key={apiKey.id}
-              className="rounded-md border border-border px-2.5 py-2"
+              className="flex items-center justify-between gap-4 px-4 py-3"
             >
-              <div className="flex flex-col gap-1">
+              <div className="flex min-w-0 flex-col gap-1">
                 {/* Rename */}
                 {editingApiKeyId === apiKey.id ? (
-                  <div className="flex gap-1.5">
+                  <div className="flex max-w-xs gap-1.5">
                     <input
                       value={editingApiKeyName}
                       onChange={(e) => setEditingApiKeyName(e.target.value)}
@@ -140,68 +140,68 @@ export function ApiKeyList({
                       }}
                       autoFocus
                       disabled={renaming}
-                      className={`${FIELD} flex-1 px-2 py-1`}
+                      className={`${FIELD} flex-1 px-2.5 py-1.5`}
                     />
 
                     <button
                       type="button"
                       onClick={() => void handleRename(apiKey.id)}
                       disabled={renaming || !editingApiKeyName.trim()}
-                      className="rounded-md bg-primary px-2 py-1 text-[11px] font-medium text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+                      className="shrink-0 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
                     >
                       {renaming ? "Saving..." : "Save"}
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="truncate text-[12.5px] font-medium text-foreground">
-                      {apiKey.name}
-                    </span>
-
-                    {!apiKey.revokedAt && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditingApiKeyId(apiKey.id);
-                          setEditingApiKeyName(apiKey.name);
-                        }}
-                        className={ICON_BTN}
-                      >
-                        Rename
-                      </button>
-                    )}
-                  </div>
+                  <span className="truncate text-sm font-medium text-foreground">
+                    {apiKey.name}
+                  </span>
                 )}
 
-                {/* Key prefix */}
-                <span className="font-mono text-[10px] text-muted-foreground">
-                  {apiKey.keyPrefix}********
-                </span>
-
-                {/* Status */}
-                {apiKey.revokedAt ? (
-                  <span className="inline-flex w-fit items-center rounded-sm bg-danger/10 px-1.5 py-0.5 text-[10px] font-medium text-danger">
-                    Revoked {formatDate(apiKey.revokedAt)}
+                {/* Key prefix + status */}
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {apiKey.keyPrefix}********
                   </span>
-                ) : (
-                  <div className="flex items-center justify-between pt-0.5">
-                    <span className="text-[10px] text-muted-foreground">
+
+                  {apiKey.revokedAt ? (
+                    <span className="inline-flex items-center rounded-sm bg-danger/10 px-1.5 py-0.5 text-[10px] font-medium text-danger">
+                      Revoked {formatDate(apiKey.revokedAt)}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">
                       Last used:{" "}
                       {apiKey.lastUsedAt
                         ? formatDate(apiKey.lastUsedAt)
                         : "Never"}
                     </span>
-
-                    <button
-                      type="button"
-                      onClick={() => void handleRevoke(apiKey.id)}
-                      className={`${ICON_BTN} text-danger hover:bg-danger/10 hover:text-danger`}
-                    >
-                      Revoke
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
+
+              {/* Actions */}
+              {!apiKey.revokedAt && (
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingApiKeyId(apiKey.id);
+                      setEditingApiKeyName(apiKey.name);
+                    }}
+                    className={`${ACTION} text-muted-foreground hover:bg-surface-hover hover:text-foreground`}
+                  >
+                    Rename
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRevokingKey(apiKey)}
+                    className={`${ACTION} text-danger hover:bg-danger/10`}
+                  >
+                    Revoke
+                  </button>
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -213,6 +213,21 @@ export function ApiKeyList({
         onClose={() => setShowGenerateModal(false)}
         onGenerate={onGenerate}
       />
-    </Card>
+
+      {/* Revoke confirm modal */}
+      {revokingKey && (
+        <ConfirmModal
+          title="Revoke API key"
+          description="This key will immediately stop working."
+          expectedText={revokingKey.name}
+          inputLabel="Key name"
+          helperText={`Type "${revokingKey.name}" to confirm revoking.`}
+          confirmLabel="Revoke key"
+          busyLabel="Revoking…"
+          onConfirm={() => onRevoke(revokingKey.id)}
+          onClose={() => setRevokingKey(null)}
+        />
+      )}
+    </section>
   );
 }

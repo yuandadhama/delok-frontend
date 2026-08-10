@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 
 import {
   ProjectBreadcrumb,
+  ProjectDangerZone,
   ProjectSettings,
   useProject,
   useProjects,
@@ -49,7 +50,7 @@ export default function ProjectSettingsPage() {
 
   if (isLoading || !project) {
     return (
-      <div className="p-6">
+      <div className="w-full max-w-4xl p-6">
         <p className="text-xs text-muted-foreground">Loading settings...</p>
       </div>
     );
@@ -89,30 +90,39 @@ export default function ProjectSettingsPage() {
   };
 
   return (
-    <div className="p-6 max-w-5xl">
-      <div className="mb-6">
-        <ProjectBreadcrumb
-          organizationSlug={organizationSlug}
-          projectId={projectId}
-          projectName={project.name}
-          settings
-        />
+    <div>
+      {/* Sticky page header */}
+      <div className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
+        <div className="w-full max-w-4xl px-6 pt-5 pb-4">
+          <ProjectBreadcrumb
+            organizationSlug={organizationSlug}
+            projectId={projectId}
+            projectName={project.name}
+            settings
+          />
+        </div>
       </div>
 
-      <div className="space-y-6">
-        <ProjectSettings
-          projectName={project.name}
-          onUpdate={handleUpdate}
-          onDelete={handleDelete}
-        />
+      {/* Page content */}
+      <div className="w-full max-w-4xl flex flex-col p-6">
+        <div className="space-y-12">
+          <ProjectSettings projectName={project.name} onUpdate={handleUpdate} />
 
-        <ApiKeyList
-          apiKeys={apiKeys}
-          isLoading={loadingKeys}
-          onGenerate={handleCreateApiKey}
-          onRename={handleRenameApiKey}
-          onRevoke={handleRevokeApiKey}
-        />
+          <ApiKeyList
+            apiKeys={apiKeys}
+            isLoading={loadingKeys}
+            onGenerate={handleCreateApiKey}
+            onRename={handleRenameApiKey}
+            onRevoke={handleRevokeApiKey}
+          />
+        </div>
+
+        <div className="mt-12 border-t border-border pt-8">
+          <ProjectDangerZone
+            projectName={project.name}
+            onDelete={handleDelete}
+          />
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { HTMLAttributes, useEffect } from "react";
+import { createPortal } from "react-dom";
 import clsx from "clsx";
 
 type ModalProps = {
@@ -35,7 +36,11 @@ export default function Modal({
 
   if (!open) return null;
 
-  return (
+  // Render in a portal so the overlay is detached from the page's scroll
+  // container. Mounting/focusing the modal inside a scrollable ancestor can
+  // otherwise make the browser adjust that container's scroll position,
+  // shifting the page behind the modal.
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={onClose}
@@ -58,6 +63,7 @@ export default function Modal({
         )}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

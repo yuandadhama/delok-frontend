@@ -1,5 +1,6 @@
 export {
   ProjectSettings,
+  ProjectDangerZone,
   ProjectHeader,
   ProjectBreadcrumb,
   CreateProjectModal,

@@ -30,7 +30,7 @@ export function LogsPanel({
   onCloseDetail,
 }: LogsPanelProps) {
   return (
-    <div className="flex h-full min-h-0 border border-border rounded-xl overflow-hidden bg-surface">
+    <div className="flex h-full min-h-0">
       <section className="flex min-w-0 flex-1 flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">

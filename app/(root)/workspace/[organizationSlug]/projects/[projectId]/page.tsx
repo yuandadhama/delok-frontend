@@ -47,7 +47,7 @@ export default function ProjectPage() {
         <h1 className="text-sm font-semibold">Project not found</h1>
 
         <p className="mt-2 text-xs text-muted-foreground">
-          This project doesn't belong to this workspace or you don't have
+          This project doesn&apos;t belong to this workspace or you don&apos;t have
           permission to access it.
         </p>
 
@@ -64,14 +64,14 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className="h-full min-h-0 flex flex-col p-6">
+    <div className="h-full min-h-0 flex flex-col">
       <ProjectHeader
         organizationSlug={organizationSlug}
         projectId={project.id}
         projectName={project.name}
       />
 
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-0 p-6">
         <LogsPanel
           logs={logs}
           pagination={pagination}
