@@ -1,9 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { LogService } from "../api/log.service";
-import type { LogEvent, LogPagination } from "../types/log.type";
+import type {
+  LogEvent,
+  LogFiltersState,
+  LogPagination,
+} from "../types/log.type";
 
 import { createWebSocket } from "@/src/lib/websocket/websocket";
 
@@ -15,8 +19,16 @@ const DEFAULT_PAGINATION: LogPagination = {
   total: 0,
 };
 
+const EMPTY_FILTERS: LogFiltersState = {
+  search: "",
+  level: "",
+  environment: "",
+  from: "",
+  to: "",
+};
+
 export function useProjectLogs(projectId: string, limit = 20) {
-  const [logs, setLogs] = useState<LogEvent[]>([]);
+  const [rawLogs, setRawLogs] = useState<LogEvent[]>([]);
   const [pagination, setPagination] =
     useState<LogPagination>(DEFAULT_PAGINATION);
 
@@ -24,6 +36,69 @@ export function useProjectLogs(projectId: string, limit = 20) {
   const [page, setPage] = useState(1);
 
   const [selectedLog, setSelectedLog] = useState<LogEvent | null>(null);
+
+  const [filters, setFilters] = useState<LogFiltersState>(EMPTY_FILTERS);
+
+  const filteredLogs = useMemo(() => {
+    const search = filters.search.trim().toLowerCase();
+    const from = filters.from ? new Date(filters.from).getTime() : null;
+    const to = filters.to
+      ? new Date(filters.to).getTime() + 86_400_000
+      : null;
+
+    return rawLogs.filter((log) => {
+      if (
+        search &&
+        !`${log.event} ${log.message ?? ""}`.toLowerCase().includes(search)
+      ) {
+        return false;
+      }
+
+      if (
+        filters.level &&
+        log.level.toLowerCase() !== filters.level.toLowerCase()
+      ) {
+        return false;
+      }
+
+      if (
+        filters.environment &&
+        log.environment.toLowerCase() !==
+          filters.environment.toLowerCase()
+      ) {
+        return false;
+      }
+
+      const occurredAt = new Date(log.occurredAt).getTime();
+
+      if (from !== null && occurredAt < from) return false;
+
+      if (to !== null && occurredAt >= to) return false;
+
+      return true;
+    });
+  }, [rawLogs, filters]);
+
+  const hasActiveFilters = Boolean(
+    filters.search.trim() ||
+      filters.level ||
+      filters.environment ||
+      filters.from ||
+      filters.to,
+  );
+
+  const setFilter = useCallback(
+    (key: keyof LogFiltersState, value: string) => {
+      setFilters((previous) => ({ ...previous, [key]: value }));
+      setPage(1);
+    },
+    [],
+  );
+
+  const clearFilters = useCallback(() => {
+    setFilters(EMPTY_FILTERS);
+    setPage(1);
+  }, []);
 
   const fetchLogs = useCallback(async () => {
     if (!projectId) return;
@@ -33,7 +108,7 @@ export function useProjectLogs(projectId: string, limit = 20) {
     try {
       const result = await LogService.listByProject(projectId, page, limit);
 
-      setLogs(result.logs);
+      setRawLogs(result.logs);
       setPagination(result.pagination);
     } catch (error) {
       console.error("Failed to fetch logs:", error);
@@ -43,7 +118,13 @@ export function useProjectLogs(projectId: string, limit = 20) {
   }, [projectId, page, limit]);
 
   useEffect(() => {
-    fetchLogs();
+    // Defer so the initial fetch (which sets loading state) doesn't run
+    // synchronously inside the effect body.
+    const timer = setTimeout(() => {
+      void fetchLogs();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [fetchLogs]);
 
   /**
@@ -89,7 +170,7 @@ export function useProjectLogs(projectId: string, limit = 20) {
           return;
         }
 
-        setLogs((previous) => [log, ...previous.slice(0, limit - 1)]);
+        setRawLogs((previous) => [log, ...previous.slice(0, limit - 1)]);
 
         setPagination((previous) => ({
           ...previous,
@@ -143,14 +224,20 @@ export function useProjectLogs(projectId: string, limit = 20) {
   }, []);
 
   return {
-    logs,
+    logs: filteredLogs,
     pagination,
     page,
     isLoading,
 
     selectedLog,
 
+    filters,
+    hasActiveFilters,
+
     setPage,
+
+    setFilter,
+    clearFilters,
 
     selectLog,
     closeLogDetail,

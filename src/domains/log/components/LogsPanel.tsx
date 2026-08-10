@@ -4,8 +4,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { LogEventRow } from "./LogEventRow";
 import { LogDetailPanel } from "./LogDetailPanel";
+import { LogFilters } from "./LogFilters";
 
-import type { LogEvent, LogPagination } from "../types/log.type";
+import type { LogEvent, LogFiltersState, LogPagination } from "../types/log.type";
 
 type LogsPanelProps = {
   logs: LogEvent[];
@@ -17,6 +18,11 @@ type LogsPanelProps = {
   selectedLog: LogEvent | null;
   onSelectLog: (log: LogEvent) => void;
   onCloseDetail: () => void;
+
+  filters: LogFiltersState;
+  onFilterChange: (key: keyof LogFiltersState, value: string) => void;
+  onClearFilters: () => void;
+  hasActiveFilters: boolean;
 };
 
 export function LogsPanel({
@@ -28,23 +34,46 @@ export function LogsPanel({
   selectedLog,
   onSelectLog,
   onCloseDetail,
+  filters,
+  onFilterChange,
+  onClearFilters,
+  hasActiveFilters,
 }: LogsPanelProps) {
   return (
     <div className="flex h-full min-h-0">
       <section className="flex min-w-0 flex-1 flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3">
           <div>
             <h2 className="text-xs font-semibold text-foreground">Logs</h2>
 
             <p className="text-[10px] text-muted-foreground">
-              {pagination.total} total events
+              {hasActiveFilters
+                ? `${logs.length} matching events`
+                : `${pagination.total} total events`}
             </p>
           </div>
         </div>
 
+        {/* Filters */}
+        <LogFilters
+          search={filters.search}
+          level={filters.level}
+          environment={filters.environment}
+          from={filters.from}
+          to={filters.to}
+          hasActiveFilters={hasActiveFilters}
+          onSearchChange={(value) => onFilterChange("search", value)}
+          onLevelChange={(value) => onFilterChange("level", value)}
+          onEnvironmentChange={(value) => onFilterChange("environment", value)}
+          onFromChange={(value) => onFilterChange("from", value)}
+          onToChange={(value) => onFilterChange("to", value)}
+          onClearFilters={onClearFilters}
+        />
+
         {/* Table Header */}
         <div className="flex items-center gap-3 px-3 py-2 border-b border-border bg-background text-[10px] uppercase tracking-wider font-semibold text-muted-foreground">
+          <span className="w-24 shrink-0">Date</span>
           <span className="w-20 shrink-0">Time</span>
           <span className="w-14 shrink-0">Level</span>
           <span className="w-36 shrink-0">Environment</span>
@@ -64,7 +93,11 @@ export function LogsPanel({
 
           {!isLoading && logs.length === 0 && (
             <div className="flex items-center justify-center h-32">
-              <p className="text-xs text-muted-foreground">No logs found.</p>
+              <p className="text-xs text-muted-foreground">
+                {hasActiveFilters
+                  ? "No logs match your filters."
+                  : "No logs found."}
+              </p>
             </div>
           )}
 

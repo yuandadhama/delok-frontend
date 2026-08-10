@@ -26,7 +26,11 @@ export default function ProjectPage() {
     page,
     isLoading: loadingLogs,
     selectedLog,
+    filters,
+    hasActiveFilters,
     setPage,
+    setFilter,
+    clearFilters,
     selectLog,
     closeLogDetail,
   } = useProjectLogs(projectId);
@@ -81,6 +85,10 @@ export default function ProjectPage() {
           selectedLog={selectedLog}
           onSelectLog={selectLog}
           onCloseDetail={closeLogDetail}
+          filters={filters}
+          onFilterChange={setFilter}
+          onClearFilters={clearFilters}
+          hasActiveFilters={hasActiveFilters}
         />
       </div>
     </div>

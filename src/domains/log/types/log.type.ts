@@ -14,6 +14,14 @@ export type LogEvent = {
   payload: Record<string, unknown> | null;
 };
 
+export type LogFiltersState = {
+  search: string;
+  level: string;
+  environment: string;
+  from: string;
+  to: string;
+};
+
 export type LogPagination = {
   page: number;
   totalPages: number;

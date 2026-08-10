@@ -3,6 +3,7 @@
 import { FileJson, MessageSquare, X } from "lucide-react";
 
 import type { LogEvent } from "../types/log.type";
+import { formatLogTimestamp } from "../utils/format";
 
 type LogDetailPanelProps = {
   log: LogEvent | null;
@@ -47,7 +48,7 @@ export function LogDetailPanel({ log, onClose }: LogDetailPanelProps) {
         <DetailItem label="Environment">{log.environment}</DetailItem>
 
         <DetailItem label="Occurred At">
-          {new Date(log.occurredAt).toLocaleString()}
+          {formatLogTimestamp(log.occurredAt)}
         </DetailItem>
 
         {log.message && (

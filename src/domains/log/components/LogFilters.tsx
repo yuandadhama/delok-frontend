@@ -35,7 +35,7 @@ export function LogFilters({
   onClearFilters,
 }: LogFiltersProps) {
   return (
-    <div className="mb-3 flex flex-wrap items-center gap-1.5 rounded-lg border border-border bg-surface p-2 shadow-sm">
+    <div className="mb-3 flex flex-wrap items-center gap-1.5">
       <div className="relative min-w-45 flex-1">
         <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2">
           <Search className="h-3.5 w-3.5 text-muted-foreground" />

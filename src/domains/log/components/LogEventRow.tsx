@@ -3,19 +3,12 @@
 import { ChevronRight, FileJson, MessageSquare } from "lucide-react";
 
 import type { LogEvent } from "../types/log.type";
+import { formatLogDate, formatLogTime } from "../utils/format";
 
 type LogEventRowProps = {
   log: LogEvent;
   onClick: () => void;
 };
-
-function formatTime(value: string) {
-  return new Date(value).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-}
 
 function getLevelClass(level: string) {
   switch (level.toLowerCase()) {
@@ -47,8 +40,12 @@ export function LogEventRow({ log, onClick }: LogEventRowProps) {
       onClick={onClick}
       className="w-full flex items-center gap-3 px-3 py-2 text-left border-b border-border/50 hover:bg-surface-hover transition-colors"
     >
+      <span className="w-24 shrink-0 text-[11px] font-mono text-muted-foreground">
+        {formatLogDate(log.occurredAt)}
+      </span>
+
       <span className="w-20 shrink-0 text-[11px] font-mono text-muted-foreground">
-        {formatTime(log.occurredAt)}
+        {formatLogTime(log.occurredAt)}
       </span>
 
       <span
