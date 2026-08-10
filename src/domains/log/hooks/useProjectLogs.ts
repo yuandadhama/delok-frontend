@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LogService } from "../api/log.service";
 import type {
@@ -27,57 +27,66 @@ const EMPTY_FILTERS: LogFiltersState = {
   to: "",
 };
 
-export function useProjectLogs(projectId: string, limit = 20) {
-  const [rawLogs, setRawLogs] = useState<LogEvent[]>([]);
+/**
+ * Client-side filter check used for realtime (WebSocket) logs, which bypass
+ * the server query. Page data is already filtered server-side.
+ */
+function matchesLogFilters(log: LogEvent, filters: LogFiltersState): boolean {
+  const search = filters.search.trim().toLowerCase();
+  const from = filters.from ? new Date(filters.from).getTime() : null;
+  const to = filters.to ? new Date(filters.to).getTime() + 86_400_000 : null;
+
+  if (
+    search &&
+    !`${log.event} ${log.message ?? ""}`.toLowerCase().includes(search)
+  ) {
+    return false;
+  }
+
+  if (
+    filters.level &&
+    log.level.toLowerCase() !== filters.level.toLowerCase()
+  ) {
+    return false;
+  }
+
+  if (
+    filters.environment &&
+    log.environment.toLowerCase() !== filters.environment.toLowerCase()
+  ) {
+    return false;
+  }
+
+  const occurredAt = new Date(log.occurredAt).getTime();
+
+  if (from !== null && occurredAt < from) return false;
+
+  if (to !== null && occurredAt >= to) return false;
+
+  return true;
+}
+
+export function useProjectLogs(projectId: string, initialLimit = 50) {
+  const [logs, setLogs] = useState<LogEvent[]>([]);
   const [pagination, setPagination] =
     useState<LogPagination>(DEFAULT_PAGINATION);
 
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
 
+  const [limit, setLimitState] = useState<number>(initialLimit);
+
   const [selectedLog, setSelectedLog] = useState<LogEvent | null>(null);
 
   const [filters, setFilters] = useState<LogFiltersState>(EMPTY_FILTERS);
 
-  const filteredLogs = useMemo(() => {
-    const search = filters.search.trim().toLowerCase();
-    const from = filters.from ? new Date(filters.from).getTime() : null;
-    const to = filters.to
-      ? new Date(filters.to).getTime() + 86_400_000
-      : null;
+  // Always-current filter ref so the WebSocket handler can check incoming
+  // logs without reconnecting whenever a filter changes.
+  const filtersRef = useRef(filters);
 
-    return rawLogs.filter((log) => {
-      if (
-        search &&
-        !`${log.event} ${log.message ?? ""}`.toLowerCase().includes(search)
-      ) {
-        return false;
-      }
-
-      if (
-        filters.level &&
-        log.level.toLowerCase() !== filters.level.toLowerCase()
-      ) {
-        return false;
-      }
-
-      if (
-        filters.environment &&
-        log.environment.toLowerCase() !==
-          filters.environment.toLowerCase()
-      ) {
-        return false;
-      }
-
-      const occurredAt = new Date(log.occurredAt).getTime();
-
-      if (from !== null && occurredAt < from) return false;
-
-      if (to !== null && occurredAt >= to) return false;
-
-      return true;
-    });
-  }, [rawLogs, filters]);
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
 
   const hasActiveFilters = Boolean(
     filters.search.trim() ||
@@ -100,22 +109,44 @@ export function useProjectLogs(projectId: string, limit = 20) {
     setPage(1);
   }, []);
 
+  const setLimit = useCallback((next: number) => {
+    setLimitState(next);
+    setPage(1);
+  }, []);
+
+  // Only the latest fetch request may apply its result, so a slow earlier
+  // response (e.g. after rapid filter typing) can't overwrite a newer one.
+  const fetchSequence = useRef(0);
+
   const fetchLogs = useCallback(async () => {
     if (!projectId) return;
+
+    const sequence = ++fetchSequence.current;
 
     setIsLoading(true);
 
     try {
-      const result = await LogService.listByProject(projectId, page, limit);
+      const result = await LogService.listByProject(
+        projectId,
+        page,
+        limit,
+        filters,
+      );
 
-      setRawLogs(result.logs);
+      if (sequence !== fetchSequence.current) return;
+
+      setLogs(result.logs);
       setPagination(result.pagination);
     } catch (error) {
-      console.error("Failed to fetch logs:", error);
+      if (sequence === fetchSequence.current) {
+        console.error("Failed to fetch logs:", error);
+      }
     } finally {
-      setIsLoading(false);
+      if (sequence === fetchSequence.current) {
+        setIsLoading(false);
+      }
     }
-  }, [projectId, page, limit]);
+  }, [projectId, page, limit, filters]);
 
   useEffect(() => {
     // Defer so the initial fetch (which sets loading state) doesn't run
@@ -170,7 +201,11 @@ export function useProjectLogs(projectId: string, limit = 20) {
           return;
         }
 
-        setRawLogs((previous) => [log, ...previous.slice(0, limit - 1)]);
+        if (!matchesLogFilters(log, filtersRef.current)) {
+          return;
+        }
+
+        setLogs((previous) => [log, ...previous.slice(0, limit - 1)]);
 
         setPagination((previous) => ({
           ...previous,
@@ -224,7 +259,7 @@ export function useProjectLogs(projectId: string, limit = 20) {
   }, []);
 
   return {
-    logs: filteredLogs,
+    logs,
     pagination,
     page,
     isLoading,
@@ -234,10 +269,13 @@ export function useProjectLogs(projectId: string, limit = 20) {
     filters,
     hasActiveFilters,
 
+    limit,
+
     setPage,
 
     setFilter,
     clearFilters,
+    setLimit,
 
     selectLog,
     closeLogDetail,

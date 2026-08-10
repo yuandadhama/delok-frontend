@@ -8,15 +8,23 @@ import { formatLogTimestamp } from "../utils/format";
 type LogDetailPanelProps = {
   log: LogEvent | null;
   onClose: () => void;
+  width?: number;
 };
 
-export function LogDetailPanel({ log, onClose }: LogDetailPanelProps) {
+export function LogDetailPanel({
+  log,
+  onClose,
+  width = 384,
+}: LogDetailPanelProps) {
   if (!log) {
     return null;
   }
 
   return (
-    <aside className="w-96 shrink-0 border-l border-border bg-surface flex flex-col">
+    <aside
+      style={{ "--drawer-width": `${width}px` } as React.CSSProperties}
+      className="absolute inset-y-0 right-0 z-20 flex w-full max-w-sm shrink-0 flex-col border-l border-border bg-surface shadow-2xl @2xl:static @2xl:z-auto @2xl:max-w-[calc(100%_-_280px)] @2xl:w-[var(--drawer-width)] @2xl:shadow-none"
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">
         <div className="min-w-0">
@@ -60,7 +68,7 @@ export function LogDetailPanel({ log, onClose }: LogDetailPanelProps) {
             </div>
 
             <div className="rounded-md border border-border bg-background p-3">
-              <p className="text-xs text-foreground whitespace-pre-wrap wrap-break-word">
+              <p className="text-[11px] text-foreground whitespace-pre-wrap wrap-break-word">
                 {log.message}
               </p>
             </div>
@@ -75,7 +83,7 @@ export function LogDetailPanel({ log, onClose }: LogDetailPanelProps) {
               <h3 className="text-xs font-semibold">Payload</h3>
             </div>
 
-            <pre className="rounded-md border border-border bg-background p-3 overflow-x-auto text-[11px] leading-relaxed font-mono text-muted-foreground">
+            <pre className="rounded-md border border-border bg-background p-3 overflow-x-auto text-[10px] leading-relaxed font-mono text-muted-foreground">
               {JSON.stringify(log.payload, null, 2)}
             </pre>
           </section>
@@ -98,7 +106,7 @@ function DetailItem({
         {label}
       </p>
 
-      <p className="text-xs text-foreground wrap-break-word">{children}</p>
+      <p className="text-[11px] text-foreground wrap-break-word">{children}</p>
     </div>
   );
 }

@@ -28,9 +28,11 @@ export default function ProjectPage() {
     selectedLog,
     filters,
     hasActiveFilters,
+    limit,
     setPage,
     setFilter,
     clearFilters,
+    setLimit,
     selectLog,
     closeLogDetail,
   } = useProjectLogs(projectId);
@@ -51,8 +53,8 @@ export default function ProjectPage() {
         <h1 className="text-sm font-semibold">Project not found</h1>
 
         <p className="mt-2 text-xs text-muted-foreground">
-          This project doesn&apos;t belong to this workspace or you don&apos;t have
-          permission to access it.
+          This project doesn&apos;t belong to this workspace or you don&apos;t
+          have permission to access it.
         </p>
 
         <Button
@@ -68,14 +70,14 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className="h-full min-h-0 flex flex-col">
+    <div className="h-full  flex flex-col">
       <ProjectHeader
         organizationSlug={organizationSlug}
         projectId={project.id}
         projectName={project.name}
       />
 
-      <div className="flex-1 min-h-0 p-6">
+      <div className="flex-1 h-200 pb-10">
         <LogsPanel
           logs={logs}
           pagination={pagination}
@@ -89,6 +91,8 @@ export default function ProjectPage() {
           onFilterChange={setFilter}
           onClearFilters={clearFilters}
           hasActiveFilters={hasActiveFilters}
+          limit={limit}
+          onLimitChange={setLimit}
         />
       </div>
     </div>

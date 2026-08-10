@@ -17,7 +17,7 @@ export function ProjectHeader({
   projectName,
 }: ProjectHeaderProps) {
   return (
-    <header className="sticky top-0 z-10 shrink-0 border-b border-border bg-background/90 backdrop-blur">
+    <header className="sticky top-0 z-99 shrink-0 border-b border-border bg-background/90 backdrop-blur">
       <div className="flex w-full items-center justify-between px-6 py-4">
         <ProjectBreadcrumb
           organizationSlug={organizationSlug}

@@ -38,29 +38,29 @@ export function LogEventRow({ log, onClick }: LogEventRowProps) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full flex items-center gap-3 px-3 py-2 text-left border-b border-border/50 hover:bg-surface-hover transition-colors"
+      className="w-full flex items-center gap-3 px-3 py-1 @2xl:py-1.5 text-left border-b border-border/50 hover:bg-surface-hover transition-colors"
     >
-      <span className="w-24 shrink-0 text-[11px] font-mono text-muted-foreground">
+      <span className="w-24 shrink-0 text-[10px] font-mono text-muted-foreground">
         {formatLogDate(log.occurredAt)}
       </span>
 
-      <span className="w-20 shrink-0 text-[11px] font-mono text-muted-foreground">
+      <span className="w-20 shrink-0 text-[10px] font-mono text-muted-foreground">
         {formatLogTime(log.occurredAt)}
       </span>
 
       <span
-        className={`w-14 shrink-0 text-[11px] font-semibold uppercase ${getLevelClass(
+        className={`w-14 shrink-0 text-[10px] font-semibold uppercase ${getLevelClass(
           log.level,
         )}`}
       >
         {log.level}
       </span>
 
-      <span className="w-36 shrink-0 truncate text-xs font-mono text-muted-foreground">
+      <span className="w-36 shrink-0 truncate text-[10px] font-mono text-muted-foreground">
         {log.environment}
       </span>
 
-      <span className="min-w-0 flex-1 truncate text-xs text-foreground">
+      <span className="min-w-0 flex-1 truncate text-[11px] text-foreground">
         {log.event}
       </span>
 
