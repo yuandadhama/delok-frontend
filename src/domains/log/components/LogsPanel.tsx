@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ChevronLeft, ChevronRight, KeyRound } from "lucide-react";
+
+import EmptyState from "@/src/components/ui/EmptyState";
 
 import { LogEventRow } from "./LogEventRow";
 import { LogDetailPanel } from "./LogDetailPanel";
@@ -38,6 +41,12 @@ type LogsPanelProps = {
 
   limit: number;
   onLimitChange: (limit: number) => void;
+
+  /**
+   * Where users manage API keys for this project (linked from the empty
+   * state when the project has never received a log).
+   */
+  settingsUrl: string;
 };
 
 export function LogsPanel({
@@ -55,6 +64,7 @@ export function LogsPanel({
   hasActiveFilters,
   limit,
   onLimitChange,
+  settingsUrl,
 }: LogsPanelProps) {
   const [drawerWidth, setDrawerWidth] = useState(DEFAULT_DRAWER_WIDTH);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -182,13 +192,33 @@ export function LogsPanel({
               )}
 
               {!isLoading && logs.length === 0 && (
-                <div className="flex h-32 items-center justify-center">
-                  <p className="text-xs text-muted-foreground">
-                    {hasActiveFilters
-                      ? "No logs match your filters."
-                      : "No logs found."}
-                  </p>
-                </div>
+                <EmptyState
+                  bare
+                  icon={<KeyRound className="h-6 w-6" />}
+                  title={
+                    hasActiveFilters ? "No matching logs" : "No logs yet"
+                  }
+                  description={
+                    hasActiveFilters
+                      ? "Try adjusting or clearing your filters."
+                      : "Generate an API key and connect it to your project to start streaming events."
+                  }
+                  action={
+                    hasActiveFilters ? undefined : (
+                      // Styled like a primary Button but rendered as an anchor
+                      // (a <button> inside a <Link> would nest interactive
+                      // elements, which is invalid HTML).
+                      <Link
+                        href={settingsUrl}
+                        className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      >
+                        Generate API key
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    )
+                  }
+                  className="mx-auto my-16 w-full max-w-sm"
+                />
               )}
 
               {!isLoading &&
@@ -196,58 +226,63 @@ export function LogsPanel({
                   <LogEventRow
                     key={log.id}
                     log={log}
+                    isSelected={selectedLog?.id === log.id}
                     onClick={() => onSelectLog(log)}
                   />
                 ))}
             </div>
           </div>
 
-          {/* Pagination */}
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-border px-3 py-2 sm:justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-muted-foreground">Show</span>
+          {/* Pagination (hidden entirely when the project has zero logs) */}
+          {pagination.total > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-border px-3 py-2 sm:justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] text-muted-foreground">Show</span>
 
-              <select
-                aria-label="Logs per page"
-                value={limit}
-                onChange={(e) => onLimitChange(Number(e.target.value))}
-                className="cursor-pointer rounded-md border border-border bg-surface px-1.5 py-0.5 text-[10px] text-foreground transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              >
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-                <option value={250}>250</option>
-              </select>
+                <select
+                  aria-label="Logs per page"
+                  value={limit}
+                  onChange={(e) => onLimitChange(Number(e.target.value))}
+                  className="cursor-pointer rounded-md border border-border bg-surface px-1.5 py-0.5 text-[10px] text-foreground transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                  <option value={250}>250</option>
+                </select>
+
+                <span className="text-[10px] text-muted-foreground">
+                  per page
+                </span>
+              </div>
 
               <span className="text-[10px] text-muted-foreground">
-                per page
+                Page <span className="font-bold ">{page}</span> of{" "}
+                <span className="font-bold ">
+                  {Math.max(pagination.totalPages, 1)}
+                </span>
               </span>
+
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  disabled={!pagination.hasPreviousPage}
+                  onClick={() => onPageChange(page - 1)}
+                  className="rounded-md p-1.5 hover:bg-surface-hover disabled:opacity-30"
+                >
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                </button>
+
+                <button
+                  type="button"
+                  disabled={!pagination.hasNextPage}
+                  onClick={() => onPageChange(page + 1)}
+                  className="rounded-md p-1.5 hover:bg-surface-hover disabled:opacity-30"
+                >
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
-
-            <span className="text-[10px] text-muted-foreground">
-              Page <span className="font-bold ">{page}</span> of{" "}
-              <span className="font-bold ">{pagination.totalPages}</span>
-            </span>
-
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={!pagination.hasPreviousPage}
-                onClick={() => onPageChange(page - 1)}
-                className="rounded-md p-1.5 hover:bg-surface-hover disabled:opacity-30"
-              >
-                <ChevronLeft className="h-3.5 w-3.5" />
-              </button>
-
-              <button
-                type="button"
-                disabled={!pagination.hasNextPage}
-                onClick={() => onPageChange(page + 1)}
-                className="rounded-md p-1.5 hover:bg-surface-hover disabled:opacity-30"
-              >
-                <ChevronRight className="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
+          )}
         </section>
 
         {/* Backdrop (drawer overlays the list on narrow containers) */}

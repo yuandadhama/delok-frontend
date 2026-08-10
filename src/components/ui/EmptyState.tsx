@@ -6,6 +6,8 @@ type EmptyStateProps = {
   title?: string;
   description?: string;
   action?: React.ReactNode;
+  /** Render without the card background/border - icon, text, action only. */
+  bare?: boolean;
   className?: string;
 } & HTMLAttributes<HTMLDivElement>;
 
@@ -14,13 +16,17 @@ export default function EmptyState({
   title,
   description,
   action,
+  bare = false,
   className,
   ...props
 }: EmptyStateProps) {
   return (
     <div
       className={clsx(
-        "flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-surface py-12 text-center",
+        "flex flex-col items-center justify-center gap-2 text-center",
+        bare
+          ? ""
+          : "rounded-lg border border-dashed border-border bg-surface py-12",
         className,
       )}
       {...props}

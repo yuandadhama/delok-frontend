@@ -68,7 +68,7 @@ export function ApiKeyList({
   };
 
   return (
-    <section className="space-y-4">
+    <section id="api-keys" className="scroll-mt-24 space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>

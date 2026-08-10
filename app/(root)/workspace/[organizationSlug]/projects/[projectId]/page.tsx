@@ -93,6 +93,10 @@ export default function ProjectPage() {
           hasActiveFilters={hasActiveFilters}
           limit={limit}
           onLimitChange={setLimit}
+          settingsUrl={`${ROUTES.WORKSPACE.PROJECT_SETTINGS(
+            organizationSlug,
+            projectId,
+          )}#api-keys`}
         />
       </div>
     </div>

@@ -84,6 +84,13 @@ export function useProjectLogs(projectId: string, initialLimit = 50) {
   // logs without reconnecting whenever a filter changes.
   const filtersRef = useRef(filters);
 
+  // Ids of logs that arrived over the WebSocket since the last fetch. Used to
+  // re-apply the realtime flag when a fetch resolves while a WS log was
+  // already delivered (e.g. during the initial load), so its flash still
+  // plays when the row first renders. Cleared after each fetch so logs are
+  // only flagged for the first appearance in the current view.
+  const realtimeLogIds = useRef<Set<string>>(new Set());
+
   useEffect(() => {
     filtersRef.current = filters;
   }, [filters]);
@@ -135,7 +142,16 @@ export function useProjectLogs(projectId: string, initialLimit = 50) {
 
       if (sequence !== fetchSequence.current) return;
 
-      setLogs(result.logs);
+      const arrivedIds = realtimeLogIds.current;
+
+      setLogs(
+        result.logs.map((log) =>
+          arrivedIds.has(log.id) ? { ...log, isRealtime: true } : log,
+        ),
+      );
+
+      arrivedIds.clear();
+
       setPagination(result.pagination);
     } catch (error) {
       if (sequence === fetchSequence.current) {
@@ -205,7 +221,13 @@ export function useProjectLogs(projectId: string, initialLimit = 50) {
           return;
         }
 
-        setLogs((previous) => [log, ...previous.slice(0, limit - 1)]);
+        // Mark the log so the UI can flag it as arriving in realtime.
+        realtimeLogIds.current.add(log.id);
+
+        setLogs((previous) => [
+          { ...log, isRealtime: true },
+          ...previous.slice(0, limit - 1),
+        ]);
 
         setPagination((previous) => ({
           ...previous,

@@ -12,6 +12,12 @@ export type LogEvent = {
   occurredAt: string;
   receivedAt: string;
   payload: Record<string, unknown> | null;
+
+  /**
+   * Client-side only: true when the log arrived over the realtime
+   * (WebSocket) stream rather than being loaded from the server.
+   */
+  isRealtime?: boolean;
 };
 
 export type LogFiltersState = {
