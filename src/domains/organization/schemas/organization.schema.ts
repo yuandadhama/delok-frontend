@@ -7,7 +7,7 @@ export const organizationSchema = z.object({
     .min(3, "Organization name must be at least 3 characters")
     .max(100, "Organization name must not exceed 100 characters")
     .regex(
-      /^[a-z0-9-]+$/,
-      "Organization name can only contain lowercase letters, numbers, and hyphens",
+      /^(?!-)(?!.*--)(?!.*-$)[A-Za-z0-9]+(?:[ -][A-Za-z0-9]+)*$/,
+      "Only alphanumeric characters, spaces, and single hyphens are allowed, and the name cannot start or end with a hyphen",
     ),
 });

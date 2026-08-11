@@ -13,3 +13,11 @@ export function getApiErrorMessage(body: unknown, fallback: string): string {
 
   return data.error?.message ?? data.errorDetail?.message ?? data.errors?.[0]?.message ?? fallback;
 }
+
+export function getApiErrorCode(body: unknown): string | undefined {
+  if (!body || typeof body !== "object") return undefined;
+
+  const data = body as ApiErrorBody;
+
+  return data.error?.code ?? data.errorDetail?.code;
+}

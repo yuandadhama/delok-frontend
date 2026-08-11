@@ -1,3 +1,5 @@
+import { getApiErrorCode, getApiErrorMessage } from "@/src/utils/api-error";
+
 import type {
   CreateOrganizationInput,
   Organization,
@@ -5,6 +7,8 @@ import type {
 } from "../types/organization.type";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+const ORGANIZATION_SLUG_ALREADY_EXISTS = "ORGANIZATION_SLUG_ALREADY_EXISTS";
 
 /**
  * OrganizationService
@@ -47,7 +51,10 @@ export class OrganizationService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message ?? "Failed to create organization");
+      if (getApiErrorCode(data) === ORGANIZATION_SLUG_ALREADY_EXISTS) {
+        throw new Error("Organization name already exists");
+      }
+      throw new Error(getApiErrorMessage(data, "Failed to create organization"));
     }
 
     return data.data;
@@ -89,7 +96,10 @@ export class OrganizationService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message ?? "Failed to update organization");
+      if (getApiErrorCode(data) === ORGANIZATION_SLUG_ALREADY_EXISTS) {
+        throw new Error("Organization name already exists");
+      }
+      throw new Error(getApiErrorMessage(data, "Failed to update organization"));
     }
 
     return data.data;
