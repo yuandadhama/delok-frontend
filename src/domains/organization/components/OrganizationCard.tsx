@@ -13,7 +13,7 @@ type OrganizationCardProps = {
 export function OrganizationCard({ organization }: OrganizationCardProps) {
   return (
     <Link
-      href={ROUTES.WORKSPACE.ORGANIZATION(organization.slug)}
+      href={ROUTES.WORKSPACE.PROJECTS(organization.slug)}
       className="
         group
         flex

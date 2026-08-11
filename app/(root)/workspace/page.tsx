@@ -42,17 +42,20 @@ export default function DashboardPage() {
     });
   }, [session]);
 
-  if (sessionPending) {
+  // Side-effect (navigation) must happen in an effect, not during render.
+  useEffect(() => {
+    if (sessionPending) return;
+    if (session) return;
+
+    router.push(ROUTES.AUTH.SIGN_IN);
+  }, [sessionPending, session, router]);
+
+  if (sessionPending || !session) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
         Loading session...
       </div>
     );
-  }
-
-  if (!session) {
-    router.push(ROUTES.AUTH.SIGN_IN);
-    return null;
   }
 
   return (
