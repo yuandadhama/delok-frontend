@@ -22,20 +22,22 @@ export default function ProjectsPage() {
   const loading = isLoading || isPending;
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-6">
+    <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
       {/* Header */}
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">Projects</h1>
+      <header className="mb-4 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
+        <div className="min-w-0">
+          <h1 className="text-base font-semibold text-foreground sm:text-lg">
+            Projects
+          </h1>
 
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1">
             Projects in this workspace
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {!loading && (
-            <span className="font-mono text-xs text-muted-foreground">
+            <span className="hidden font-mono text-xs text-muted-foreground sm:inline">
               {projects.length} total
             </span>
           )}

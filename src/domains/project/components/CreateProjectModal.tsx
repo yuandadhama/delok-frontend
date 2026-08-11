@@ -70,10 +70,11 @@ export function CreateProjectModal({
       <Button
         type="button"
         onClick={handleOpen}
-        className="inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+        className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 sm:gap-2"
       >
         <Plus className="h-4 w-4" />
-        Add Project
+        <span className="hidden sm:inline">Add Project</span>
+        <span className="sm:hidden">Add</span>
       </Button>
 
       <Modal open={open} onClose={handleClose} title="Create Project">

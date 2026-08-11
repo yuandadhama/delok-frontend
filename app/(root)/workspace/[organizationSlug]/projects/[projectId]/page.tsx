@@ -49,9 +49,8 @@ export default function ProjectPage() {
 
   if (isError || !project) {
     return (
-      <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex flex-col items-center justify-center h-full text-center px-4">
         <h1 className="text-sm font-semibold">Project not found</h1>
-
         <p className="mt-2 text-xs text-muted-foreground">
           This project doesn&apos;t belong to this workspace or you don&apos;t
           have permission to access it.
