@@ -28,7 +28,7 @@ export function ProjectDangerZone({
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 rounded-lg border border-danger/25 bg-danger/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2.5 rounded-lg border border-danger/25 bg-danger/5 p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:p-4">
           <div>
             <p className="text-sm font-medium text-foreground">Delete project</p>
 

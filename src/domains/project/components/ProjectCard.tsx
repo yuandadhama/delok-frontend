@@ -23,6 +23,7 @@ export function ProjectCard({ project, organizationSlug }: ProjectCardProps) {
         bg-surface
         px-4
         py-3
+        rounded-md
         transition-all
         hover:bg-surface-hover
       "

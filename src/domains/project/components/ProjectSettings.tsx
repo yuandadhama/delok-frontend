@@ -5,6 +5,7 @@
 import { useState } from "react";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
+import { projectSchema } from "../schemas/project.schema";
 
 type ProjectSettingsProps = {
   projectName: string;
@@ -19,15 +20,29 @@ export function ProjectSettings({
   const [updating, setUpdating] = useState(false);
   const [updateError, setUpdateError] = useState("");
 
-  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const isUnchanged = editingName.trim() === projectName;
+
+  const handleUpdate = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!editingName.trim()) return;
+
+    if (updating || isUnchanged) return;
+
+    const result = projectSchema.safeParse({ name: editingName });
+
+    if (!result.success) {
+      setUpdateError(result.error.issues[0].message);
+      return;
+    }
 
     setUpdating(true);
     setUpdateError("");
     try {
-      await onUpdate(editingName.trim());
+      await onUpdate(result.data.name);
+      setEditingName(result.data.name);
     } catch (err) {
+      if (err instanceof Error) {
+        console.log(err);
+      }
       setUpdateError(
         err instanceof Error ? err.message : "Something went wrong",
       );
@@ -52,7 +67,13 @@ export function ProjectSettings({
             label="Project name"
             name="projectName"
             value={editingName}
-            onChange={(e) => setEditingName(e.target.value)}
+            onChange={(e) => {
+              setEditingName(e.target.value);
+
+              if (updateError) {
+                setUpdateError("");
+              }
+            }}
             placeholder="Project name"
           />
         </div>
@@ -63,7 +84,10 @@ export function ProjectSettings({
           </p>
         )}
 
-        <Button type="submit" disabled={updating || !editingName.trim()}>
+        <Button
+          type="submit"
+          disabled={updating || isUnchanged || !editingName.trim()}
+        >
           {updating ? "Renaming…" : "Rename project"}
         </Button>
       </form>

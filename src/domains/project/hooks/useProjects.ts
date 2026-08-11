@@ -39,9 +39,12 @@ export function useProjects(organizationSlug: string | undefined) {
         name: input.name,
       }),
 
-    onSuccess: () => {
+    onSuccess: (_data, input) => {
       queryClient.invalidateQueries({
         queryKey: projectsKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["project", input.projectId],
       });
     },
   });

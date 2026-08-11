@@ -23,7 +23,7 @@ const FIELD =
   "rounded-md border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-colors";
 
 const ACTION =
-  "rounded-md px-2 py-1 text-xs font-medium transition-colors cursor-pointer";
+  "rounded-md px-1.5 py-0.5 text-xs font-medium transition-colors cursor-pointer sm:px-2 sm:py-1";
 
 const formatDate = (iso: string) => {
   const date = new Date(iso);
@@ -70,7 +70,7 @@ export function ApiKeyList({
   return (
     <section id="api-keys" className="scroll-mt-24 space-y-4">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div>
           <h2 className="text-sm font-semibold text-foreground">
             API keys
@@ -92,10 +92,10 @@ export function ApiKeyList({
           size="sm"
           onClick={() => setShowGenerateModal(true)}
           disabled={isLoading}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs "
         >
           Generate key
-          <Plus className="h-3.5 w-3.5" />
+          <Plus className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
         </Button>
       </div>
 
@@ -115,13 +115,13 @@ export function ApiKeyList({
         />
       ) : (
         /* API key list */
-        <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-surface">
+        <ul className="divide-y divide-border border border-border rounded-md overflow-hidden bg-surface">
           {apiKeys.map((apiKey) => (
             <li
               key={apiKey.id}
-              className="flex items-center justify-between gap-4 px-4 py-3"
+              className="flex items-center justify-between gap-2 px-3 py-1.5 sm:gap-4 sm:px-4 sm:py-3"
             >
-              <div className="flex min-w-0 flex-col gap-1">
+              <div className="flex min-w-0 flex-col gap-0.5">
                 {/* Rename */}
                 {editingApiKeyId === apiKey.id ? (
                   <div className="flex max-w-xs gap-1.5">
@@ -159,8 +159,8 @@ export function ApiKeyList({
                 )}
 
                 {/* Key prefix + status */}
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                  <span className="font-mono text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 sm:gap-x-2">
+                  <span className="font-mono text-[11px] text-muted-foreground sm:text-xs">
                     {apiKey.keyPrefix}********
                   </span>
 
@@ -169,7 +169,7 @@ export function ApiKeyList({
                       Revoked {formatDate(apiKey.revokedAt)}
                     </span>
                   ) : (
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-[11px] text-muted-foreground sm:text-xs">
                       Last used:{" "}
                       {apiKey.lastUsedAt
                         ? formatDate(apiKey.lastUsedAt)
@@ -181,7 +181,7 @@ export function ApiKeyList({
 
               {/* Actions */}
               {!apiKey.revokedAt && (
-                <div className="flex shrink-0 items-center gap-1">
+                <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
                   <button
                     type="button"
                     onClick={() => {

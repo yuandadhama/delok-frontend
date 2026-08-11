@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
 
 import {
   ProjectBreadcrumb,
@@ -61,6 +62,8 @@ export default function ProjectSettingsPage() {
       projectId,
       name,
     });
+
+    toast.success("Project renamed", { id: "project-rename" });
   };
 
   const handleDelete = async () => {
@@ -92,8 +95,8 @@ export default function ProjectSettingsPage() {
   return (
     <div>
       {/* Sticky page header */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
-        <div className="w-full max-w-4xl px-6 pt-5 pb-4">
+      <header className="sticky top-0 z-10 border-b border-border bg-background/90 backdrop-blur">
+        <div className="w-full max-w-4xl px-4 pt-4 pb-3 sm:px-6 sm:pt-5 sm:pb-4">
           <ProjectBreadcrumb
             organizationSlug={organizationSlug}
             projectId={projectId}
@@ -101,11 +104,11 @@ export default function ProjectSettingsPage() {
             settings
           />
         </div>
-      </div>
+      </header>
 
       {/* Page content */}
-      <div className="w-full max-w-4xl flex flex-col p-6">
-        <div className="space-y-12">
+      <div className="w-full max-w-4xl flex flex-col p-4 sm:p-6">
+        <div className="space-y-10 sm:space-y-12">
           <ProjectSettings projectName={project.name} onUpdate={handleUpdate} />
 
           <ApiKeyList
@@ -117,7 +120,7 @@ export default function ProjectSettingsPage() {
           />
         </div>
 
-        <div className="mt-12 border-t border-border pt-8">
+        <div className="mt-10 border-t border-border pt-6 sm:mt-12 sm:pt-8">
           <ProjectDangerZone
             projectName={project.name}
             onDelete={handleDelete}

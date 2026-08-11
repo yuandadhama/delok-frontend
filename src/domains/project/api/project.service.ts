@@ -1,5 +1,7 @@
 // src/domains/project/api/project.service.ts
 
+import { getApiErrorMessage } from "@/src/utils/api-error";
+
 import type {
   CreateProjectInput,
   Project,
@@ -32,7 +34,7 @@ export class ProjectService {
 
     if (!response.ok) {
       const data = await response.json().catch(() => null);
-      throw new Error(data?.error?.message ?? "Failed to fetch projects");
+      throw new Error(getApiErrorMessage(data, "Failed to fetch projects"));
     }
 
     const data = await response.json();
@@ -60,7 +62,7 @@ export class ProjectService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message ?? "Failed to create project");
+      throw new Error(getApiErrorMessage(data, "Failed to create project"));
     }
 
     return data.data;
@@ -77,7 +79,7 @@ export class ProjectService {
 
     if (!response.ok) {
       const data = await response.json().catch(() => null);
-      throw new Error(data?.error?.message ?? "Failed to fetch project");
+      throw new Error(getApiErrorMessage(data, "Failed to fetch project"));
     }
 
     const data = await response.json();
@@ -102,7 +104,7 @@ export class ProjectService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message ?? "Failed to update project");
+      throw new Error(getApiErrorMessage(data, "Failed to update project"));
     }
 
     return data.data;
@@ -121,7 +123,7 @@ export class ProjectService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data?.error?.message ?? "Failed to delete project");
+      throw new Error(getApiErrorMessage(data, "Failed to delete project"));
     }
 
     return data.data;
