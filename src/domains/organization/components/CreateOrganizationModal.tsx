@@ -12,7 +12,17 @@ import Modal from "@/src/components/ui/Modal";
 import { organizationSchema } from "../schemas/organization.schema";
 import { useOrganizations } from "../hooks/useOrganizations";
 
-export function CreateOrganizationModal() {
+type CreateOrganizationModalProps = {
+  /**
+   * Customize the trigger element (e.g. render a card instead of a button).
+   * Receives a function that opens the modal.
+   */
+  trigger?: (open: () => void) => React.ReactNode;
+};
+
+export function CreateOrganizationModal({
+  trigger,
+}: CreateOrganizationModalProps) {
   const [open, setOpen] = useState(false);
   const [organizationName, setOrganizationName] = useState("");
   const [error, setError] = useState("");
@@ -33,7 +43,7 @@ export function CreateOrganizationModal() {
     setError("");
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const result = organizationSchema.safeParse({
@@ -63,21 +73,28 @@ export function CreateOrganizationModal() {
 
   return (
     <>
-      <Button
-        type="button"
-        onClick={handleOpen}
-        className="inline-flex items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+      {trigger ? (
+        trigger(handleOpen)
+      ) : (
+        <Button
+          type="button"
+          variant="primary"
+          size="sm"
+          onClick={handleOpen}
+          className="inline-flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add Workspace
+        </Button>
+      )}
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        title="Create Workspace"
+        description="Create a new workspace for your projects."
       >
-        <Plus className="h-4 w-4" />
-        Add Workspace
-      </Button>
-
-      <Modal open={open} onClose={handleClose} title="Create Workspace">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <p className="text-sm text-muted-foreground">
-            Create a new workspace for your projects.
-          </p>
-
+        <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-4">
           <Input
             label="Workspace Name"
             name="name"
@@ -97,23 +114,23 @@ export function CreateOrganizationModal() {
           <div className="flex justify-end gap-2">
             <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={handleClose}
               disabled={createOrganization.isPending}
-              className="border border-border bg-surface text-foreground hover:bg-surface-hover"
             >
               Cancel
             </Button>
 
             <Button
               type="submit"
+              variant="primary"
+              size="sm"
               disabled={
                 createOrganization.isPending || !organizationName.trim()
               }
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              {createOrganization.isPending
-                ? "Creating..."
-                : "Create Workspace"}
+              {createOrganization.isPending ? "Creating..." : "Create"}
             </Button>
           </div>
         </form>

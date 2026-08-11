@@ -4,6 +4,8 @@ export {
   OrganizationList,
   OrganizationListSkeleton,
   OrganizationEmptyState,
+  GetStartedSection,
+  OrganizationsPanel,
 } from "./components";
 
 export { organizationSchema } from "./schemas/organization.schema";

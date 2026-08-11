@@ -3,18 +3,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+
+import { WorkspaceTopbar } from "@/src/components/layout/topbar/WorkspaceTopbar";
 
 import {
-  CreateOrganizationModal,
-  OrganizationEmptyState,
-  OrganizationList,
-  OrganizationListSkeleton,
+  GetStartedSection,
+  OrganizationsPanel,
   useOrganizations,
 } from "@/src/domains/organization";
 
 import { authClient } from "@/src/lib/auth/auth-client";
 import { delok } from "@/src/lib/delok";
-import { useRouter } from "next/navigation";
+import { ROUTES } from "@/src/constants/routes";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -26,7 +27,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!session?.user?.id) return;
-
     if (hasLogged.current) return;
 
     hasLogged.current = true;
@@ -51,47 +51,36 @@ export default function DashboardPage() {
   }
 
   if (!session) {
-    router.push("/login");
-    return;
+    router.push(ROUTES.AUTH.SIGN_IN);
+    return null;
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-6">
-      {/* Header */}
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">Workspace</h1>
+    <div className="min-h-screen bg-background">
+      <WorkspaceTopbar />
 
-          <p className="mt-1 text-xs text-muted-foreground">
-            Welcome back, {session.user.name}
+      <div className="mx-auto w-full max-w-6xl px-6 py-10">
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">
+            Hello,{" "}
+            <span className="text-primary">
+              {session.user.name?.split(" ")[0] ?? "there"}
+            </span>
+          </h1>
+          <p className="mt-1 text-lg text-muted-foreground">
+            Welcome back to Delok!
           </p>
         </div>
 
-        <CreateOrganizationModal />
-      </header>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,320px)_1fr]">
+          <GetStartedSection />
 
-      {/* Organizations */}
-      <section>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Your Workspaces
-          </h2>
-
-          {!isLoading && (
-            <span className="font-mono text-xs text-muted-foreground">
-              {organizations.length} total
-            </span>
-          )}
+          <OrganizationsPanel
+            organizations={organizations}
+            isLoading={isLoading}
+          />
         </div>
-
-        {isLoading && <OrganizationListSkeleton />}
-
-        {!isLoading && organizations.length === 0 && <OrganizationEmptyState />}
-
-        {!isLoading && organizations.length > 0 && (
-          <OrganizationList organizations={organizations} />
-        )}
-      </section>
+      </div>
     </div>
   );
 }

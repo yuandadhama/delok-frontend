@@ -19,7 +19,7 @@ export function OrganizationCard({ organization }: OrganizationCardProps) {
         flex
         items-center
         justify-between
-        rounded-xl
+        rounded-md
         border
         border-border
         bg-surface
@@ -39,17 +39,6 @@ export function OrganizationCard({ organization }: OrganizationCardProps) {
           {organization.name}
         </span>
       </div>
-
-      <ArrowRight
-        className="
-          h-4
-          w-4
-          text-muted-foreground
-          transition-transform
-          group-hover:translate-x-1
-          group-hover:text-primary
-        "
-      />
     </Link>
   );
 }
