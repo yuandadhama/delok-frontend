@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 
 import { ROUTES } from "@/src/constants/routes";
@@ -10,11 +11,13 @@ export default function HomePage() {
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
 
-  if (session?.user?.id) {
-    router.push(ROUTES.WORKSPACE.ROOT);
-  }
+  useEffect(() => {
+    if (session?.user?.id) {
+      router.push(ROUTES.WORKSPACE.ROOT);
+    }
+  }, [session?.user?.id, router]);
 
-  if (isPending) {
+  if (isPending || session?.user?.id) {
     return (
       <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
         Loading session...

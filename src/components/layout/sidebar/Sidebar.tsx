@@ -2,20 +2,18 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { SidebarHeader } from "./SidebarHeader";
 import { SidebarNavigation } from "./SidebarNavigation";
 import { SidebarFooter } from "./SidebarFooter";
 
 type SidebarProps = {
   organizationSlug: string;
-  organizationName: string;
 };
 
 const EXPANDED_WIDTH = 178;
 const COLLAPSED_WIDTH = 50;
 
-export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
+export function Sidebar({ organizationSlug }: SidebarProps) {
   const pathname = usePathname();
 
   const [pinned, setPinned] = useState(true);
@@ -24,15 +22,18 @@ export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
   // Expanded when pinned OR temporarily hovered.
   const collapsed = !pinned && !hovered;
 
+  // Branches on `pinned` (not the derived `collapsed`): any click on the
+  // sidebar happens while the mouse is inside it, so `hovered` is always true
+  // by click time. Branching on `collapsed` would make clicking the collapsed
+  // logo mark collapse the sidebar instead of expanding it.
   const handleToggle = () => {
     if (pinned) {
-      // Collapse permanently.
-      // Reset hover so the sidebar closes immediately
+      // Collapse permanently. Reset hover so the sidebar closes immediately
       // even if the mouse is still inside the sidebar.
       setPinned(false);
       setHovered(false);
     } else {
-      // Pin/open the sidebar permanently.
+      // Expand and pin open.
       setPinned(true);
     }
   };
@@ -44,12 +45,12 @@ export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
       style={{
         width: collapsed ? COLLAPSED_WIDTH : EXPANDED_WIDTH,
       }}
-      className="shrink-0 bg-surface border-r border-border flex flex-col transition-[width] duration-200 ease-in-out"
+      className="bg-surface flex flex-col transition-[width] duration-200 ease-in-out"
     >
       <SidebarHeader
-        organizationSlug={organizationSlug}
-        organizationName={organizationName}
         collapsed={collapsed}
+        pinned={pinned}
+        onToggle={handleToggle}
       />
 
       <SidebarNavigation
@@ -57,22 +58,6 @@ export function Sidebar({ organizationSlug, organizationName }: SidebarProps) {
         pathname={pathname}
         collapsed={collapsed}
       />
-
-      <button
-        onClick={handleToggle}
-        title={pinned ? "Collapse sidebar" : "Pin sidebar"}
-        className="flex items-center gap-2.5 px-3 py-2 mx-2 mb-2 text-xs font-medium text-muted-foreground rounded-md hover:bg-surface-hover hover:text-foreground transition-colors cursor-pointer"
-      >
-        {pinned ? (
-          <PanelLeftClose className="h-4 w-4 shrink-0" />
-        ) : (
-          <PanelLeftOpen className="h-4 w-4 shrink-0" />
-        )}
-
-        {!collapsed && (
-          <span className="truncate">{pinned ? "Collapse" : "Expand"}</span>
-        )}
-      </button>
 
       <SidebarFooter collapsed={collapsed} />
     </aside>

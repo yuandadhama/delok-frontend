@@ -16,7 +16,7 @@ export function UserAvatar({ name, size = "md" }: UserAvatarProps) {
 
   return (
     <span
-      className={`flex items-center justify-center rounded-full bg-primary/10 text-primary font-semibold ${sizeClass}`}
+      className={`flex items-center justify-center rounded-full bg-primary-foreground text-primary font-semibold ${sizeClass}`}
     >
       {initials}
     </span>

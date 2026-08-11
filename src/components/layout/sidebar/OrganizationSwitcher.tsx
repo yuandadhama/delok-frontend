@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Building2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useOrganizations } from "@/src/domains/organization";
 import { ROUTES } from "@/src/constants/routes";
 import { delok } from "@/src/lib/delok";

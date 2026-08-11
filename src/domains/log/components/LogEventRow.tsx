@@ -9,7 +9,7 @@ import { formatLogDate, formatLogTime } from "../utils/format";
 type LogEventRowProps = {
   log: LogEvent;
   onClick: () => void;
-  /** True when this row is the one currently open in the detail drawer. */
+
   isSelected?: boolean;
 };
 
@@ -151,11 +151,9 @@ export function LogEventRow({
         </span>
       )}
 
-      <ChevronRight
-        className={`h-3.5 w-3.5 shrink-0 transition-transform ${
-          isSelected ? "rotate-90 text-primary" : "text-muted-foreground"
-        }`}
-      />
+      {isSelected && (
+        <ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform text-muted-foreground" />
+      )}
     </button>
   );
 }

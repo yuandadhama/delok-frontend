@@ -38,10 +38,7 @@ export default function OrganizationLayout({
 
   return (
     <div className="h-screen bg-background text-foreground flex">
-      <Sidebar
-        organizationSlug={organizationSlug}
-        organizationName={organization.name}
-      />
+      <Sidebar organizationSlug={organizationSlug} />
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar
           organizationSlug={organizationSlug}
