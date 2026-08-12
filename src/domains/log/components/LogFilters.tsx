@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Filter, Search, X } from "lucide-react";
+
+const SEARCH_DEBOUNCE_MS = 300;
 
 type LogFiltersProps = {
   search: string;
@@ -155,6 +157,31 @@ export function LogFilters({
 }: LogFiltersProps) {
   const [open, setOpen] = useState(false);
 
+  // Local draft of the search text so keystrokes are committed (and the API
+  // fetched) only after the user stops typing for SEARCH_DEBOUNCE_MS.
+  const [searchDraft, setSearchDraft] = useState(search);
+  const searchChangeRef = useRef(onSearchChange);
+
+  useEffect(() => {
+    searchChangeRef.current = onSearchChange;
+  });
+
+  // Keep the draft in sync when the parent resets the search (e.g. "Clear").
+  useEffect(() => {
+    setSearchDraft(search);
+  }, [search]);
+
+  // Debounce committing the draft to avoid an API call per keystroke.
+  useEffect(() => {
+    if (searchDraft === search) return;
+
+    const timer = setTimeout(() => {
+      searchChangeRef.current(searchDraft);
+    }, SEARCH_DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [searchDraft, search]);
+
   const activeCount = [search.trim(), level, environment, from, to].filter(
     Boolean,
   ).length;
@@ -210,7 +237,10 @@ export function LogFilters({
           id="log-filters-panel"
           className="@2xl:hidden mt-2 space-y-2 rounded-md border border-border bg-surface p-3"
         >
-          <SearchField value={search} onChange={onSearchChange} />
+          <SearchField
+            value={searchDraft}
+            onChange={setSearchDraft}
+          />
 
           <div className="grid grid-cols-2 gap-2">
             <SelectField
@@ -255,8 +285,8 @@ export function LogFilters({
       {/* Wide mode (>= @2xl container): inline toolbar */}
       <div className="hidden @2xl:flex flex-wrap items-center gap-x-1.5 gap-y-2">
         <SearchField
-          value={search}
-          onChange={onSearchChange}
+          value={searchDraft}
+          onChange={setSearchDraft}
           wrapperClassName="min-w-45 flex-1"
         />
 
