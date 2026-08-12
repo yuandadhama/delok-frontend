@@ -12,11 +12,11 @@ function AuthErrorContent() {
 
   const error = params.get("error");
 
-  if (error !== "account_not_linked") {
-    return <AuthErrorCard />;
+  if (error === "account_not_linked") {
+    return <ResendVerificationForm />;
   }
 
-  return <ResendVerificationForm />;
+  return <AuthErrorCard />;
 }
 
 export default function AuthErrorPage() {

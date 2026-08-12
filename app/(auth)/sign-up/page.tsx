@@ -1,6 +1,6 @@
 // ./app/(auth)/sign-up/page.tsx
 
-import SignUpPage from "@/src/pages/auth/SignUpPage";
+import SignUpPage from "@/src/views/auth/SignUpPage";
 
 export default function page() {
   return <SignUpPage />;
