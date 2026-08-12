@@ -2,6 +2,6 @@
 
 import VerifyEmailPage from "@/src/pages/auth/VerifyEmailPage";
 
-export default function Page() {
+export default function page() {
   return <VerifyEmailPage />;
 }

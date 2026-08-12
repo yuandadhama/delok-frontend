@@ -1,7 +1,7 @@
 // ./app/(auth)/sign-in/forgot-password/page.tsx
 
-import { ForgotPasswordForm } from "@/src/domains/auth";
+import ForgotPasswordPage from "@/src/pages/auth/ForgotPasswordPage";
 
-export default function Page() {
-  return <ForgotPasswordForm />;
+export default function page() {
+  return <ForgotPasswordPage />;
 }

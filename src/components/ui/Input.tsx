@@ -1,5 +1,7 @@
 // ./src/components/ui/Input.tsx
 
+"use client";
+
 import { forwardRef, InputHTMLAttributes, useMemo, useState } from "react";
 import clsx from "clsx";
 

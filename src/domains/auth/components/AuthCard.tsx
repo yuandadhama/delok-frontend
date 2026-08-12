@@ -10,7 +10,7 @@ import { ROUTES } from "@/src/constants/routes";
 type Props = {
   title: string;
   subtitle?: string;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function AuthCard({ title, subtitle, children }: Props) {

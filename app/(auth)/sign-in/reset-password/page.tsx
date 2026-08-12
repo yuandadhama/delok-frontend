@@ -1,13 +1,7 @@
 // ./app/(auth)/sign-in/reset-password/page.tsx
 
-import { Suspense } from "react";
+import ResetPasswordPage from "@/src/pages/auth/ResetPasswordPage";
 
-import { ResetPasswordForm } from "@/src/domains/auth";
-
-export default function ResetPasswordPage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <ResetPasswordForm />
-    </Suspense>
-  );
+export default function page() {
+  return <ResetPasswordPage />;
 }

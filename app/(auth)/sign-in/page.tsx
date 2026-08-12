@@ -1,7 +1,7 @@
 // ./app/(auth)/sign-in/page.tsx
 
-import { SignInForm } from "@/src/domains/auth";
+import SignInPage from "@/src/pages/auth/SignInPage";
 
-export default function Page() {
-  return <SignInForm />;
+export default function page() {
+  return <SignInPage />
 }

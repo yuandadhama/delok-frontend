@@ -2,6 +2,6 @@
 
 import SignUpPage from "@/src/pages/auth/SignUpPage";
 
-export default function Page() {
+export default function page() {
   return <SignUpPage />;
 }
