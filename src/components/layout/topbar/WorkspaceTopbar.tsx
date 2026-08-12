@@ -1,4 +1,4 @@
-// src/components/layout/topbar/WorkspaceTopbar.tsx
+// ./src/components/layout/topbar/WorkspaceTopbar.tsx
 
 "use client";
 

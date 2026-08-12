@@ -1,4 +1,4 @@
-// src/domains/project/components/ProjectSettings.tsx
+// ./src/domains/project/components/ProjectSettings.tsx
 
 "use client";
 

@@ -1,3 +1,5 @@
+// ./src/domains/auth/components/AuthCard.tsx
+
 import Image from "next/image";
 import { ReactNode } from "react";
 import Logo from "@/public/delok-light-logo.webp";

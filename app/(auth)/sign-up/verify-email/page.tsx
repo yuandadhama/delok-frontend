@@ -1,5 +1,7 @@
-import { VerifyEmailCard } from "@/src/domains/auth";
+// ./app/(auth)/sign-up/verify-email/page.tsx
+
+import VerifyEmailPage from "@/src/pages/auth/VerifyEmailPage";
 
 export default function Page() {
-  return <VerifyEmailCard />;
+  return <VerifyEmailPage />;
 }

@@ -1,4 +1,4 @@
-// src/domains/project/components/ProjectList.tsx
+// ./src/domains/project/components/ProjectList.tsx
 
 import { ProjectCard } from "./ProjectCard";
 

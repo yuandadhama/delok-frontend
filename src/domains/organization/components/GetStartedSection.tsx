@@ -1,4 +1,4 @@
-// src/domains/organization/components/GetStartedSection.tsx
+// ./src/domains/organization/components/GetStartedSection.tsx
 
 "use client";
 

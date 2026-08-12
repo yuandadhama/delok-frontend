@@ -1,3 +1,5 @@
+// ./src/domains/log/components/LogEventRow.tsx
+
 "use client";
 
 import { useEffect, useRef } from "react";

@@ -1,3 +1,5 @@
+// ./src/components/layout/sidebar/OrganizationSwitcher.tsx
+
 "use client";
 
 import { useState } from "react";

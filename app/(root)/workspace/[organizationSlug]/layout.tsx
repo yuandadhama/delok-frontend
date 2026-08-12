@@ -1,3 +1,5 @@
+// ./app/(root)/workspace/[organizationSlug]/layout.tsx
+
 "use client";
 
 import { Sidebar } from "@/src/components/layout/sidebar";

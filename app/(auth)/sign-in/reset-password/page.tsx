@@ -1,3 +1,5 @@
+// ./app/(auth)/sign-in/reset-password/page.tsx
+
 import { Suspense } from "react";
 
 import { ResetPasswordForm } from "@/src/domains/auth";

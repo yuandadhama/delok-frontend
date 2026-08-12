@@ -1,3 +1,5 @@
+// ./src/domains/auth/components/AuthLayout.tsx
+
 import { ReactNode } from "react";
 
 type Props = {

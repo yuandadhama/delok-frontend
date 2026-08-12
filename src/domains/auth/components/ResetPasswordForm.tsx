@@ -1,3 +1,5 @@
+// ./src/domains/auth/components/ResetPasswordForm.tsx
+
 "use client";
 
 import Link from "next/link";

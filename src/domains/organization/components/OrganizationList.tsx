@@ -1,4 +1,4 @@
-// src/domains/organization/components/OrganizationList.tsx
+// ./src/domains/organization/components/OrganizationList.tsx
 
 import type { Organization } from "../types/organization.type";
 import { OrganizationCard } from "./OrganizationCard";

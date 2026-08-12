@@ -1,4 +1,4 @@
-// src/domains/project/components/ProjectEmptyState.tsx
+// ./src/domains/project/components/ProjectEmptyState.tsx
 
 import { FolderKanban } from "lucide-react";
 

@@ -1,4 +1,4 @@
-// src/domains/organization/components/OrganizationListSkeleton.tsx
+// ./src/domains/organization/components/OrganizationListSkeleton.tsx
 
 import Skeleton from "@/src/components/ui/Skeleton";
 

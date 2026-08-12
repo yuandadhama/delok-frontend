@@ -1,3 +1,5 @@
+// ./src/components/layout/sidebar/SidebarNavigation.tsx
+
 import { SIDEBAR_ITEMS } from "./sidebar.config";
 import { SidebarNavigationItem } from "./SidebarNavigationItem";
 

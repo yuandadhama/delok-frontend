@@ -1,3 +1,5 @@
+// ./src/providers/SocketProvider.tsx
+
 "use client";
 
 import { ReactNode } from "react";

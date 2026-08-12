@@ -1,3 +1,5 @@
+// ./app/(root)/workspace/[organizationSlug]/settings/page.tsx
+
 "use client";
 
 import Button from "@/src/components/ui/Button";

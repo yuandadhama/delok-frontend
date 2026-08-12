@@ -1,3 +1,5 @@
+// ./src/domains/auth/components/SignUpForm.tsx
+
 "use client";
 
 import Link from "next/link";

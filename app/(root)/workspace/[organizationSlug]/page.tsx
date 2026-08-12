@@ -1,4 +1,5 @@
-// app/[organizationSlug] - Workspace Overview
+// ./app/(root)/workspace/[organizationSlug]/page.tsx
+
 "use client";
 
 import { ROUTES } from "@/src/constants/routes";

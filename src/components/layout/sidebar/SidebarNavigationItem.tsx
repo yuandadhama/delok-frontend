@@ -1,3 +1,5 @@
+// ./src/components/layout/sidebar/SidebarNavigationItem.tsx
+
 import Link from "next/link";
 import { delok } from "@/src/lib/delok";
 import type { SidebarItem } from "./sidebar.config";

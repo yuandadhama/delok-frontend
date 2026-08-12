@@ -1,3 +1,5 @@
+// ./src/components/layout/topbar/Topbar.tsx
+
 "use client";
 
 import { authClient } from "@/src/lib/auth/auth-client";

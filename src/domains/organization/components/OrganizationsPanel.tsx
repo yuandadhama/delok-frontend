@@ -1,4 +1,4 @@
-// src/domains/organization/components/OrganizationsPanel.tsx
+// ./src/domains/organization/components/OrganizationsPanel.tsx
 
 "use client";
 

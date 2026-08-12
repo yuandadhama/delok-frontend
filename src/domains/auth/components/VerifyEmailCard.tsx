@@ -1,3 +1,5 @@
+// ./src/domains/auth/components/VerifyEmailCard.tsx
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 

@@ -1,3 +1,5 @@
+// ./app/(root)/workspace/[organizationSlug]/projects/page.tsx
+
 "use client";
 
 import { useParams } from "next/navigation";

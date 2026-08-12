@@ -1,3 +1,5 @@
+// ./src/domains/auth/components/AuthErrorCard.tsx
+
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 

@@ -1,4 +1,4 @@
-// app/(root)/workspace/page.tsx
+// ./app/(root)/workspace/page.tsx
 
 "use client";
 
@@ -17,7 +17,7 @@ import { authClient } from "@/src/lib/auth/auth-client";
 import { delok } from "@/src/lib/delok";
 import { ROUTES } from "@/src/constants/routes";
 
-export default function DashboardPage() {
+export default function WorkspacePage() {
   const router = useRouter();
   const { data: session, isPending: sessionPending } = authClient.useSession();
 
@@ -32,8 +32,8 @@ export default function DashboardPage() {
     hasLogged.current = true;
 
     delok.info({
-      event: "user_open_dashboard",
-      message: "User opened dashboard page",
+      event: "user_open_workspace",
+      message: "User opened workspace page",
       payload: {
         userId: session.user.id,
         name: session.user.name,

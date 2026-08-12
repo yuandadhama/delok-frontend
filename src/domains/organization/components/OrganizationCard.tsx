@@ -1,7 +1,7 @@
-// src/domains/organization/components/OrganizationCard.tsx
+// ./src/domains/organization/components/OrganizationCard.tsx
 
 import Link from "next/link";
-import { ArrowRight, Building2 } from "lucide-react";
+import { Building2 } from "lucide-react";
 
 import { ROUTES } from "@/src/constants/routes";
 import type { Organization } from "../types/organization.type";

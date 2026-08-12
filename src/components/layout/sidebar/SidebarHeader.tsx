@@ -1,3 +1,5 @@
+// ./src/components/layout/sidebar/SidebarHeader.tsx
+
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Image from "next/image";
 import DelokMarkLogo from "@/public/delok-light-logo.webp";

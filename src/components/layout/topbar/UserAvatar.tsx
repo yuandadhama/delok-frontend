@@ -1,3 +1,5 @@
+// ./src/components/layout/topbar/UserAvatar.tsx
+
 type UserAvatarProps = {
   name?: string | null;
   size?: "sm" | "md";
