@@ -84,19 +84,19 @@ export function CreateOrganizationModal({
           className="inline-flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
-          Add Workspace
+          Add Organization
         </Button>
       )}
 
       <Modal
         open={open}
         onClose={handleClose}
-        title="Create Workspace"
-        description="Create a new workspace for your projects."
+        title="Create Organization"
+        description="Create a new organization for your projects."
       >
         <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-4">
           <Input
-            label="Workspace Name"
+            label="Organization Name"
             name="name"
             placeholder="e.g. Delok Inc."
             value={organizationName}

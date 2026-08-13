@@ -3,7 +3,7 @@
 "use client";
 
 import { authClient } from "@/src/lib/auth/auth-client";
-import { OrganizationSwitcher } from "../sidebar/OrganizationSwitcher";
+import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { UserMenu } from "./UserMenu";
 
 type TopbarProps = {

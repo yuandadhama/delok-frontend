@@ -27,10 +27,10 @@ export function GetStartedSection() {
 
             <span>
               <span className="block text-sm font-semibold text-foreground">
-                Create a new workspace
+                Create a new organization
               </span>
               <span className="mt-1 block text-xs text-muted-foreground">
-                Set up a workspace to organize your projects and logs.
+                Set up an organization to organize your projects and logs.
               </span>
             </span>
           </button>
@@ -41,8 +41,8 @@ export function GetStartedSection() {
       <button
         type="button"
         onClick={() =>
-          toast.info("Joining workspaces is coming soon.", {
-            id: "join-workspace",
+          toast.info("Joining organizations is coming soon.", {
+            id: "join-organization",
           })
         }
         className="group flex w-full items-start gap-3 rounded-xl border border-dashed border-border bg-transparent p-4 text-left opacity-70 transition-opacity "
@@ -53,10 +53,10 @@ export function GetStartedSection() {
 
         <span>
           <span className="block text-sm font-semibold text-foreground">
-            Join a workspace
+            Join an organization
           </span>
           <span className="mt-1 block text-xs text-muted-foreground">
-            Use an invite to join an existing workspace.
+            Use an invite to join an existing organization.
           </span>
         </span>
       </button>

@@ -1,4 +1,4 @@
-// ./app/(root)/workspace/[organizationSlug]/page.tsx
+// app/(root)/orgs/[organizationSlug]/page.tsx
 
 "use client";
 
@@ -12,12 +12,12 @@ const Page = () => {
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-1 text-center">
-      <p className="text-sm font-medium text-foreground">Workspace overview</p>
+      <p className="text-sm font-medium text-foreground">Organization overview</p>
       <p className="text-xs text-muted-foreground">
         This page is under development :)
       </p>
       <Link
-        href={ROUTES.WORKSPACE.PROJECTS(organizationSlug)}
+        href={ROUTES.ORGANIZATION.PROJECTS(organizationSlug)}
         className="underline text-blue-500"
       >
         Go to projects page

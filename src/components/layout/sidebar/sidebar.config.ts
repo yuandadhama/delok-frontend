@@ -21,18 +21,18 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
     label: "Overview",
     icon: LayoutDashboard,
-    href: (slug: string) => ROUTES.WORKSPACE.ORGANIZATION(slug),
+    href: (slug: string) => ROUTES.ORGANIZATION.BASE(slug),
     isActive: (pathname: string, slug: string) =>
-      pathname === ROUTES.WORKSPACE.ORGANIZATION(slug),
+      pathname === ROUTES.ORGANIZATION.BASE(slug),
     disabled: true,
   },
   {
     label: "Projects",
     icon: FolderKanban,
-    href: (slug: string) => ROUTES.WORKSPACE.PROJECTS(slug),
+    href: (slug: string) => ROUTES.ORGANIZATION.PROJECTS(slug),
     isActive: (pathname: string, slug: string) =>
-      pathname.startsWith(`${ROUTES.WORKSPACE.ORGANIZATION(slug)}/project`) ||
-      pathname === ROUTES.WORKSPACE.PROJECTS(slug),
+      pathname.startsWith(`${ROUTES.ORGANIZATION.BASE(slug)}/project`) ||
+      pathname === ROUTES.ORGANIZATION.PROJECTS(slug),
   },
   {
     label: "Members",
@@ -44,8 +44,8 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
     label: "Settings",
     icon: Settings,
-    href: (slug: string) => ROUTES.WORKSPACE.ORGANIZATION_SETTINGS(slug),
+    href: (slug: string) => ROUTES.ORGANIZATION.ORGANIZATION_SETTINGS(slug),
     isActive: (pathname: string, slug: string) =>
-      pathname === ROUTES.WORKSPACE.ORGANIZATION_SETTINGS(slug),
+      pathname === ROUTES.ORGANIZATION.ORGANIZATION_SETTINGS(slug),
   },
 ];

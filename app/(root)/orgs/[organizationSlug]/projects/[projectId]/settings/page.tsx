@@ -1,4 +1,4 @@
-// ./app/(root)/workspace/[organizationSlug]/projects/[projectId]/settings/page.tsx
+// ./app/(root)/orgs/[organizationSlug]/projects/[projectId]/settings/page.tsx
 
 "use client";
 
@@ -14,6 +14,8 @@ import {
 } from "@/src/domains/project";
 
 import { ApiKeyList, ApiKeyService } from "@/src/domains/api-key";
+
+import { ROUTES } from "@/src/constants/routes";
 
 import { useEffect, useState } from "react";
 
@@ -71,7 +73,7 @@ export default function ProjectSettingsPage() {
   const handleDelete = async () => {
     await deleteProject.mutateAsync(projectId);
 
-    window.location.assign(`/workspace/${organizationSlug}/projects`);
+    window.location.assign(ROUTES.ORGANIZATION.PROJECTS(organizationSlug));
   };
 
   const handleCreateApiKey = async (name: string) => {

@@ -15,7 +15,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (session?.user?.id) {
-      router.push(ROUTES.WORKSPACE.ROOT);
+      router.push(ROUTES.ORGANIZATION.ROOT);
     }
   }, [session?.user?.id, router]);
 

@@ -1,4 +1,4 @@
-// ./src/pages/auth/ResetPasswordPage.tsx
+// ./src/views/auth/ResetPasswordPage.tsx
 
 import { Suspense } from "react";
 

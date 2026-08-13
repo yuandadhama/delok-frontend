@@ -40,7 +40,7 @@ export function OrganizationsPanel({
         </span>
 
         <Input
-          placeholder="Search all workspaces"
+          placeholder="Search all organizations"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           className="rounded-full! pl-9"
@@ -50,7 +50,7 @@ export function OrganizationsPanel({
       <div className="rounded-xl border border-border bg-surface p-3">
         <div className="mb-4 flex items-center justify-between px-1 pt-1">
           <h2 className="text-xs font-semibold uppercase tracking-wider  text-muted-foreground">
-            Your Workspaces
+            Your Organizations
           </h2>
 
           {!isLoading && organizations.length > 0 && filtered.length > 0 && (
@@ -66,7 +66,7 @@ export function OrganizationsPanel({
 
         {!isLoading && organizations.length > 0 && filtered.length === 0 && (
           <p className="px-2 py-8 text-center text-xs text-muted-foreground">
-            No workspaces match &ldquo;{search}&rdquo;.
+            No organizations match &ldquo;{search}&rdquo;.
           </p>
         )}
 

@@ -14,7 +14,7 @@ type ProjectCardProps = {
 export function ProjectCard({ project, organizationSlug }: ProjectCardProps) {
   return (
     <Link
-      href={ROUTES.WORKSPACE.PROJECT(organizationSlug, project.id)}
+      href={ROUTES.ORGANIZATION.PROJECT(organizationSlug, project.id)}
       className="
         group
         flex

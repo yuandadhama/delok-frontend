@@ -23,7 +23,7 @@ export function ProjectBreadcrumb({
   return (
     <nav className="flex items-center gap-1.5 text-xs">
       <Link
-        href={ROUTES.WORKSPACE.PROJECTS(organizationSlug)}
+        href={ROUTES.ORGANIZATION.PROJECTS(organizationSlug)}
         className="text-muted-foreground hover:text-foreground"
       >
         Projects
@@ -32,7 +32,7 @@ export function ProjectBreadcrumb({
       <ChevronRight className="h-3 w-3 text-muted-foreground" />
 
       <Link
-        href={ROUTES.WORKSPACE.PROJECT(organizationSlug, projectId)}
+        href={ROUTES.ORGANIZATION.PROJECT(organizationSlug, projectId)}
         className={
           settings
             ? "text-muted-foreground hover:text-foreground"

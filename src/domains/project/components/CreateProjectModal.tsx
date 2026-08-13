@@ -82,7 +82,7 @@ export function CreateProjectModal({
       <Modal open={open} onClose={handleClose} title="Create Project">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <p className="text-sm text-muted-foreground">
-            Create a new project in this workspace.
+            Create a new project in this organization.
           </p>
 
           <Input

@@ -1,4 +1,4 @@
-// ./src/pages/auth/SignInPage.tsx
+// ./src/views/auth/SignInPage.tsx
 
 import { SignInForm } from "@/src/domains/auth";
 

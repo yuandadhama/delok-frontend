@@ -1,10 +1,12 @@
-// ./src/pages/workspace/components/WorkspaceWelcomeProps.tsx
+// ./src/views/orgs/components/OrganizationsWelcome.tsx
 
-type WorkspaceWelcomeProps = {
+type OrganizationsWelcomeProps = {
   name?: string | null;
 };
 
-export default function WorkspaceWelcome({ name }: WorkspaceWelcomeProps) {
+export default function OrganizationsWelcome({
+  name,
+}: OrganizationsWelcomeProps) {
   const firstName = name?.split(" ")[0] ?? "there";
 
   return (

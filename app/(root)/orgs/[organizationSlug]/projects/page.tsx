@@ -1,4 +1,4 @@
-// ./app/(root)/workspace/[organizationSlug]/projects/page.tsx
+// ./app/(root)/orgs/[organizationSlug]/projects/page.tsx
 
 "use client";
 
@@ -33,7 +33,7 @@ export default function ProjectsPage() {
           </h1>
 
           <p className="mt-0.5 text-xs text-muted-foreground sm:mt-1">
-            Projects in this workspace
+            Projects in this organization
           </p>
         </div>
 

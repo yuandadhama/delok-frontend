@@ -28,7 +28,7 @@ export function ProjectHeader({
         />
 
         <Link
-          href={ROUTES.WORKSPACE.PROJECT_SETTINGS(organizationSlug, projectId)}
+          href={ROUTES.ORGANIZATION.PROJECT_SETTINGS(organizationSlug, projectId)}
           className="flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-muted-foreground hover:bg-surface-hover hover:text-foreground transition-colors"
         >
           <Settings className="h-3.5 w-3.5" />

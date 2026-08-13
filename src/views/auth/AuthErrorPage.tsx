@@ -1,4 +1,4 @@
-// ./src/pages/auth/ErrorPage.tsx
+// ./src/views/auth/ErrorPage.tsx
 
 "use client";
 

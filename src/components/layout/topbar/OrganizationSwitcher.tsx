@@ -57,12 +57,12 @@ export function OrganizationSwitcher({
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute left-0 top-full z-20 mt-1 w-56 rounded-lg border border-border bg-surface shadow-lg py-1.5">
             <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              Switch workspace
+              Switch organization
             </p>
             <div className="flex flex-col gap-0.5 px-1.5 pt-1">
               {organizations.length === 0 && (
                 <p className="px-2 py-1.5 text-xs text-muted-foreground">
-                  No other workspaces
+                  No other organizations
                 </p>
               )}
               {organizations.map((org) => {
@@ -70,7 +70,7 @@ export function OrganizationSwitcher({
                 return (
                   <Link
                     key={org.id}
-                    href={ROUTES.WORKSPACE.ORGANIZATION(org.slug)}
+                    href={ROUTES.ORGANIZATION.BASE(org.slug)}
                     onClick={() => handleSwitch(org.slug)}
                     className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors ${
                       isCurrent

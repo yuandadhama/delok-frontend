@@ -8,8 +8,8 @@ export function OrganizationEmptyState() {
   return (
     <EmptyState
       icon={<Building2 className="h-6 w-6" />}
-      title="No workspaces yet"
-      description="Create your first workspace to get started."
+      title="No organizations yet"
+      description="Create your first organization to get started."
     />
   );
 }

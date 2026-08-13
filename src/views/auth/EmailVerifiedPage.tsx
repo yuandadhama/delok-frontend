@@ -1,4 +1,4 @@
-// ./src/pages/auth/EmailVerifiedPage.tsx
+// ./src/views/auth/EmailVerifiedPage.tsx
 
 import { EmailVerifiedCard } from "@/src/domains/auth";
 

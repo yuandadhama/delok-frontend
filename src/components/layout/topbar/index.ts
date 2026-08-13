@@ -1,5 +1,5 @@
 export { Topbar } from "./Topbar";
-export { OrganizationSwitcher } from "../sidebar/OrganizationSwitcher";
+export { OrganizationSwitcher } from "./OrganizationSwitcher";
 export { UserMenu } from "./UserMenu";
 export { UserAvatar } from "./UserAvatar";
-export { WorkspaceTopbar } from "./WorkspaceTopbar";
+export { OrganizationsTopbar } from "./OrganizationsTopbar";

@@ -1,4 +1,4 @@
-// ./src/components/layout/topbar/WorkspaceTopbar.tsx
+// ./src/components/layout/topbar/OrganizationsTopbar.tsx
 
 "use client";
 
@@ -7,7 +7,7 @@ import { UserMenu } from "./UserMenu";
 import Image from "next/image";
 import DelokTextLogo from "@/public/delok-light-teks_logo.webp";
 
-export function WorkspaceTopbar() {
+export function OrganizationsTopbar() {
   const { data: session } = authClient.useSession();
 
   return (

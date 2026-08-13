@@ -97,7 +97,7 @@ export class AuthService {
   static async signInGoogle() {
     return authClient.signIn.social({
       provider: "google",
-      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.WORKSPACE.ROOT}`,
+      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.ORGANIZATION.ROOT}`,
     });
   }
 
@@ -110,7 +110,7 @@ export class AuthService {
   static async signInGithub() {
     return authClient.signIn.social({
       provider: "github",
-      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.WORKSPACE.ROOT}`,
+      callbackURL: `${process.env.NEXT_PUBLIC_APP_URL}${ROUTES.ORGANIZATION.ROOT}`,
     });
   }
 }

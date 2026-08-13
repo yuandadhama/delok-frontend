@@ -23,8 +23,6 @@ export function SidebarHeader({
       }`}
     >
       {collapsed ? (
-        // The logo mark doubles as the re-expand control when the sidebar is
-        // collapsed (tooltip + aria-label keep it discoverable/accessible).
         <button
           type="button"
           onClick={onToggle}
@@ -42,8 +40,6 @@ export function SidebarHeader({
         </button>
       ) : (
         <>
-          {/* Wordmark at the same height as the toggle button. Decorative
-              only - the toggle button beside it handles collapse/pin. */}
           <Image src={DelokTextLogo} alt="Delok" width={90} />
 
           <button

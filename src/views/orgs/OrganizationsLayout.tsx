@@ -1,4 +1,4 @@
-// ./src/pages/workspace/WorkspaceLayout.tsx
+// ./src/views/orgs/OrganizationsLayout.tsx
 
 "use client";
 
@@ -8,9 +8,13 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/src/lib/auth/auth-client";
 import { ROUTES } from "@/src/constants/routes";
 
-import WorkspaceLoading from "@/src/views/workspace/components/WorkspaceLoading";
+import OrganizationsLoading from "@/src/views/orgs/components/OrganizationsLoading";
 
-export default function WorkspaceLayout({ children }: { children: ReactNode }) {
+export default function OrganizationsLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const router = useRouter();
 
   const { data: session, isPending } = authClient.useSession();
@@ -23,12 +27,11 @@ export default function WorkspaceLayout({ children }: { children: ReactNode }) {
     }
   }, [isPending, session, router]);
 
-  if (isPending) {
-    return <WorkspaceLoading />;
-  }
-
   if (!session) {
     return null;
+  }
+  if (isPending) {
+    return <OrganizationsLoading />;
   }
 
   return children;

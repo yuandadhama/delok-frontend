@@ -1,4 +1,4 @@
-// ./src/pages/auth/SignUpPage.tsx
+// ./src/views/auth/SignUpPage.tsx
 
 import SignUpForm from "@/src/domains/auth/components/SignUpForm";
 

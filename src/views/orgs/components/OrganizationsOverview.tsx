@@ -1,4 +1,4 @@
-// ./src/pages/workspace/components/WorkspaceOverview.tsx
+// ./src/views/orgs/components/OrganizationsOverview.tsx
 
 import {
   GetStartedSection,
@@ -7,15 +7,15 @@ import {
 
 import type { Organization } from "@/src/domains/organization";
 
-type WorkspaceOverviewProps = {
+type OrganizationsOverviewProps = {
   organizations: Organization[];
   isLoading: boolean;
 };
 
-export default function WorkspaceOverview({
+export default function OrganizationsOverview({
   organizations,
   isLoading,
-}: WorkspaceOverviewProps) {
+}: OrganizationsOverviewProps) {
   return (
     <section className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,320px)_1fr]">
       <GetStartedSection />

@@ -1,4 +1,4 @@
-// ./app/(root)/workspace/[organizationSlug]/projects/[projectId]/page.tsx
+// ./app/(root)/orgs/[organizationSlug]/projects/[projectId]/page.tsx
 
 "use client";
 
@@ -54,14 +54,16 @@ export default function ProjectPage() {
       <div className="flex flex-col items-center justify-center h-full text-center px-4">
         <h1 className="text-sm font-semibold">Project not found</h1>
         <p className="mt-2 text-xs text-muted-foreground">
-          This project doesn&apos;t belong to this workspace or you don&apos;t
-          have permission to access it.
+          This project doesn&apos;t belong to this organization or you
+          don&apos;t have permission to access it.
         </p>
 
         <Button
           className="mt-5"
           onClick={() => {
-            window.location.assign(ROUTES.WORKSPACE.PROJECTS(organizationSlug));
+            window.location.assign(
+              ROUTES.ORGANIZATION.PROJECTS(organizationSlug),
+            );
           }}
         >
           Back to Projects
@@ -94,7 +96,7 @@ export default function ProjectPage() {
           hasActiveFilters={hasActiveFilters}
           limit={limit}
           onLimitChange={setLimit}
-          settingsUrl={`${ROUTES.WORKSPACE.PROJECT_SETTINGS(
+          settingsUrl={`${ROUTES.ORGANIZATION.PROJECT_SETTINGS(
             organizationSlug,
             projectId,
           )}#api-keys`}
