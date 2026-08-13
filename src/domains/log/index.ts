@@ -1,12 +1,17 @@
-export { LogEventRow, LogDetailPanel, LogsPanel } from "./components";
+export { LogDetailPanel, LogEventRow } from "./components";
 
 export { LogService } from "./api/log.service";
 
-export { useProjectLogs } from "./hooks/useProjectLogs";
+export {
+  formatLogDate,
+  formatLogTime,
+  formatLogTimestamp,
+} from "./utils/format";
 
 export type {
   LogEvent,
   LogLevel,
+  LogFiltersState,
   LogPagination,
   LogResponse,
 } from "./types/log.type";

@@ -70,7 +70,7 @@ export function OrganizationSwitcher({
                 return (
                   <Link
                     key={org.id}
-                    href={ROUTES.ORGANIZATION.BASE(org.slug)}
+                    href={ROUTES.ORGANIZATION.PROJECTS(org.slug)}
                     onClick={() => handleSwitch(org.slug)}
                     className={`flex items-center gap-2 px-2 py-1.5 text-xs rounded-md transition-colors ${
                       isCurrent

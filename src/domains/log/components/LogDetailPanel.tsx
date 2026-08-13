@@ -25,7 +25,7 @@ export function LogDetailPanel({
   return (
     <aside
       style={{ "--drawer-width": `${width}px` } as React.CSSProperties}
-      className="absolute inset-y-0 right-0 z-20 flex w-full max-w-sm shrink-0 flex-col border-l border-border bg-surface shadow-2xl @2xl:static @2xl:z-auto @2xl:max-w-[calc(100%_-_280px)] @2xl:w-[var(--drawer-width)] @2xl:shadow-none"
+      className="absolute inset-y-0 right-0 z-20 flex w-full max-w-sm shrink-0 flex-col border-l border-border bg-surface shadow-2xl @2xl:static @2xl:z-auto @2xl:max-w-[calc(100%-280px)] @2xl:w-(--drawer-width) @2xl:shadow-none"
     >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-border">

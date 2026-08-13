@@ -1,4 +1,4 @@
-// ./src/domains/log/components/LogsPanel.tsx
+// ./src/domains/log-explorer/components/LogsPanel.tsx
 
 "use client";
 
@@ -8,15 +8,15 @@ import { ArrowRight, ChevronLeft, ChevronRight, KeyRound } from "lucide-react";
 
 import EmptyState from "@/src/components/ui/EmptyState";
 
-import { LogEventRow } from "./LogEventRow";
-import { LogDetailPanel } from "./LogDetailPanel";
+import { LogDetailPanel, LogEventRow } from "@/src/domains/log";
+
 import { LogFilters } from "./LogFilters";
 
 import type {
   LogEvent,
   LogFiltersState,
   LogPagination,
-} from "../types/log.type";
+} from "@/src/domains/log";
 
 const MIN_DRAWER_WIDTH = 300;
 const MAX_DRAWER_WIDTH = 720;
@@ -25,24 +25,29 @@ const DEFAULT_DRAWER_WIDTH = 384;
 // @2xl:max-w-[calc(100%_-_280px)] on the drawer).
 const MIN_LIST_WIDTH = 280;
 
-type LogsPanelProps = {
+type LogsPanelData = {
   logs: LogEvent[];
   pagination: LogPagination;
   isLoading: boolean;
   page: number;
-  onPageChange: (page: number) => void;
-
   selectedLog: LogEvent | null;
+  filters: LogFiltersState;
+  hasActiveFilters: boolean;
+  limit: number;
+};
+
+type LogsPanelActions = {
+  onPageChange: (page: number) => void;
   onSelectLog: (log: LogEvent) => void;
   onCloseDetail: () => void;
-
-  filters: LogFiltersState;
   onFilterChange: (key: keyof LogFiltersState, value: string) => void;
   onClearFilters: () => void;
-  hasActiveFilters: boolean;
-
-  limit: number;
   onLimitChange: (limit: number) => void;
+};
+
+type LogsPanelProps = {
+  data: LogsPanelData;
+  actions: LogsPanelActions;
 
   /**
    * Where users manage API keys for this project (linked from the empty
@@ -52,22 +57,30 @@ type LogsPanelProps = {
 };
 
 export function LogsPanel({
-  logs,
-  pagination,
-  isLoading,
-  page,
-  onPageChange,
-  selectedLog,
-  onSelectLog,
-  onCloseDetail,
-  filters,
-  onFilterChange,
-  onClearFilters,
-  hasActiveFilters,
-  limit,
-  onLimitChange,
+  data,
+  actions,
   settingsUrl,
 }: LogsPanelProps) {
+  const {
+    logs,
+    pagination,
+    isLoading,
+    page,
+    selectedLog,
+    filters,
+    hasActiveFilters,
+    limit,
+  } = data;
+
+  const {
+    onPageChange,
+    onSelectLog,
+    onCloseDetail,
+    onFilterChange,
+    onClearFilters,
+    onLimitChange,
+  } = actions;
+
   const [drawerWidth, setDrawerWidth] = useState(DEFAULT_DRAWER_WIDTH);
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);

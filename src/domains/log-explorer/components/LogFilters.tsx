@@ -1,4 +1,4 @@
-// ./src/domains/log/components/LogFilters.tsx
+// ./src/domains/log-explorer/components/LogFilters.tsx
 
 "use client";
 
