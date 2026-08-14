@@ -4,6 +4,10 @@
 
 import { useParams } from "next/navigation";
 
+import { FolderX } from "lucide-react";
+
+import EmptyState from "@/src/components/ui/EmptyState";
+
 import { ProjectBreadcrumb, useProject } from "@/src/domains/project";
 
 import ProjectSettingsLoading from "./ProjectSettingsLoading";
@@ -15,10 +19,25 @@ export default function ProjectSettingsPage() {
     projectId: string;
   }>();
 
-  const { project, isLoading } = useProject(organizationSlug, projectId);
+  const { project, isLoading, isError } = useProject(
+    organizationSlug,
+    projectId,
+  );
 
-  if (isLoading || !project) {
+  if (isLoading) {
     return <ProjectSettingsLoading />;
+  }
+
+  if (isError || !project) {
+    return (
+      <div className="flex items-center justify-center">
+        <EmptyState
+          icon={<FolderX className="h-6 w-6" />}
+          title="Project not found"
+          description="This project doesn't belong to this organization or you don't have permission to access it."
+        />
+      </div>
+    );
   }
 
   return (

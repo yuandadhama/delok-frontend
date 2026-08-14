@@ -9,6 +9,7 @@ import { ProjectHeader, useProject } from "@/src/domains/project";
 import { LogExplorer } from "@/src/domains/log-explorer";
 
 import { ROUTES } from "@/src/constants/routes";
+import Link from "next/link";
 
 export default function ProjectPage() {
   const { organizationSlug, projectId } = useParams<{
@@ -16,10 +17,11 @@ export default function ProjectPage() {
     projectId: string;
   }>();
 
-  const { project, isLoading: loadingProject, isError } = useProject(
-    organizationSlug,
-    projectId,
-  );
+  const {
+    project,
+    isLoading: loadingProject,
+    isError,
+  } = useProject(organizationSlug, projectId);
 
   if (loadingProject) {
     return (
@@ -41,16 +43,9 @@ export default function ProjectPage() {
           don&apos;t have permission to access it.
         </p>
 
-        <Button
-          className="mt-5"
-          onClick={() =>
-            window.location.assign(
-              ROUTES.ORGANIZATION.PROJECTS(organizationSlug),
-            )
-          }
-        >
-          Back to Projects
-        </Button>
+        <Link href={ROUTES.ORGANIZATION.PROJECTS(organizationSlug)}>
+          <Button className="mt-5">Back to Projects</Button>
+        </Link>
       </div>
     );
   }
@@ -63,10 +58,7 @@ export default function ProjectPage() {
         projectName={project.name}
       />
 
-      <LogExplorer
-        organizationSlug={organizationSlug}
-        projectId={project.id}
-      />
+      <LogExplorer organizationSlug={organizationSlug} projectId={project.id} />
     </div>
   );
 }

@@ -22,7 +22,7 @@ export default function ProjectsPage() {
   const { projects, isLoading } = useProjects(organizationSlug);
 
   return (
-    <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
+    <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6">
       {/* Header */}
       <header className="mb-4 flex flex-wrap items-center justify-between gap-3 sm:mb-6">
         <div className="min-w-0">
@@ -43,10 +43,14 @@ export default function ProjectsPage() {
       </header>
 
       {/* Content */}
-      <section>
+      <section className="flex flex-1 flex-col">
         {isLoading && <ProjectListSkeleton />}
 
-        {!isLoading && projects.length === 0 && <ProjectEmptyState />}
+        {!isLoading && projects.length === 0 && (
+          <div className="flex flex-1 items-center justify-center">
+            <ProjectEmptyState />
+          </div>
+        )}
 
         {!isLoading && projects.length > 0 && (
           <ProjectList
