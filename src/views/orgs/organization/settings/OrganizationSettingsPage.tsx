@@ -12,6 +12,8 @@ import {
   useOrganization,
 } from "@/src/domains/organization";
 
+import { useCooldown } from "@/src/hooks/useCooldown";
+import { showToast } from "@/src/components/ui/toast";
 import { ROUTES } from "@/src/constants/routes";
 import { delok } from "@/src/lib/delok";
 
@@ -32,10 +34,22 @@ export default function OrganizationSettingsPage() {
 
   const initializedRef = useRef(false);
 
+  // Tracks whether the component is still mounted so async callbacks that
+  // resolve after navigation/logout do not touch stale UI or show stale toasts.
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const name = organization?.name ?? "";
 
   const isUpdating = updateOrganization.isPending;
   const isDeleting = deleteOrganization.isPending;
+
+  const { isCooldownActive, startCooldown } = useCooldown();
 
   const isUnchanged = editingName.trim() === name;
 
@@ -58,7 +72,7 @@ export default function OrganizationSettingsPage() {
   const handleUpdate = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isUpdating || isUnchanged) {
+    if (isUpdating || isCooldownActive || isUnchanged) {
       return;
     }
 
@@ -74,7 +88,14 @@ export default function OrganizationSettingsPage() {
     setUpdateError("");
 
     try {
+      // The API mutation owns the loading state and, on success, synchronizes
+      // the organization cache. Only the page-local side effects below depend
+      // on this component still being mounted.
       const updated = await updateOrganization.mutateAsync(result.data);
+
+      if (!isMountedRef.current) {
+        return;
+      }
 
       delok.info({
         event: "organization_updated",
@@ -87,15 +108,23 @@ export default function OrganizationSettingsPage() {
 
       setEditingName(updated.name);
 
+      showToast({ message: "Organization renamed", type: "success" });
+
+      // Short anti-spam lock: the cache/UI/toast above already applied
+      // immediately. The cooldown only blocks another rename for a moment.
+      startCooldown();
+
       if (updated.slug && updated.slug !== organizationSlug) {
         router.replace(ROUTES.ORGANIZATION.BASE(updated.slug));
       }
     } catch (error) {
-      setUpdateError(
-        error instanceof Error
-          ? error.message
-          : "Failed to update organization.",
-      );
+      if (isMountedRef.current) {
+        setUpdateError(
+          error instanceof Error
+            ? error.message
+            : "Failed to update organization.",
+        );
+      }
     }
   };
 
@@ -112,6 +141,10 @@ export default function OrganizationSettingsPage() {
           organizationSlug,
         },
       });
+
+      if (isMountedRef.current) {
+        showToast({ message: "Organization deleted", type: "success" });
+      }
 
       router.replace(ROUTES.ORGANIZATION.ROOT);
     } catch (error) {
@@ -149,7 +182,7 @@ export default function OrganizationSettingsPage() {
                 }
               }}
               placeholder="Acme Inc."
-              disabled={isUpdating}
+              disabled={isUpdating || isCooldownActive}
             />
 
             {updateError && (
@@ -160,7 +193,9 @@ export default function OrganizationSettingsPage() {
 
             <Button
               type="submit"
-              disabled={isUpdating || isUnchanged || !editingName.trim()}
+              disabled={
+                isUpdating || isCooldownActive || isUnchanged || !editingName.trim()
+              }
             >
               {isUpdating ? "Saving…" : "Save changes"}
             </Button>

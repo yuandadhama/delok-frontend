@@ -99,3 +99,15 @@
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* ==========================================================================
+   4. TOAST PROGRESS BAR (Auto-dismiss countdown)
+   ========================================================================== */
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}

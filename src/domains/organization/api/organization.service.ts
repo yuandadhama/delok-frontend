@@ -52,9 +52,11 @@ export class OrganizationService {
 
     if (!response.ok) {
       if (getApiErrorCode(data) === ORGANIZATION_SLUG_ALREADY_EXISTS) {
-        throw new Error("Organization name already exists");
+        throw new Error("Organization name already taken");
       }
-      throw new Error(getApiErrorMessage(data, "Failed to create organization"));
+      throw new Error(
+        getApiErrorMessage(data, "Failed to create organization"),
+      );
     }
 
     return data.data;
@@ -97,9 +99,11 @@ export class OrganizationService {
 
     if (!response.ok) {
       if (getApiErrorCode(data) === ORGANIZATION_SLUG_ALREADY_EXISTS) {
-        throw new Error("Organization name already exists");
+        throw new Error("Organization name already taken");
       }
-      throw new Error(getApiErrorMessage(data, "Failed to update organization"));
+      throw new Error(
+        getApiErrorMessage(data, "Failed to update organization"),
+      );
     }
 
     return data.data;

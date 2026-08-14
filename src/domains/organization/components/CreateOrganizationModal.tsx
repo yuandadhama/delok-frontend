@@ -8,6 +8,8 @@ import { Plus } from "lucide-react";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 import Modal from "@/src/components/ui/Modal";
+import { showToast } from "@/src/components/ui/toast";
+import { useCooldown } from "@/src/hooks/useCooldown";
 
 import { organizationSchema } from "../schemas/organization.schema";
 import { useOrganizations } from "../hooks/useOrganizations";
@@ -29,6 +31,8 @@ export function CreateOrganizationModal({
 
   const { createOrganization } = useOrganizations();
 
+  const { isCooldownActive, startCooldown } = useCooldown();
+
   const handleOpen = () => {
     setOrganizationName("");
     setError("");
@@ -46,6 +50,8 @@ export function CreateOrganizationModal({
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (createOrganization.isPending || isCooldownActive) return;
+
     const result = organizationSchema.safeParse({
       name: organizationName,
     });
@@ -59,6 +65,10 @@ export function CreateOrganizationModal({
 
     try {
       await createOrganization.mutateAsync(result.data);
+
+      showToast({ message: "Organization created", type: "success" });
+
+      startCooldown();
 
       setOrganizationName("");
       setOpen(false);
@@ -127,7 +137,9 @@ export function CreateOrganizationModal({
               variant="primary"
               size="sm"
               disabled={
-                createOrganization.isPending || !organizationName.trim()
+                createOrganization.isPending ||
+                isCooldownActive ||
+                !organizationName.trim()
               }
             >
               {createOrganization.isPending ? "Creating..." : "Create"}

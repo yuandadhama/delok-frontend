@@ -8,6 +8,8 @@ import { Plus } from "lucide-react";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
 import Modal from "@/src/components/ui/Modal";
+import { showToast } from "@/src/components/ui/toast";
+import { useCooldown } from "@/src/hooks/useCooldown";
 
 import { projectSchema } from "../schemas/project.schema";
 import { useProjects } from "../hooks/useProjects";
@@ -24,6 +26,8 @@ export function CreateProjectModal({
   const [error, setError] = useState("");
 
   const { createProject } = useProjects(organizationSlug);
+
+  const { isCooldownActive, startCooldown } = useCooldown();
 
   const handleOpen = () => {
     setError("");
@@ -42,6 +46,8 @@ export function CreateProjectModal({
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (createProject.isPending || isCooldownActive) return;
+
     const result = projectSchema.safeParse({
       name: projectName,
     });
@@ -55,6 +61,10 @@ export function CreateProjectModal({
 
     try {
       await createProject.mutateAsync(result.data);
+
+      showToast({ message: "Project created", type: "success" });
+
+      startCooldown();
 
       setProjectName("");
       setOpen(false);
@@ -113,7 +123,9 @@ export function CreateProjectModal({
 
             <Button
               type="submit"
-              disabled={createProject.isPending || !projectName.trim()}
+              disabled={
+                createProject.isPending || isCooldownActive || !projectName.trim()
+              }
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {createProject.isPending ? "Creating..." : "Create Project"}

@@ -39,13 +39,15 @@ export function useProjects(organizationSlug: string | undefined) {
         name: input.name,
       }),
 
-    onSuccess: (_data, input) => {
-      queryClient.invalidateQueries({
-        queryKey: projectsKey,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["project", organizationSlug, input.projectId],
-      });
+    onSuccess: (project) => {
+      // Server success is authoritative. Update the project detail cache and
+      // invalidate the project list so the breadcrumb/header and list reflect
+      // the rename without a full page refresh.
+      queryClient.setQueryData(
+        ["project", organizationSlug, project.id],
+        project,
+      );
+      queryClient.invalidateQueries({ queryKey: projectsKey });
     },
   });
 

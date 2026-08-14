@@ -9,6 +9,8 @@ import Button from "@/src/components/ui/Button";
 import ConfirmModal from "@/src/components/ui/ConfirmModal";
 import EmptyState from "@/src/components/ui/EmptyState";
 import Skeleton from "@/src/components/ui/Skeleton";
+import { showToast } from "@/src/components/ui/toast";
+import { useCooldown } from "@/src/hooks/useCooldown";
 
 import type { ApiKey } from "../types/api-key.type";
 import { GenerateApiKeyModal } from "./GenerateApiKeyModal";
@@ -53,17 +55,32 @@ export function ApiKeyList({
 
   const [revokingKey, setRevokingKey] = useState<ApiKey | null>(null);
 
+  const {
+    isCooldownActive: isRenameCooldown,
+    startCooldown: startRenameCooldown,
+  } = useCooldown();
+
   const handleRename = async (id: string) => {
     const name = editingApiKeyName.trim();
 
-    if (!name) return;
+    if (!name || renaming || isRenameCooldown) return;
 
     setRenaming(true);
 
     try {
       await onRename(id, name);
+
+      showToast({ message: "API key renamed", type: "success" });
+
+      startRenameCooldown();
+
       setEditingApiKeyId(null);
       setEditingApiKeyName("");
+    } catch (err) {
+      showToast({
+        message: err instanceof Error ? err.message : "Failed to rename API key",
+        type: "error",
+      });
     } finally {
       setRenaming(false);
     }
@@ -141,14 +158,18 @@ export function ApiKeyList({
                         }
                       }}
                       autoFocus
-                      disabled={renaming}
+                      disabled={renaming || isRenameCooldown}
                       className={`${FIELD} flex-1 px-2.5 py-1.5`}
                     />
 
                     <button
                       type="button"
                       onClick={() => void handleRename(apiKey.id)}
-                      disabled={renaming || !editingApiKeyName.trim()}
+                      disabled={
+                        renaming ||
+                        isRenameCooldown ||
+                        !editingApiKeyName.trim()
+                      }
                       className="shrink-0 rounded-md bg-primary px-2.5 py-1.5 text-xs font-medium text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
                     >
                       {renaming ? "Saving..." : "Save"}
@@ -226,7 +247,11 @@ export function ApiKeyList({
           helperText={`Type "${revokingKey.name}" to confirm revoking.`}
           confirmLabel="Revoke key"
           busyLabel="Revoking…"
-          onConfirm={() => onRevoke(revokingKey.id)}
+          onConfirm={async () => {
+            await onRevoke(revokingKey.id);
+
+            showToast({ message: "API key revoked", type: "success" });
+          }}
           onClose={() => setRevokingKey(null)}
         />
       )}

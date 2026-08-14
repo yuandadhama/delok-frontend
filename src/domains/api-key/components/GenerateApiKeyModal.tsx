@@ -5,6 +5,8 @@
 import { useState } from "react";
 import { Copy } from "lucide-react";
 import Modal from "@/src/components/ui/Modal";
+import { showToast } from "@/src/components/ui/toast";
+import { useCooldown } from "@/src/hooks/useCooldown";
 import { apiKeySchema } from "@/src/domains/api-key/schemas/api-key.schema";
 
 type GenerateApiKeyModalProps = {
@@ -27,6 +29,8 @@ export function GenerateApiKeyModal({
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
   const [keyCopied, setKeyCopied] = useState(false);
 
+  const { isCooldownActive, startCooldown } = useCooldown();
+
   const reset = () => {
     setName("");
     setError("");
@@ -41,6 +45,8 @@ export function GenerateApiKeyModal({
   };
 
   const handleGenerate = async () => {
+    if (creating || isCooldownActive) return;
+
     const validationResult = apiKeySchema.safeParse({ name: name.trim() });
     if (!validationResult.success) {
       setError(validationResult.error.issues[0].message);
@@ -51,6 +57,11 @@ export function GenerateApiKeyModal({
     setError("");
     try {
       const key = await onGenerate(validationResult.data.name);
+
+      showToast({ message: "API key created", type: "success" });
+
+      startCooldown();
+
       setGeneratedKey(key);
       setName("");
     } catch (err) {
@@ -103,7 +114,7 @@ export function GenerateApiKeyModal({
               </button>
               <button
                 onClick={handleGenerate}
-                disabled={creating || !name.trim()}
+                disabled={creating || isCooldownActive || !name.trim()}
                 className="flex-1 rounded-md bg-primary text-primary-foreground text-xs font-medium py-2 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 {creating ? "Generating…" : "Generate"}

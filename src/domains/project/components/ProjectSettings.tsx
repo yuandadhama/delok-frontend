@@ -2,9 +2,11 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "@/src/components/ui/Button";
 import Input from "@/src/components/ui/Input";
+import { showToast } from "@/src/components/ui/toast";
+import { useCooldown } from "@/src/hooks/useCooldown";
 import { projectSchema } from "../schemas/project.schema";
 
 type ProjectSettingsProps = {
@@ -20,12 +22,24 @@ export function ProjectSettings({
   const [updating, setUpdating] = useState(false);
   const [updateError, setUpdateError] = useState("");
 
+  const { isCooldownActive, startCooldown } = useCooldown();
+
+  // Tracks whether the component is still mounted so async callbacks that
+  // resolve after navigation/logout do not touch stale UI.
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const isUnchanged = editingName.trim() === projectName;
 
   const handleUpdate = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (updating || isUnchanged) return;
+    if (updating || isCooldownActive || isUnchanged) return;
 
     const result = projectSchema.safeParse({ name: editingName });
 
@@ -38,16 +52,26 @@ export function ProjectSettings({
     setUpdateError("");
     try {
       await onUpdate(result.data.name);
-      setEditingName(result.data.name);
-    } catch (err) {
-      if (err instanceof Error) {
-        console.log(err);
+
+      // Only commit the local UI value and show the toast if the component is
+      // still mounted (i.e. the user did not navigate away or log out).
+      if (isMountedRef.current) {
+        setEditingName(result.data.name);
+        showToast({ message: "Project renamed", type: "success" });
+        // Short anti-spam lock: does NOT delay the cache/UI/toast above, which
+        // already happened immediately. It only blocks another rename for a moment.
+        startCooldown();
       }
-      setUpdateError(
-        err instanceof Error ? err.message : "Something went wrong",
-      );
+    } catch (err) {
+      if (isMountedRef.current) {
+        setUpdateError(
+          err instanceof Error ? err.message : "Something went wrong",
+        );
+      }
     } finally {
-      setUpdating(false);
+      if (isMountedRef.current) {
+        setUpdating(false);
+      }
     }
   };
 
@@ -74,7 +98,7 @@ export function ProjectSettings({
                 setUpdateError("");
               }
             }}
-            placeholder="Project name"
+            placeholder={projectName}
           />
         </div>
 
@@ -86,9 +110,11 @@ export function ProjectSettings({
 
         <Button
           type="submit"
-          disabled={updating || isUnchanged || !editingName.trim()}
+          disabled={
+            updating || isCooldownActive || isUnchanged || !editingName.trim()
+          }
         >
-          {updating ? "Renaming…" : "Rename project"}
+          {updating ? "Saving…" : "Save changes"}
         </Button>
       </form>
     </section>

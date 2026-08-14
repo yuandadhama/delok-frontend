@@ -2,7 +2,11 @@
 
 type ApiErrorBody = {
   error?: { code?: string; message?: string };
-  errors?: Array<{ code?: string; message?: string; path?: (string | number)[] }>;
+  errors?: Array<{
+    code?: string;
+    message?: string;
+    path?: (string | number)[];
+  }>;
   errorDetail?: { code?: string; message?: string };
 };
 
@@ -11,7 +15,12 @@ export function getApiErrorMessage(body: unknown, fallback: string): string {
 
   const data = body as ApiErrorBody;
 
-  return data.error?.message ?? data.errorDetail?.message ?? data.errors?.[0]?.message ?? fallback;
+  return (
+    data.error?.message ??
+    data.errorDetail?.message ??
+    data.errors?.[0]?.message ??
+    fallback
+  );
 }
 
 export function getApiErrorCode(body: unknown): string | undefined {

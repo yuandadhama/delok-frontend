@@ -3,8 +3,8 @@
 "use client";
 
 import { Building2, Link2 } from "lucide-react";
-import { toast } from "sonner";
 
+import { showToast } from "@/src/components/ui/toast";
 import { CreateOrganizationModal } from "./CreateOrganizationModal";
 
 export function GetStartedSection() {
@@ -41,9 +41,7 @@ export function GetStartedSection() {
       <button
         type="button"
         onClick={() =>
-          toast.info("Joining organizations is coming soon.", {
-            id: "join-organization",
-          })
+          showToast({ message: "Joining organizations is coming soon.", type: "info" })
         }
         className="group flex w-full items-start gap-3 rounded-xl border border-dashed border-border bg-transparent p-4 text-left opacity-70 transition-opacity "
       >
