@@ -4,11 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { ProjectService } from "../api/project.service";
 
-export function useProject(projectId: string) {
+export function useProject(organizationSlug: string, projectId: string) {
   const query = useQuery({
-    queryKey: ["project", projectId],
-    queryFn: () => ProjectService.getById(projectId),
-    enabled: Boolean(projectId),
+    queryKey: ["project", organizationSlug, projectId],
+    queryFn: () => ProjectService.getById(organizationSlug, projectId),
+    enabled: Boolean(organizationSlug && projectId),
   });
 
   return {

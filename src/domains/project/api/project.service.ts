@@ -15,9 +15,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
  *
  * Centralized service for all project-related API requests.
  *
- * Projects are mounted at two URL prefixes:
- * - `/api/organizations/:organizationSlug/projects` — list/create within an org
- * - `/api/project/:id` — get/update/delete individual project
+ * All project operations are mounted under an organization boundary:
+ * `/api/organizations/:organizationSlug/projects[/:projectId]`
  */
 export class ProjectService {
   /**
@@ -69,13 +68,19 @@ export class ProjectService {
   }
 
   /**
-   * Get a single project by id.
-   * @returns `GET /api/project/:id`
+   * Get a single project by id within an organization.
+   * @returns `GET /api/organizations/:organizationSlug/projects/:projectId`
    */
-  static async getById(projectId: string): Promise<Project> {
-    const response = await fetch(`${API_BASE_URL}/api/project/${projectId}`, {
-      credentials: "include",
-    });
+  static async getById(
+    organizationSlug: string,
+    projectId: string,
+  ): Promise<Project> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/organizations/${organizationSlug}/projects/${projectId}`,
+      {
+        credentials: "include",
+      },
+    );
 
     if (!response.ok) {
       const data = await response.json().catch(() => null);
@@ -87,19 +92,23 @@ export class ProjectService {
   }
 
   /**
-   * Update a project's name. Requires parent org OWNER role.
-   * @returns `PATCH /api/project/:id`
+   * Update a project's name within an organization. Requires org OWNER role.
+   * @returns `PATCH /api/organizations/:organizationSlug/projects/:projectId`
    */
   static async update(
+    organizationSlug: string,
     projectId: string,
     input: UpdateProjectInput,
   ): Promise<Project> {
-    const response = await fetch(`${API_BASE_URL}/api/project/${projectId}`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/organizations/${organizationSlug}/projects/${projectId}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      },
+    );
 
     const data = await response.json();
 
@@ -111,14 +120,21 @@ export class ProjectService {
   }
 
   /**
-   * Delete a project. Cascades to all ApiKeys and LogEvents.
-   * @returns `DELETE /api/project/:id`
+   * Delete a project within an organization. Requires org OWNER role.
+   * Cascades to all ApiKeys and LogEvents.
+   * @returns `DELETE /api/organizations/:organizationSlug/projects/:projectId`
    */
-  static async delete(projectId: string): Promise<Project> {
-    const response = await fetch(`${API_BASE_URL}/api/project/${projectId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+  static async delete(
+    organizationSlug: string,
+    projectId: string,
+  ): Promise<Project> {
+    const response = await fetch(
+      `${API_BASE_URL}/api/organizations/${organizationSlug}/projects/${projectId}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
 
     const data = await response.json();
 

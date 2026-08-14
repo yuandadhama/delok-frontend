@@ -35,7 +35,7 @@ export function useProjects(organizationSlug: string | undefined) {
 
   const updateProject = useMutation({
     mutationFn: (input: { projectId: string } & UpdateProjectInput) =>
-      ProjectService.update(input.projectId, {
+      ProjectService.update(organizationSlug!, input.projectId, {
         name: input.name,
       }),
 
@@ -44,13 +44,14 @@ export function useProjects(organizationSlug: string | undefined) {
         queryKey: projectsKey,
       });
       queryClient.invalidateQueries({
-        queryKey: ["project", input.projectId],
+        queryKey: ["project", organizationSlug, input.projectId],
       });
     },
   });
 
   const deleteProject = useMutation({
-    mutationFn: (projectId: string) => ProjectService.delete(projectId),
+    mutationFn: (projectId: string) =>
+      ProjectService.delete(organizationSlug!, projectId),
 
     onSuccess: () => {
       queryClient.invalidateQueries({

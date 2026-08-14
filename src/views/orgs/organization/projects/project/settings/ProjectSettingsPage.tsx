@@ -15,7 +15,7 @@ export default function ProjectSettingsPage() {
     projectId: string;
   }>();
 
-  const { project, isLoading } = useProject(projectId);
+  const { project, isLoading } = useProject(organizationSlug, projectId);
 
   if (isLoading || !project) {
     return <ProjectSettingsLoading />;

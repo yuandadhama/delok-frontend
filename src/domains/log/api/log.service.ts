@@ -41,12 +41,12 @@ export class LogService {
       },
     );
 
-    const data = await response.json().catch(() => null);
+    const result = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(data?.error?.message ?? "Failed to fetch logs");
+      throw new Error(result?.error?.message ?? "Failed to fetch logs");
     }
 
-    return data.data;
+    return result.data;
   }
 }

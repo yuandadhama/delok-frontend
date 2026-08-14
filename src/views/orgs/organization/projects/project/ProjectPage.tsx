@@ -16,7 +16,10 @@ export default function ProjectPage() {
     projectId: string;
   }>();
 
-  const { project, isLoading: loadingProject, isError } = useProject(projectId);
+  const { project, isLoading: loadingProject, isError } = useProject(
+    organizationSlug,
+    projectId,
+  );
 
   if (loadingProject) {
     return (
