@@ -96,6 +96,7 @@ export function CreateProjectModal({
           </p>
 
           <Input
+            id="projectName"
             label="Project Name"
             name="name"
             placeholder="e.g. My API Service"

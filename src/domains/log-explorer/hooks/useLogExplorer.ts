@@ -66,19 +66,16 @@ export function useLogExplorer({ projectId }: UseLogExplorerOptions) {
 
   const hasActiveFilters = Boolean(
     filters.search.trim() ||
-      filters.level ||
-      filters.environment ||
-      filters.from ||
-      filters.to,
+    filters.level ||
+    filters.environment ||
+    filters.from ||
+    filters.to,
   );
 
-  const setFilter = useCallback(
-    (key: keyof LogFiltersState, value: string) => {
-      setFilters((previous) => ({ ...previous, [key]: value }));
-      setPage(1);
-    },
-    [],
-  );
+  const setFilter = useCallback((key: keyof LogFiltersState, value: string) => {
+    setFilters((previous) => ({ ...previous, [key]: value }));
+    setPage(1);
+  }, []);
 
   const clearFilters = useCallback(() => {
     setFilters(EMPTY_FILTERS);
@@ -166,7 +163,7 @@ export function useLogExplorer({ projectId }: UseLogExplorerOptions) {
   useLogExplorerRealtime({ projectId, filtersRef, onLogReceived });
 
   const selectLog = useCallback((log: LogEvent) => {
-    setSelectedLog(log);
+    setSelectedLog((current) => (current?.id === log.id ? null : log));
   }, []);
 
   const closeLogDetail = useCallback(() => {

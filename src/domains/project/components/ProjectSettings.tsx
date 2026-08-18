@@ -88,6 +88,7 @@ export function ProjectSettings({
       <form onSubmit={handleUpdate} className="space-y-4">
         <div className="">
           <Input
+            id="projectName"
             label="Project name"
             name="projectName"
             value={editingName}

@@ -106,6 +106,7 @@ export function CreateOrganizationModal({
       >
         <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-4">
           <Input
+            id="organizationName"
             label="Organization Name"
             name="name"
             placeholder="e.g. Delok Inc."

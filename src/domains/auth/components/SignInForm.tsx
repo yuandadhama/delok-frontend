@@ -28,6 +28,7 @@ export default function SignInForm() {
           )}
 
           <Input
+            id="email"
             label="Email"
             name="email"
             type="email"
@@ -36,6 +37,7 @@ export default function SignInForm() {
           />
 
           <Input
+            id="password"
             label="Password"
             name="password"
             type="password"

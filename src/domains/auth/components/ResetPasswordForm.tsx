@@ -50,6 +50,7 @@ export default function ResetPasswordForm() {
 
         <form onSubmit={submit} className="space-y-4">
           <Input
+            id="password"
             label="New password"
             name="password"
             type="password"
@@ -58,6 +59,7 @@ export default function ResetPasswordForm() {
           />
 
           <Input
+            id="confirmPassword"
             label="Confirm password"
             name="confirmPassword"
             type="password"

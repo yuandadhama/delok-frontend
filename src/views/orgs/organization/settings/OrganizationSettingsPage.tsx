@@ -171,6 +171,7 @@ export default function OrganizationSettingsPage() {
 
           <form onSubmit={handleUpdate} className="space-y-4">
             <Input
+              id="organizationName"
               label="Organization name"
               name="organizationName"
               value={editingName}

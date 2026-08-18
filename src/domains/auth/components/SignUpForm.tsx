@@ -31,6 +31,7 @@ export default function SignUpForm() {
           )}
 
           <Input
+            id="name"
             label="Name"
             placeholder="Alan Turing"
             {...form.register("name")}
@@ -38,6 +39,7 @@ export default function SignUpForm() {
           />
 
           <Input
+            id="email"
             label="Email"
             type="email"
             placeholder="alan@turing.com"
@@ -46,6 +48,7 @@ export default function SignUpForm() {
           />
 
           <Input
+            id="password"
             label="Password"
             type="password"
             placeholder="********"
@@ -54,6 +57,7 @@ export default function SignUpForm() {
           />
 
           <Input
+            id="confirmPassword"
             label="Confirm Password"
             type="password"
             placeholder="********"

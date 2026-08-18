@@ -25,7 +25,7 @@ export default function OrganizationsPage() {
     hasLogged.current = true;
 
     delok.info({
-      event: "USER_OPEN_ORGANIZATIONS",
+      event: "user_open_organization",
       message: "User opens organizations page",
       payload: {
         userId: data?.user.id,

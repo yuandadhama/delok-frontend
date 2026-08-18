@@ -18,9 +18,10 @@ import type {
   LogPagination,
 } from "@/src/domains/log";
 
-const MIN_DRAWER_WIDTH = 300;
+const MIN_DRAWER_WIDTH = 384;
 const MAX_DRAWER_WIDTH = 720;
 const DEFAULT_DRAWER_WIDTH = 384;
+const CLOSE_DRAG_OFFSET = 80;
 // The log list always keeps at least this much width (matches the CSS cap
 // @2xl:max-w-[calc(100%_-_280px)] on the drawer).
 const MIN_LIST_WIDTH = 280;
@@ -56,11 +57,7 @@ type LogsPanelProps = {
   settingsUrl: string;
 };
 
-export function LogsPanel({
-  data,
-  actions,
-  settingsUrl,
-}: LogsPanelProps) {
+export function LogsPanel({ data, actions, settingsUrl }: LogsPanelProps) {
   const {
     logs,
     pagination,
@@ -84,7 +81,11 @@ export function LogsPanel({
   const [drawerWidth, setDrawerWidth] = useState(DEFAULT_DRAWER_WIDTH);
   const [containerWidth, setContainerWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const dragRef = useRef<{ x: number; width: number } | null>(null);
+  const dragRef = useRef<{
+    x: number;
+    width: number;
+    closeTriggered: boolean;
+  } | null>(null);
 
   // Track the log panel container width so the drawer can never exceed it
   // (keeps the list >= MIN_LIST_WIDTH and prevents right-edge overflow).
@@ -117,20 +118,49 @@ export function LogsPanel({
     Math.min(effectiveMaxDrawerWidth, Math.max(MIN_DRAWER_WIDTH, value));
 
   const handleResizePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    dragRef.current = { x: e.clientX, width: drawerWidth };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
+    e.preventDefault();
+    dragRef.current = {
+      x: e.clientX,
+      width: drawerWidth,
+      closeTriggered: false,
+    };
 
-  const handleResizePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current) return;
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      if (!dragRef.current) return;
 
-    const next = dragRef.current.width + (dragRef.current.x - e.clientX);
+      const deltaX = moveEvent.clientX - dragRef.current.x;
+      const next = dragRef.current.width - deltaX;
+      const clampedNext = clampDrawerWidth(next);
 
-    setDrawerWidth(clampDrawerWidth(next));
-  };
+      if (clampedNext <= MIN_DRAWER_WIDTH) {
+        setDrawerWidth(MIN_DRAWER_WIDTH);
 
-  const handleResizePointerEnd = () => {
-    dragRef.current = null;
+        const intentionalCloseGesture = deltaX >= CLOSE_DRAG_OFFSET;
+
+        if (intentionalCloseGesture && !dragRef.current.closeTriggered) {
+          dragRef.current.closeTriggered = true;
+          onCloseDetail();
+          window.removeEventListener("pointermove", handlePointerMove);
+          window.removeEventListener("pointerup", handlePointerUp);
+          window.removeEventListener("pointercancel", handlePointerUp);
+        }
+
+        return;
+      }
+
+      setDrawerWidth(clampedNext);
+    };
+
+    const handlePointerUp = () => {
+      dragRef.current = null;
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
   };
 
   const handleResizeKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -210,9 +240,7 @@ export function LogsPanel({
                 <EmptyState
                   bare
                   icon={<KeyRound className="h-6 w-6" />}
-                  title={
-                    hasActiveFilters ? "No matching logs" : "No logs yet"
-                  }
+                  title={hasActiveFilters ? "No matching logs" : "No logs yet"}
                   description={
                     hasActiveFilters
                       ? "Try adjusting or clearing your filters."
@@ -321,9 +349,6 @@ export function LogsPanel({
             aria-valuemax={effectiveMaxDrawerWidth}
             tabIndex={0}
             onPointerDown={handleResizePointerDown}
-            onPointerMove={handleResizePointerMove}
-            onPointerUp={handleResizePointerEnd}
-            onPointerCancel={handleResizePointerEnd}
             onKeyDown={handleResizeKeyDown}
             className="hidden w-2 shrink-0 cursor-col-resize touch-none select-none items-center justify-center bg-transparent outline-none transition-colors hover:bg-primary/10 focus-visible:ring-2 focus-visible:ring-primary/30 active:bg-primary/15 @2xl:flex"
           >

@@ -45,6 +45,7 @@ export default function ForgotPasswordForm() {
 
         <form onSubmit={submit} className="space-y-4">
           <Input
+            id="email"
             name="email"
             label="Email"
             type="email"
