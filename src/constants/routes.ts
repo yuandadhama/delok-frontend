@@ -17,7 +17,7 @@ export const ROUTES = {
   ORGANIZATION: {
     ROOT: "/orgs",
 
-    BASE: (organizationSlug: string) => `/orgs/${organizationSlug}`,
+    OVERVIEW: (organizationSlug: string) => `/orgs/${organizationSlug}`,
 
     ORGANIZATION_SETTINGS: (organizationSlug: string) =>
       `/orgs/${organizationSlug}/settings`,

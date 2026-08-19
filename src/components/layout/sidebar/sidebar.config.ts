@@ -21,9 +21,9 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
   {
     label: "Overview",
     icon: LayoutDashboard,
-    href: (slug: string) => ROUTES.ORGANIZATION.BASE(slug),
+    href: (slug: string) => ROUTES.ORGANIZATION.OVERVIEW(slug),
     isActive: (pathname: string, slug: string) =>
-      pathname === ROUTES.ORGANIZATION.BASE(slug),
+      pathname === ROUTES.ORGANIZATION.OVERVIEW(slug),
     disabled: true,
   },
   {
@@ -31,7 +31,7 @@ export const SIDEBAR_ITEMS: SidebarItem[] = [
     icon: FolderKanban,
     href: (slug: string) => ROUTES.ORGANIZATION.PROJECTS(slug),
     isActive: (pathname: string, slug: string) =>
-      pathname.startsWith(`${ROUTES.ORGANIZATION.BASE(slug)}/project`) ||
+      pathname.startsWith(`${ROUTES.ORGANIZATION.OVERVIEW(slug)}/project`) ||
       pathname === ROUTES.ORGANIZATION.PROJECTS(slug),
   },
   {

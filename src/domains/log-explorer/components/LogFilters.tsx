@@ -107,6 +107,7 @@ function SelectField({
 }
 
 function DateFilterField({
+  id,
   label,
   value,
   min,
@@ -115,6 +116,7 @@ function DateFilterField({
   wrapperClassName = "",
   fill = false,
 }: {
+  id: string;
   label: string;
   value: string;
   min?: string;
@@ -125,11 +127,15 @@ function DateFilterField({
 }) {
   return (
     <div className={`${DATE_GROUP} ${wrapperClassName}`}>
-      <span className="pl-2 text-[11px] font-medium text-muted-foreground">
+      <label
+        className="pl-2 text-[11px] font-medium text-muted-foreground"
+        htmlFor={id}
+      >
         {label}
-      </span>
+      </label>
 
       <input
+        id={id}
         aria-label={`${label} date`}
         type="date"
         value={value}
@@ -239,10 +245,7 @@ export function LogFilters({
           id="log-filters-panel"
           className="@2xl:hidden mt-2 space-y-2 rounded-md border border-border bg-surface p-3"
         >
-          <SearchField
-            value={searchDraft}
-            onChange={setSearchDraft}
-          />
+          <SearchField value={searchDraft} onChange={setSearchDraft} />
 
           <div className="grid grid-cols-2 gap-2">
             <SelectField
@@ -265,6 +268,7 @@ export function LogFilters({
           <div className="grid grid-cols-2 gap-2">
             <DateFilterField
               label="From"
+              id="from"
               value={from}
               max={to}
               onChange={onFromChange}
@@ -274,6 +278,7 @@ export function LogFilters({
 
             <DateFilterField
               label="To"
+              id="to"
               value={to}
               min={from}
               onChange={onToChange}
@@ -309,6 +314,7 @@ export function LogFilters({
         <div className="flex flex-wrap items-center gap-1.5">
           <DateFilterField
             label="From"
+            id="from"
             value={from}
             max={to}
             onChange={onFromChange}
@@ -316,6 +322,7 @@ export function LogFilters({
 
           <DateFilterField
             label="To"
+            id="to"
             value={to}
             min={from}
             onChange={onToChange}

@@ -1,18 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { signInSchema } from "../schemas/auth.schema";
 import type { SignInForm } from "../types/auth.type";
 import { AuthService } from "../api/auth.service";
-import { ROUTES } from "@/src/constants/routes";
 
 type SignInErrors = Partial<Record<keyof SignInForm, string>>;
 
 export function useSignIn() {
-  const router = useRouter();
-
   const [errors, setErrors] = useState<SignInErrors>({});
   const [formError, setFormError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -57,8 +53,6 @@ export function useSignIn() {
         setFormError(error.message ?? "Unable to sign in.");
         return;
       }
-
-      router.push(ROUTES.ORGANIZATION.ROOT);
     } catch (e) {
       console.error(e);
       setFormError("Something went wrong. Please try again.");
