@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FileText } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 import type { Project } from "../types/project.type";
 import { ROUTES } from "@/src/constants/routes";
@@ -12,6 +13,35 @@ type ProjectCardProps = {
 };
 
 export function ProjectCard({ project, organizationSlug }: ProjectCardProps) {
+  const logCountRef = useRef<HTMLSpanElement | null>(null);
+  const previousLogCountRef = useRef(project.logCount);
+
+  useEffect(() => {
+    const previousLogCount = previousLogCountRef.current;
+    previousLogCountRef.current = project.logCount;
+
+    if (
+      previousLogCount === undefined ||
+      project.logCount === undefined ||
+      previousLogCount === project.logCount ||
+      !logCountRef.current
+    ) {
+      return;
+    }
+
+    const flash = logCountRef.current.animate(
+      [
+        { backgroundColor: "rgba(34, 197, 94, 0.24)" },
+        { backgroundColor: "rgba(34, 197, 94, 0)", offset: 1 },
+      ],
+      { duration: 1000, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
+    );
+
+    return () => {
+      flash.cancel();
+    };
+  }, [project.logCount]);
+
   return (
     <Link
       href={ROUTES.ORGANIZATION.PROJECT(organizationSlug, project.id)}
@@ -38,7 +68,10 @@ export function ProjectCard({ project, organizationSlug }: ProjectCardProps) {
         </span>
       </div>
 
-      <span className="ml-3 shrink-0 font-mono text-xs text-muted-foreground">
+      <span
+        ref={logCountRef}
+        className="ml-3 shrink-0 font-mono text-xs text-muted-foreground"
+      >
         {project.logCount === undefined
           ? "—"
           : `${project.logCount.toLocaleString()} logs`}

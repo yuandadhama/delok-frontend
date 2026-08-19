@@ -18,6 +18,8 @@ export { useProject } from "./hooks/useProject";
 
 export { useProjectSettings } from "./hooks/useProjectSettings";
 
+export { useProjectsRealtime } from "./hooks/useProjectsRealtime";
+
 export { projectSchema } from "./schemas/project.schema";
 
 export type {

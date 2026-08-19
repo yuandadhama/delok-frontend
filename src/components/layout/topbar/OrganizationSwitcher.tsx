@@ -25,9 +25,9 @@ export function OrganizationSwitcher({
     (org) => org.slug === organizationSlug,
   );
 
-  const handleSwitch = (targetSlug: string) => {
+  const handleSwitch = async (targetSlug: string) => {
     setOpen(false);
-    delok.info({
+    await delok.info({
       event: "organization_switched",
       message: "User switched organization",
       payload: {

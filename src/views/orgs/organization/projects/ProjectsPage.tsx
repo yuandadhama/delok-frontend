@@ -2,6 +2,7 @@
 
 "use client";
 
+import { useMemo } from "react";
 import { useParams } from "next/navigation";
 
 import {
@@ -10,6 +11,7 @@ import {
   ProjectList,
   ProjectListSkeleton,
   useProjects,
+  useProjectsRealtime,
 } from "@/src/domains/project";
 
 export default function ProjectsPage() {
@@ -20,6 +22,13 @@ export default function ProjectsPage() {
   const organizationSlug = params.organizationSlug;
 
   const { projects, isLoading } = useProjects(organizationSlug);
+
+  const projectIds = useMemo(
+    () => projects.map((p) => p.id),
+    [projects],
+  );
+
+  useProjectsRealtime({ organizationSlug, projectIds });
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6">

@@ -21,8 +21,8 @@ export function SidebarNavigationItem({
   const href = item.href(organizationSlug);
   const Icon = item.icon;
 
-  const handleClick = () => {
-    delok.info({
+  const handleClick = async () => {
+    await delok.info({
       event: "sidebar_nav_clicked",
       message: `Sidebar navigation clicked: ${item.label}`,
       payload: {

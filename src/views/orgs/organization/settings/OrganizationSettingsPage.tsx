@@ -115,7 +115,7 @@ export default function OrganizationSettingsPage() {
       startCooldown();
 
       if (updated.slug && updated.slug !== organizationSlug) {
-        router.replace(ROUTES.ORGANIZATION.BASE(updated.slug));
+        router.replace(ROUTES.ORGANIZATION.PROJECTS(updated.slug));
       }
     } catch (error) {
       if (isMountedRef.current) {
@@ -195,7 +195,10 @@ export default function OrganizationSettingsPage() {
             <Button
               type="submit"
               disabled={
-                isUpdating || isCooldownActive || isUnchanged || !editingName.trim()
+                isUpdating ||
+                isCooldownActive ||
+                isUnchanged ||
+                !editingName.trim()
               }
             >
               {isUpdating ? "Saving…" : "Save changes"}
