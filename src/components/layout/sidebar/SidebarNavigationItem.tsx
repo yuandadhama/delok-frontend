@@ -1,7 +1,11 @@
 // ./src/components/layout/sidebar/SidebarNavigationItem.tsx
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { delok } from "@/src/lib/delok";
+import { ProjectService } from "@/src/domains/project/api/project.service";
+import { ROUTES } from "@/src/constants/routes";
+import { clearLastProjectId, getLastProjectId } from "@/src/constants/storage";
 import type { SidebarItem } from "./sidebar.config";
 
 type SidebarNavigationItemProps = {
@@ -17,11 +21,12 @@ export function SidebarNavigationItem({
   pathname,
   collapsed,
 }: SidebarNavigationItemProps) {
+  const router = useRouter();
   const active = item.isActive(pathname, organizationSlug);
   const href = item.href(organizationSlug);
   const Icon = item.icon;
 
-  const handleClick = async () => {
+  const handleClick = async (event: React.MouseEvent<HTMLAnchorElement>) => {
     await delok.info({
       event: "sidebar_nav_clicked",
       message: `Sidebar navigation clicked: ${item.label}`,
@@ -30,6 +35,22 @@ export function SidebarNavigationItem({
         section: item.label,
       },
     });
+
+    if (item.label === "Projects") {
+      const projectId = getLastProjectId(organizationSlug);
+
+      if (projectId) {
+        event.preventDefault();
+
+        try {
+          await ProjectService.getById(organizationSlug, projectId);
+          router.push(ROUTES.ORGANIZATION.PROJECT(organizationSlug, projectId));
+        } catch {
+          clearLastProjectId(organizationSlug);
+          router.push(href);
+        }
+      }
+    }
   };
 
   if (item.disabled) {

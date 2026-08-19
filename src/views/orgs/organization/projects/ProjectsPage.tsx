@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useParams } from "next/navigation";
 
 import {
@@ -13,6 +13,7 @@ import {
   useProjects,
   useProjectsRealtime,
 } from "@/src/domains/project";
+import { clearLastProjectId } from "@/src/constants/storage";
 
 export default function ProjectsPage() {
   const params = useParams<{
@@ -23,12 +24,13 @@ export default function ProjectsPage() {
 
   const { projects, isLoading } = useProjects(organizationSlug);
 
-  const projectIds = useMemo(
-    () => projects.map((p) => p.id),
-    [projects],
-  );
+  const projectIds = useMemo(() => projects.map((p) => p.id), [projects]);
 
   useProjectsRealtime({ organizationSlug, projectIds });
+
+  useEffect(() => {
+    clearLastProjectId(organizationSlug);
+  }, [organizationSlug]);
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col p-4 sm:p-6">

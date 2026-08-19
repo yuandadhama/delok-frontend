@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useEffect } from "react";
 
 import Button from "@/src/components/ui/Button";
 
@@ -10,6 +11,7 @@ import { LogExplorer } from "@/src/domains/log-explorer";
 
 import { ROUTES } from "@/src/constants/routes";
 import Link from "next/link";
+import { setLastProjectId } from "@/src/constants/storage";
 
 export default function ProjectPage() {
   const { organizationSlug, projectId } = useParams<{
@@ -22,6 +24,14 @@ export default function ProjectPage() {
     isLoading: loadingProject,
     isError,
   } = useProject(organizationSlug, projectId);
+
+  useEffect(() => {
+    if (loadingProject || isError || !project) {
+      return;
+    }
+
+    setLastProjectId(organizationSlug, projectId);
+  }, [isError, loadingProject, organizationSlug, project, projectId]);
 
   if (loadingProject) {
     return (
