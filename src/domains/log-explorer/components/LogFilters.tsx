@@ -168,6 +168,7 @@ export function LogFilters({
   // Local draft of the search text so keystrokes are committed (and the API
   // fetched) only after the user stops typing for SEARCH_DEBOUNCE_MS.
   const [searchDraft, setSearchDraft] = useState(search);
+  const [committedSearch, setCommittedSearch] = useState(search);
   const searchChangeRef = useRef(onSearchChange);
 
   useEffect(() => {
@@ -175,20 +176,21 @@ export function LogFilters({
   });
 
   // Keep the draft in sync when the parent resets the search (e.g. "Clear").
-  useEffect(() => {
+  if (committedSearch !== search) {
+    setCommittedSearch(search);
     setSearchDraft(search);
-  }, [search]);
+  }
 
   // Debounce committing the draft to avoid an API call per keystroke.
   useEffect(() => {
-    if (searchDraft === search) return;
+    if (searchDraft === committedSearch) return;
 
     const timer = setTimeout(() => {
       searchChangeRef.current(searchDraft);
     }, SEARCH_DEBOUNCE_MS);
 
     return () => clearTimeout(timer);
-  }, [searchDraft, search]);
+  }, [searchDraft, committedSearch]);
 
   const activeCount = [search.trim(), level, environment, from, to].filter(
     Boolean,

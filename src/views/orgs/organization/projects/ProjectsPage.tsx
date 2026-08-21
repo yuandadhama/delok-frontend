@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 
 import {
@@ -15,6 +15,18 @@ import {
 } from "@/src/domains/project";
 import { clearLastProjectId } from "@/src/constants/storage";
 
+const SORT_OPTIONS = [
+  { value: "created-desc", label: "Newest created" },
+  { value: "created-asc", label: "Oldest created" },
+  { value: "updated-desc", label: "Recently updated" },
+] as const;
+
+type SortOption = (typeof SORT_OPTIONS)[number]["value"];
+
+function getTimestamp(value?: string) {
+  return value ? new Date(value).getTime() : 0;
+}
+
 export default function ProjectsPage() {
   const params = useParams<{
     organizationSlug: string;
@@ -24,7 +36,25 @@ export default function ProjectsPage() {
 
   const { projects, isLoading } = useProjects(organizationSlug);
 
-  const projectIds = useMemo(() => projects.map((p) => p.id), [projects]);
+  const [sortBy, setSortBy] = useState<SortOption>("created-desc");
+
+  const sortedProjects = useMemo(() => {
+    return [...projects].sort((a, b) => {
+      switch (sortBy) {
+        case "created-asc":
+          return getTimestamp(a.createdAt) - getTimestamp(b.createdAt);
+        case "updated-desc":
+          return getTimestamp(b.updatedAt) - getTimestamp(a.updatedAt);
+        default:
+          return getTimestamp(b.createdAt) - getTimestamp(a.createdAt);
+      }
+    });
+  }, [projects, sortBy]);
+
+  const projectIds = useMemo(
+    () => sortedProjects.map((p) => p.id),
+    [sortedProjects],
+  );
 
   useProjectsRealtime({ organizationSlug, projectIds });
 
@@ -49,6 +79,21 @@ export default function ProjectsPage() {
             </span>
           )}
 
+          {!isLoading && projects.length > 1 && (
+            <select
+              aria-label="Sort projects"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="cursor-pointer rounded-md border border-border bg-surface px-2 py-1.5 text-xs text-foreground transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          )}
+
           <CreateProjectModal organizationSlug={organizationSlug} />
         </div>
       </header>
@@ -65,7 +110,7 @@ export default function ProjectsPage() {
 
         {!isLoading && projects.length > 0 && (
           <ProjectList
-            projects={projects}
+            projects={sortedProjects}
             organizationSlug={organizationSlug}
           />
         )}
