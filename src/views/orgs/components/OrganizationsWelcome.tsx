@@ -16,7 +16,7 @@ export default function OrganizationsWelcome({
       </h1>
 
       <p className="mt-1 text-lg text-muted-foreground">
-        Welcome back to Delok!
+        Let’s get your organaization set up.
       </p>
     </header>
   );

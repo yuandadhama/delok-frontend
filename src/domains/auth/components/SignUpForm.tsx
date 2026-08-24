@@ -25,8 +25,8 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps = {}) {
   return (
     <AuthLayout>
       <AuthCard
-        title="Get started with Delok"
-        subtitle="Create your free account"
+        title="Start seeing your systems clearly"
+        subtitle="Create your Delok account and start seeing your application activity in real time."
       >
         <form onSubmit={submit} className="space-y-4">
           {form.formState.errors.root && (
@@ -38,7 +38,7 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps = {}) {
           <Input
             id="name"
             label="Name"
-            placeholder="Alan Turing"
+            placeholder="Ada Lovelace"
             {...form.register("name")}
             error={form.formState.errors.name?.message}
           />
@@ -47,7 +47,7 @@ export default function SignUpForm({ onSuccess }: SignUpFormProps = {}) {
             id="email"
             label="Email"
             type="email"
-            placeholder="alan@turing.com"
+            placeholder="ada@company.com"
             {...form.register("email")}
             error={form.formState.errors.email?.message}
           />

@@ -9,7 +9,7 @@ export function OrganizationEmptyState() {
     <EmptyState
       icon={<Building2 className="h-6 w-6" />}
       title="No organizations yet"
-      description="Create your first organization to get started."
+      description="Create an organization to start managing your projects and logs."
     />
   );
 }

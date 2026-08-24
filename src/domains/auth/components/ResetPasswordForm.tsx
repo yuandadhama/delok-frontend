@@ -28,10 +28,10 @@ export default function ResetPasswordForm({
   if (!token) {
     return (
       <AuthLayout>
-        <AuthCard title="Invalid reset link">
-          <p className="text-center text-sm text-muted-foreground">
-            This reset link is invalid or has expired. Please request a new one.
-          </p>
+        <AuthCard
+          title="Invalid reset link"
+          subtitle="This reset link is invalid or has expired. Request a new one to continue."
+        >
           <div className="mt-6 text-center">
             <Link
               href={ROUTES.AUTH.FORGOT_PASSWORD}
@@ -48,8 +48,8 @@ export default function ResetPasswordForm({
   return (
     <AuthLayout>
       <AuthCard
-        title="Create your new password"
-        subtitle="Enter your new password below"
+        title="Set a new password"
+        subtitle="Choose a new password to secure your Delok account."
       >
         {formError && (
           <div className="mb-4 rounded-md border border-danger bg-danger/10 p-3 text-sm text-danger">

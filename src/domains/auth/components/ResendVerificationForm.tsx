@@ -29,10 +29,10 @@ export default function ResendVerificationForm() {
     <AuthLayout>
       <AuthCard
         title="Verify your email"
-        subtitle="The Google account you're using is associated with an unverified email. Enter it below and we'll send a new verification email."
+        subtitle="Enter your email address and we'll send you a new verification link."
       >
         {success ? (
-          <div className="rounded-md border border-success bg-success/10 p-3 text-sm text-success text-center">
+          <div className="bg-success/10 p-3 text-sm text-success text-center">
             If an account requiring email verification exists, we&apos;ve sent a
             new verification email.
           </div>
@@ -47,7 +47,7 @@ export default function ResendVerificationForm() {
                 setEmail(e.target.value);
                 if (fieldError) setFieldError(null);
               }}
-              placeholder="you@example.com"
+              placeholder="you@company.com"
               error={fieldError ?? undefined}
             />
 

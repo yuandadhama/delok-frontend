@@ -11,7 +11,7 @@ export function GetStartedSection() {
   return (
     <div className="flex flex-col gap-3">
       <h2 className="text-xs font-semibold uppercase tracking-wider text-primary">
-        Get started
+        Choose where to start
       </h2>
 
       <CreateOrganizationModal
@@ -30,7 +30,7 @@ export function GetStartedSection() {
                 Create a new organization
               </span>
               <span className="mt-1 block text-xs text-muted-foreground">
-                Set up an organization to organize your projects and logs.
+                Create an organization to manage your projects and logs.
               </span>
             </span>
           </button>
@@ -40,9 +40,6 @@ export function GetStartedSection() {
       {/* Stub for future "join by invite" flow */}
       <button
         type="button"
-        onClick={() =>
-          showToast({ message: "Joining organizations is coming soon.", type: "info" })
-        }
         className="group flex w-full items-start gap-3 rounded-xl border border-dashed border-border bg-transparent p-4 text-left opacity-70 transition-opacity "
       >
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface-hover text-muted-foreground">
@@ -53,8 +50,9 @@ export function GetStartedSection() {
           <span className="block text-sm font-semibold text-foreground">
             Join an organization
           </span>
-          <span className="mt-1 block text-xs text-muted-foreground">
-            Use an invite to join an existing organization.
+
+          <span className="mt-2 block text-xs text-muted-foreground font-bold">
+            COMING SOON...
           </span>
         </span>
       </button>

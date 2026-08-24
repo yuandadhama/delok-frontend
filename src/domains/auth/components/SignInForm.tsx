@@ -19,7 +19,10 @@ export default function SignInForm() {
 
   return (
     <AuthLayout>
-      <AuthCard title="Welcome back" subtitle="Sign in to your Delok account">
+      <AuthCard
+        title="Welcome back!"
+        subtitle="Continue monitoring your systems with Delok."
+      >
         <form onSubmit={submit} className="space-y-4">
           {formError && (
             <div className="rounded-md border border-danger bg-danger/10 p-3 text-sm text-danger">
@@ -32,7 +35,7 @@ export default function SignInForm() {
             label="Email"
             name="email"
             type="email"
-            placeholder="alan@turing.com"
+            placeholder="you@company.com"
             error={errors.email}
           />
 

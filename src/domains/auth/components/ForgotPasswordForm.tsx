@@ -29,11 +29,11 @@ export default function ForgotPasswordForm() {
     <AuthLayout>
       <AuthCard
         title="Reset your password"
-        subtitle="Enter your email and we'll send you a reset link"
+        subtitle="Enter your email and we'll send you a link to get back into Delok."
       >
         {sent && (
-          <div className="mb-4 rounded-md border border-success bg-success/10 p-3 text-sm text-success">
-            Check your email for reset instructions.
+          <div className="mb-4 rounded-md bg-success/10 p-3 text-sm text-success">
+            Check your email for instructions to reset your password.
           </div>
         )}
 
@@ -51,7 +51,7 @@ export default function ForgotPasswordForm() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="alan@turing.com"
+            placeholder="you@company.com"
             error={errors.email}
           />
 
@@ -74,7 +74,7 @@ export default function ForgotPasswordForm() {
             href={ROUTES.AUTH.SIGN_IN}
             className="text-primary hover:underline"
           >
-            Back to Sign In
+            Back to sign in
           </Link>
         </p>
       </AuthCard>
