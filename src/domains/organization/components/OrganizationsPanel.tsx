@@ -5,7 +5,6 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
-import Input from "@/src/components/ui/Input";
 import type { Organization } from "../types/organization.type";
 import { OrganizationList } from "./OrganizationList";
 import { OrganizationListSkeleton } from "./OrganizationListSkeleton";
@@ -33,17 +32,15 @@ export function OrganizationsPanel({
   }, [organizations, search]);
 
   return (
-    <div className="flex flex-col  gap-3">
-      <div className="relative ">
-        <span className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-        </span>
-
-        <Input
-          placeholder="Search all organizations"
+    <div className="flex flex-col gap-3">
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search organizations..."
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          className="rounded-full! pl-9"
+          className="w-full rounded-md border border-border bg-surface px-10 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
         />
       </div>
 

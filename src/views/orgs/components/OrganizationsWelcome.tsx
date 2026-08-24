@@ -16,7 +16,7 @@ export default function OrganizationsWelcome({
       </h1>
 
       <p className="mt-1 text-lg text-muted-foreground">
-        Let’s get your organaization set up.
+        Let&#39;s get your organization set up.
       </p>
     </header>
   );

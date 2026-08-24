@@ -5,7 +5,7 @@
 import { Building2, Link2 } from "lucide-react";
 
 import { showToast } from "@/src/components/ui/toast";
-import { CreateOrganizationModal } from "./CreateOrganizationModal";
+import { CreateOrganizationModal } from "../../../domains/organization/components/CreateOrganizationModal";
 
 export function GetStartedSection() {
   return (
