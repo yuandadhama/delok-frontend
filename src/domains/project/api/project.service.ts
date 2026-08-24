@@ -11,6 +11,19 @@ import type {
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 /**
+ * Normalize a project object returned by the API.
+ * The backend may use snake_case timestamps (`created_at`, `updated_at`)
+ * while the frontend type expects camelCase (`createdAt`, `updatedAt`).
+ */
+function normalizeProject(raw: Record<string, unknown>): Project {
+  return {
+    ...raw,
+    createdAt: (raw.createdAt as string) ?? (raw.created_at as string),
+    updatedAt: (raw.updatedAt as string) ?? (raw.updated_at as string),
+  } as Project;
+}
+
+/**
  * ProjectService
  *
  * Centralized service for all project-related API requests.
@@ -37,7 +50,7 @@ export class ProjectService {
     }
 
     const data = await response.json();
-    return data.data ?? [];
+    return (data.data ?? []).map(normalizeProject);
   }
 
   /**
@@ -64,7 +77,7 @@ export class ProjectService {
       throw new Error(getApiErrorMessage(data, "Failed to create project"));
     }
 
-    return data.data;
+    return normalizeProject(data.data);
   }
 
   /**
@@ -88,7 +101,7 @@ export class ProjectService {
     }
 
     const data = await response.json();
-    return data.data;
+    return normalizeProject(data.data);
   }
 
   /**
@@ -116,7 +129,7 @@ export class ProjectService {
       throw new Error(getApiErrorMessage(data, "Failed to update project"));
     }
 
-    return data.data;
+    return normalizeProject(data.data);
   }
 
   /**

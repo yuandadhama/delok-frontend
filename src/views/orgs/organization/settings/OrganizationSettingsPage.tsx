@@ -16,6 +16,7 @@ import { useCooldown } from "@/src/hooks/useCooldown";
 import { showToast } from "@/src/components/ui/toast";
 import { ROUTES } from "@/src/constants/routes";
 import { delok } from "@/src/lib/delok";
+import { formatDateTime } from "@/src/utils/format-date";
 
 export default function OrganizationSettingsPage() {
   const router = useRouter();
@@ -159,6 +160,32 @@ export default function OrganizationSettingsPage() {
   return (
     <div className="w-full max-w-4xl p-4 sm:p-6">
       <div className="space-y-10 sm:space-y-12">
+        {/* Details */}
+        {(organization?.createdAt || organization?.updatedAt) && (
+          <section>
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {organization.createdAt && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">Created</dt>
+                  <dd className="mt-0.5 text-sm text-foreground">
+                    {formatDateTime(organization.createdAt)}
+                  </dd>
+                </div>
+              )}
+
+              {organization.updatedAt && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">
+                    Last updated
+                  </dt>
+                  <dd className="mt-0.5 text-sm text-foreground">
+                    {formatDateTime(organization.updatedAt)}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
         {/* General */}
         <section className="space-y-4">
           <div>

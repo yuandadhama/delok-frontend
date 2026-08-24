@@ -8,6 +8,19 @@ import type {
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+/**
+ * Normalize an organization object returned by the API.
+ * The backend may use snake_case timestamps (`created_at`, `updated_at`)
+ * while the frontend type expects camelCase (`createdAt`, `updatedAt`).
+ */
+function normalizeOrganization(raw: Record<string, unknown>): Organization {
+  return {
+    ...raw,
+    createdAt: (raw.createdAt as string) ?? (raw.created_at as string),
+    updatedAt: (raw.updatedAt as string) ?? (raw.updated_at as string),
+  } as Organization;
+}
+
 const ORGANIZATION_SLUG_ALREADY_EXISTS = "ORGANIZATION_SLUG_ALREADY_EXISTS";
 
 /**
@@ -33,7 +46,7 @@ export class OrganizationService {
     }
 
     const data = await response.json();
-    return data.data ?? [];
+    return (data.data ?? []).map(normalizeOrganization);
   }
 
   /**
@@ -59,7 +72,7 @@ export class OrganizationService {
       );
     }
 
-    return data.data;
+    return normalizeOrganization(data.data);
   }
 
   /**
@@ -77,7 +90,7 @@ export class OrganizationService {
     }
 
     const data = await response.json();
-    return data.data;
+    return normalizeOrganization(data.data);
   }
 
   /**
@@ -106,7 +119,7 @@ export class OrganizationService {
       );
     }
 
-    return data.data;
+    return normalizeOrganization(data.data);
   }
 
   /**

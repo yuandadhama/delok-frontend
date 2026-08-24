@@ -8,12 +8,10 @@ import {
   useProjectSettings,
 } from "@/src/domains/project";
 
-import {
-  ApiKeyList,
-  useProjectApiKeys,
-} from "@/src/domains/api-key";
+import { ApiKeyList, useProjectApiKeys } from "@/src/domains/api-key";
 
 import type { Project } from "@/src/domains/project";
+import { formatDateTime } from "@/src/utils/format-date";
 
 type ProjectSettingsViewProps = {
   organizationSlug: string;
@@ -42,6 +40,32 @@ export function ProjectSettingsView({
   return (
     <div className="w-full max-w-4xl flex flex-col p-4 sm:p-6">
       <div className="space-y-10 sm:space-y-12">
+        {/* Details */}
+        {(project.createdAt || project.updatedAt) && (
+          <section className="space-y-4">
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {project.createdAt && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">Created</dt>
+                  <dd className="mt-0.5 text-sm text-foreground">
+                    {formatDateTime(project.createdAt)}
+                  </dd>
+                </div>
+              )}
+
+              {project.updatedAt && (
+                <div>
+                  <dt className="text-xs text-muted-foreground">
+                    Last updated
+                  </dt>
+                  <dd className="mt-0.5 text-sm text-foreground">
+                    {formatDateTime(project.updatedAt)}
+                  </dd>
+                </div>
+              )}
+            </dl>
+          </section>
+        )}
         <ProjectSettings projectName={project.name} onUpdate={renameProject} />
 
         <ApiKeyList
