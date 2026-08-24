@@ -5,3 +5,5 @@ export { OrganizationListSkeleton } from "./OrganizationListSkeleton";
 export { OrganizationEmptyState } from "./OrganizationEmptyState";
 export { GetStartedSection } from "./GetStartedSection";
 export { OrganizationsPanel } from "./OrganizationsPanel";
+export { OrganizationSettings } from "./OrganizationSettings";
+export { OrganizationDangerZone } from "./OrganizationDangerZone";

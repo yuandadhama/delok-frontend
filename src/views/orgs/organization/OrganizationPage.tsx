@@ -1,4 +1,4 @@
-// app/(root)/orgs/[organizationSlug]/page.tsx
+// ./src/views/orgs/organization/OrganizationPage.tsx
 
 "use client";
 

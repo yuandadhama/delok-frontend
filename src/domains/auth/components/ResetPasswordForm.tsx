@@ -13,8 +13,17 @@ import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";
 import { useResetPassword } from "../hooks/useResetPassword";
 
-export default function ResetPasswordForm() {
-  const { token, errors, formError, isLoading, submit } = useResetPassword();
+type ResetPasswordFormProps = {
+  /** Invoked after successful reset; the view owns navigation. */
+  onSuccess?: () => void;
+};
+
+export default function ResetPasswordForm({
+  onSuccess,
+}: ResetPasswordFormProps = {}) {
+  const { token, errors, formError, isLoading, submit } = useResetPassword({
+    onSuccess,
+  });
 
   if (!token) {
     return (

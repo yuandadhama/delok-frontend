@@ -1,49 +1,43 @@
-// ./src/domains/project/hooks/useProjectSettings.ts
+// ./src/domains/projects/hooks/useProjectSettings.ts
 
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { showToast } from "@/src/components/ui/toast";
-
-import { ROUTES } from "@/src/constants/routes";
 
 import { useProjects } from "./useProjects";
 
 /**
- * Project settings actions for a single project: rename and delete (with
- * navigation back to the organization's project list). Reuses the shared
- * project mutations from `useProjects` so project API logic stays owned by the
- * project domain.
+ * Project settings actions for a single project: rename and delete. Reuses
+ * the shared project mutations from `useProjects` so project API logic stays
+ * owned by the project domain.
  *
  * The mutations are controlled directly by React Query: `mutateAsync` drives
  * the loading state (`isPending`) and the cache is synchronized in each
  * mutation's `onSuccess`, so the project name is only committed to the UI
  * after the API succeeds.
+ *
+ * This hook does NOT navigate. Where the user goes after a mutation is a
+ * screen-level decision owned by the calling view.
  */
 export function useProjectSettings(
   organizationSlug: string,
   projectId: string,
 ) {
-  const router = useRouter();
-
   const { updateProject, deleteProject } = useProjects(organizationSlug);
 
   const renameProject = async (name: string) => {
     await updateProject.mutateAsync({ projectId, name });
   };
 
-  const deleteProjectAndNavigate = async () => {
+  const deleteProjectOnly = async () => {
     await deleteProject.mutateAsync(projectId);
 
     showToast({ message: "Project deleted", type: "success" });
-
-    router.replace(ROUTES.ORGANIZATION.PROJECTS(organizationSlug));
   };
 
   return {
     renameProject,
-    deleteProject: deleteProjectAndNavigate,
+    deleteProject: deleteProjectOnly,
     isRenaming: updateProject.isPending,
     isDeleting: deleteProject.isPending,
   };

@@ -2,6 +2,8 @@
 
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import {
   ProjectDangerZone,
   ProjectSettings,
@@ -11,6 +13,7 @@ import {
 import { ApiKeyList, useProjectApiKeys } from "@/src/domains/api-key";
 
 import type { Project } from "@/src/domains/project";
+import { ROUTES } from "@/src/constants/routes";
 import { formatDateTime } from "@/src/utils/format-date";
 
 type ProjectSettingsViewProps = {
@@ -24,10 +27,20 @@ export function ProjectSettingsView({
   projectId,
   project,
 }: ProjectSettingsViewProps) {
+  const router = useRouter();
+
   const { renameProject, deleteProject } = useProjectSettings(
     organizationSlug,
     projectId,
   );
+
+  // Navigation after deletion is a screen-level decision: the domain only
+  // performs the mutation; the view decides where the user goes next.
+  const handleDeleteProject = async () => {
+    await deleteProject();
+
+    router.replace(ROUTES.ORGANIZATION.PROJECTS(organizationSlug));
+  };
 
   const {
     apiKeys,
@@ -80,7 +93,7 @@ export function ProjectSettingsView({
       <div className="mt-10 border-t border-border pt-6 sm:mt-12 sm:pt-8">
         <ProjectDangerZone
           projectName={project.name}
-          onDelete={deleteProject}
+          onDelete={handleDeleteProject}
         />
       </div>
     </div>

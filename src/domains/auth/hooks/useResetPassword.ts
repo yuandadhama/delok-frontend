@@ -1,17 +1,23 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { resetPasswordSchema } from "../schemas/auth.schema";
 import type { ResetPasswordForm } from "../types/auth.type";
 import { AuthService } from "../api/auth.service";
-import { ROUTES } from "@/src/constants/routes";
 
 type ResetPasswordErrors = Partial<Record<keyof ResetPasswordForm, string>>;
 
-export function useResetPassword() {
-  const router = useRouter();
+type UseResetPasswordOptions = {
+  /**
+   * Called after a successful password reset. Navigation (e.g. back to the
+   * sign-in screen) is a screen-level decision owned by the calling view.
+   */
+  onSuccess?: () => void;
+};
+
+export function useResetPassword({ onSuccess }: UseResetPasswordOptions = {}) {
   const searchParam = useSearchParams();
   const token = searchParam.get("token");
 
@@ -67,7 +73,7 @@ export function useResetPassword() {
         return;
       }
 
-      router.push(`${ROUTES.AUTH.SIGN_IN}?reset=success`);
+      onSuccess?.();
     } catch (e) {
       setFormError("Something went wrong. Please try again.");
     } finally {

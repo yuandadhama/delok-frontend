@@ -14,8 +14,13 @@ import AuthLayout from "./AuthLayout";
 import SocialLogin from "./SocialLogin";
 import { useSignUp } from "../hooks/useSignUp";
 
-export default function SignUpForm() {
-  const { form, submit } = useSignUp();
+type SignUpFormProps = {
+  /** Invoked after successful sign-up; the view owns navigation. */
+  onSuccess?: () => void;
+};
+
+export default function SignUpForm({ onSuccess }: SignUpFormProps = {}) {
+  const { form, submit } = useSignUp({ onSuccess });
 
   return (
     <AuthLayout>

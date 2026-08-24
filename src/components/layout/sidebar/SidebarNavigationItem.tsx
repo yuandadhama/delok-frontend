@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { delok } from "@/src/lib/delok";
-import { ProjectService } from "@/src/domains/project/api/project.service";
+import { ProjectService } from "@/src/domains/project";
 import { ROUTES } from "@/src/constants/routes";
 import { clearLastProjectId, getLastProjectId } from "@/src/constants/storage";
 import type { SidebarItem } from "./sidebar.config";

@@ -6,6 +6,8 @@ export {
   OrganizationEmptyState,
   GetStartedSection,
   OrganizationsPanel,
+  OrganizationSettings,
+  OrganizationDangerZone,
 } from "./components";
 
 export { organizationSchema } from "./schemas/organization.schema";
