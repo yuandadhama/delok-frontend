@@ -27,6 +27,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Navbar />
+      <h1 className="w-full h-screen mt-199">Hello</h1>
     </div>
   );
 }
