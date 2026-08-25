@@ -86,7 +86,7 @@ export default function ProjectsPage() {
                 aria-label="Sort projects"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="cursor-pointer appearance-none rounded-md border border-border bg-surface px-2 pr-4 py-1.5 text-xs text-foreground transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="cursor-pointer appearance-none rounded-md border border-border bg-surface px-2 pr-8 py-1.5 text-xs text-foreground transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
               >
                 {SORT_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
