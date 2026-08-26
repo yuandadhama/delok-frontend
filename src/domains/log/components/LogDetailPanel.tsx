@@ -51,8 +51,9 @@ export function LogDetailPanel({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="grid gap-5 @lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
-          <div className="space-y-5 min-w-0">
+        <div className="space-y-5 min-w-0">
+          {/* Metadata — 2x2 grid spanning the panel width */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-5">
             <DetailItem label="Event">{log.event}</DetailItem>
 
             <DetailItem label="Level">{log.level}</DetailItem>
@@ -64,38 +65,34 @@ export function LogDetailPanel({
             </DetailItem>
           </div>
 
-          {(log.message || log.payload) && (
-            <div className="space-y-5 min-w-0">
-              {log.message && (
-                <section className="min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
+          {log.message && (
+            <section className="min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />
 
-                    <h3 className="text-xs font-semibold">Message</h3>
-                  </div>
+                <h3 className="text-xs font-semibold">Message</h3>
+              </div>
 
-                  <div className="rounded-md border border-border bg-background p-3 min-w-0 overflow-hidden">
-                    <p className="min-w-0 text-[11px] text-foreground whitespace-pre-wrap wrap-break-word overflow-wrap-anywhere">
-                      {log.message}
-                    </p>
-                  </div>
-                </section>
-              )}
+              <div className="rounded-md border border-border bg-background p-3 min-w-0 overflow-hidden">
+                <p className="min-w-0 text-[11px] text-foreground whitespace-pre-wrap wrap-break-word overflow-wrap-anywhere">
+                  {log.message}
+                </p>
+              </div>
+            </section>
+          )}
 
-              {log.payload && (
-                <section className="min-w-0">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileJson className="h-3.5 w-3.5 text-muted-foreground" />
+          {log.payload && (
+            <section className="min-w-0">
+              <div className="flex items-center gap-2 mb-2">
+                <FileJson className="h-3.5 w-3.5 text-muted-foreground" />
 
-                    <h3 className="text-xs font-semibold">Payload</h3>
-                  </div>
+                <h3 className="text-xs font-semibold">Payload</h3>
+              </div>
 
-                  <pre className="min-w-0 overflow-x-auto rounded-md border border-border bg-background p-3 text-[10px] leading-relaxed font-mono text-muted-foreground whitespace-pre-wrap wrap-break-word overflow-wrap-anywhere">
-                    {JSON.stringify(log.payload, null, 2)}
-                  </pre>
-                </section>
-              )}
-            </div>
+              <pre className="min-w-0 overflow-x-auto rounded-md border border-border bg-background p-3 text-[10px] leading-relaxed font-mono text-muted-foreground whitespace-pre-wrap wrap-break-word overflow-wrap-anywhere">
+                {JSON.stringify(log.payload, null, 2)}
+              </pre>
+            </section>
           )}
         </div>
       </div>
