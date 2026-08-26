@@ -111,3 +111,32 @@
     transform: scaleX(0);
   }
 }
+
+/* ==========================================================================
+   5. LOG PREVIEW INGESTION (DelokLogPreview live stream)
+   ========================================================================== */
+:root {
+  /* py-1.5 (12px) + single line of text -> stable row height */
+  --delok-log-row-h: 1.8125rem; /* 29px */
+}
+
+@keyframes log-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-log-enter {
+  animation: log-enter 300ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-log-enter {
+    animation: none;
+  }
+}
