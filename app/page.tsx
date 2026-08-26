@@ -2,7 +2,12 @@
 
 "use client";
 
-import { Navbar, Hero, LogInvestigationSection } from "@/src/components/landing";
+import {
+  Navbar,
+  Hero,
+  LogInvestigationSection,
+  ProjectsAwarenessSection,
+} from "@/src/components/landing";
 import { authClient } from "@/src/lib/auth/auth-client";
 
 export default function HomePage() {
@@ -29,6 +34,7 @@ export default function HomePage() {
       <Navbar />
       <Hero />
       <LogInvestigationSection />
+      <ProjectsAwarenessSection />
     </div>
   );
 }

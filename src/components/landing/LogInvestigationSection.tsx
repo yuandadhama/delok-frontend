@@ -321,7 +321,8 @@ export function LogInvestigationSection() {
             hasEntered ? "animate-section-heading" : "opacity-0"
           }`}
         >
-          Seeing logs is only the beginning.
+          Seeing <span className="text-primary">logs</span> is only the
+          beginning.
         </h2>
 
         {/* Layered product showcase + copy column — one shared container,
