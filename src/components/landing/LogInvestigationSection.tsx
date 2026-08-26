@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import {
   ChevronRight,
@@ -197,17 +199,54 @@ export function LogInvestigationSection() {
     y: number;
     key: number;
   } | null>(null);
+  const [hasEntered, setHasEntered] = useState(false);
 
+  const sectionRef = useRef<HTMLElement | null>(null);
   const compositionRef = useRef<HTMLDivElement | null>(null);
   const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const startedRef = useRef(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const hasEnteredRef = useRef(false);
 
+  // --- Entrance: once-only viewport reveal (decoupled from cursor demo) ---
   useEffect(() => {
-    const composition = compositionRef.current;
-    if (!composition || startedRef.current) return;
+    const section = sectionRef.current;
+    if (!section || hasEnteredRef.current) return;
 
+    const triggerEntrance = () => {
+      if (hasEnteredRef.current) return;
+      hasEnteredRef.current = true;
+      setHasEntered(true);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        triggerEntrance();
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+    );
+    observer.observe(section);
+
+    // Fallback: already on screen at mount (large viewport / observer timing)
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      observer.disconnect();
+      triggerEntrance();
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // --- Cursor demo: starts only after entrance has been triggered ---
+  useEffect(() => {
+    if (!hasEntered) return;
     if (DEMO_CYCLE_IDS.length === 0) return;
+    if (startedRef.current) return;
+
+    const composition = compositionRef.current;
+    if (!composition) return;
 
     let cycleIndex = 0;
 
@@ -250,8 +289,6 @@ export function LogInvestigationSection() {
       timersRef.current.push(setTimeout(step, DWELL_MS));
     };
 
-    // Starts exactly once; safe to call from both the viewport pre-check
-    // and the IntersectionObserver.
     const start = () => {
       if (startedRef.current) return;
       startedRef.current = true;
@@ -261,41 +298,29 @@ export function LogInvestigationSection() {
       timersRef.current.push(setTimeout(step, DWELL_MS));
     };
 
-    // Primary trigger: first time the composition enters the viewport.
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        observer.disconnect();
-        start();
-      },
-      { threshold: 0.3 },
-    );
-    observer.observe(composition);
-
-    // Fallback trigger: if the composition is already on screen at mount
-    // (observer timing edge cases), start immediately.
-    const rect = composition.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      observer.disconnect();
-      start();
-    }
+    // Entrance animation is 700ms + 80ms stagger; wait for it to settle.
+    const t = setTimeout(start, 900);
+    timersRef.current.push(t);
 
     return () => {
-      observer.disconnect();
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
     };
-  }, []);
+  }, [hasEntered]);
 
   const selectedLog =
     INVESTIGATION_LOGS.find((log) => log.id === selectedId) ??
     INVESTIGATION_LOGS[0];
 
   return (
-    <section className="w-full py-32 lg:py-40">
+    <section ref={sectionRef} className="w-full py-32 lg:py-40">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Editorial heading */}
-        <h2 className="max-w-3xl text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground leading-[1.1]">
+        <h2
+          className={`max-w-3xl text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground leading-[1.1] ${
+            hasEntered ? "animate-section-heading" : "opacity-0"
+          }`}
+        >
           Seeing logs is only the beginning.
         </h2>
 
@@ -304,7 +329,12 @@ export function LogInvestigationSection() {
             column-gap (~10%) between them */}
         <div className="mt-16 lg:mt-24 grid grid-cols-1 gap-y-24 lg:grid-cols-[minmax(0,58%)_minmax(0,32%)] lg:gap-x-[10%] lg:gap-y-0 items-start">
           {/* Panel composition — explorer behind, details in front */}
-          <div ref={compositionRef} className="relative">
+          <div
+            ref={compositionRef}
+            className={`relative ${
+              hasEntered ? "animate-section-visual" : "opacity-0"
+            }`}
+          >
             {/* Ambient brand glow behind the panel stack — anchored to the
                 upper-left so it never sits under the Log Details panel's
                 bottom fade zone (which dissolves to the page background). */}
@@ -377,9 +407,13 @@ export function LogInvestigationSection() {
           </div>
 
           {/* Copy column — second column of the shared container */}
-          <div className="space-y-12">
+          <div
+            className={`space-y-12 ${
+              hasEntered ? "animate-section-copy" : "opacity-0"
+            }`}
+          >
             <p className="text-lg leading-relaxed max-w-none lg:max-w-90">
-              <span className="font-semibold text-foreground">
+              <span className="font-semibold text-primary">
                 Every event carries its full context.
               </span>{" "}
               <span className="text-muted-foreground">

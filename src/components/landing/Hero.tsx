@@ -7,7 +7,7 @@ export function Hero() {
   return (
     <section className="relative w-full pt-24">
       {/* Log panel — behind the text, pulled up */}
-      <div className="relative w-full -mt-8">
+      <div className="relative w-full -mt-8 animate-hero-log">
         <DelokLogPreview />
 
         {/* Gradients to hide panel edges */}
@@ -28,12 +28,12 @@ export function Hero() {
         <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-32">
           <div className="flex flex-col">
             {/* Headline */}
-            <h1 className="text-6xl md:text-7xl lg:text-8xl font-semibold text-foreground leading-[1.1] mb-6">
+            <h1 className="animate-hero-heading text-6xl md:text-7xl lg:text-8xl font-semibold text-foreground leading-[1.1] mb-6">
               See what your systems are doing.
             </h1>
 
             {/* CTA */}
-            <div className="relative w-fit">
+            <div className="relative w-fit animate-hero-cta">
               {/* Dark backdrop to dim log rows behind the CTA */}
               <div
                 aria-hidden
