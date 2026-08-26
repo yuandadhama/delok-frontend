@@ -6,7 +6,7 @@ import type { LogEvent } from "@/src/domains/log";
 import { formatLogDate, formatLogTime } from "@/src/domains/log";
 import { DEMO_LOGS } from "./delok-log-preview.data";
 
-const VISIBLE_LOG_COUNT = 16;
+const VISIBLE_LOG_COUNT = 22;
 
 const MIN_INGEST_DELAY_MS = 2200;
 const MAX_INGEST_DELAY_MS = 3500;
@@ -110,9 +110,11 @@ function LogRow({
 export function DelokLogPreview() {
   // Rows inserted by the ingestion loop get seq >= VISIBLE_LOG_COUNT,
   // so only they play the entrance animation (initial rows appear statically).
+  // The initial set always fills the full container by cycling DEMO_LOGS,
+  // so the stream never renders partially-empty regardless of container size.
   const [visibleLogs, setVisibleLogs] = useState<VisibleLog[]>(() =>
-    DEMO_LOGS.slice(0, VISIBLE_LOG_COUNT).map((log, i) => ({
-      log,
+    Array.from({ length: VISIBLE_LOG_COUNT }, (_, i) => ({
+      log: DEMO_LOGS[i % DEMO_LOGS.length],
       seq: i,
       displayTs: null,
     })),
@@ -187,7 +189,7 @@ export function DelokLogPreview() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="relative w-full overflow-hidden rounded-lg bg-surface">
+      <div className="relative w-full overflow-hidden rounded-lg bg-surface [overflow-anchor:none]">
         {/* Panel header */}
         <div className="flex items-center gap-2 px-3 py-2 border-b border-border">
           <span className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
@@ -210,11 +212,11 @@ export function DelokLogPreview() {
               key={`${entry.log.id}-${entry.seq}`}
               style={{ height: `${100 / VISIBLE_LOG_COUNT}%` }}
             >
-                <LogRow
-                  log={entry.log}
-                  displayTs={entry.displayTs}
-                  entering={entry.seq >= VISIBLE_LOG_COUNT}
-                />
+              <LogRow
+                log={entry.log}
+                displayTs={entry.displayTs}
+                entering={entry.seq >= VISIBLE_LOG_COUNT}
+              />
             </div>
           ))}
         </div>
@@ -222,7 +224,7 @@ export function DelokLogPreview() {
         {/* Gradient fades */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Bottom */}
-          <div className="absolute inset-x-0 bottom-0 h-24 rounded-b-lg bg-linear-to-t from-background via-background/60 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-60 rounded-b-lg bg-linear-to-t from-background via-background/60 to-transparent" />
           {/* Left */}
           <div className="absolute inset-y-0 left-0 w-20 rounded-l-lg bg-linear-to-r from-background via-background/70 to-transparent" />
           {/* Right */}

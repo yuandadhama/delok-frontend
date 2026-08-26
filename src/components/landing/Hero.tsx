@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { ROUTES } from "@/src/constants/routes";
+import { ArrowUpRight } from "lucide-react";
+import Button from "@/src/components/ui/Button";
 import { DelokLogPreview } from "./DelokLogPreview";
 
 export function Hero() {
@@ -9,10 +10,12 @@ export function Hero() {
       <div className="relative w-full -mt-8">
         <DelokLogPreview />
 
-        {/* Side gradients to hide edges */}
+        {/* Gradients to hide panel edges */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-y-0 left-0 w-16 bg-linear-to-r from-background to-transparent" />
-          <div className="absolute inset-y-0 right-0 w-16 bg-linear-to-l from-background to-transparent" />
+          <div className="absolute inset-y-0 left-0 w-40 md:w-56 bg-linear-to-r from-background via-background/70 to-transparent" />
+          <div className="absolute inset-y-0 right-0 w-40 md:w-56 bg-linear-to-l from-background via-background/70 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-background via-background/60 to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-16 bg-linear-to-b from-background to-transparent" />
         </div>
       </div>
 
@@ -36,12 +39,25 @@ export function Hero() {
                 aria-hidden
                 className="absolute -inset-x-10 -inset-y-6 bg-background/70 blur-2xl rounded-full pointer-events-none"
               />
-              <Link
-                href={ROUTES.AUTH.SIGN_UP}
-                className="relative inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground px-5 py-3 text-base font-medium transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              >
-                Get started
-              </Link>
+              <div className="relative flex flex-wrap items-center gap-3">
+                <Button href={ROUTES.AUTH.SIGN_UP} size="lg">
+                  Get started
+                </Button>
+                <Button
+                  href="/docs"
+                  variant="secondary"
+                  size="lg"
+                  className="group relative rounded-none"
+                >
+                  View Documentation
+                  <ArrowUpRight className="h-4 w-4" />
+                  {/* Growing line along the button's bottom edge */}
+                  <span
+                    aria-hidden
+                    className="absolute bottom-0 left-0 right-0 h-0.5 origin-left scale-x-0 bg-foreground transition-transform duration-300 ease-out group-hover:scale-x-100"
+                  />
+                </Button>
+              </div>
             </div>
           </div>
         </div>

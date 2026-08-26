@@ -1,4 +1,10 @@
-import { ChevronRight, FileJson, MessageSquare } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import {
+  ChevronRight,
+  FileJson,
+  MessageSquare,
+  MousePointer2,
+} from "lucide-react";
 
 import type { LogEvent } from "@/src/domains/log";
 import {
@@ -28,8 +34,8 @@ function getLevelClass(level: string) {
 
 // Mirrors LogEventRow tinting: fatal keeps a red wash, the selected row gets
 // a white highlight border, everything else stays transparent.
-function getRowTintClass(log: LogEvent) {
-  if (log.id === SELECTED_LOG_ID) {
+function getRowTintClass(log: LogEvent, isSelected: boolean) {
+  if (isSelected) {
     return `border border-white ${log.level === "fatal" ? "bg-danger/10" : ""}`;
   }
   if (log.level.toLowerCase() === "fatal") {
@@ -38,15 +44,23 @@ function getRowTintClass(log: LogEvent) {
   return "border-l-2 border-l-transparent";
 }
 
-function StreamRow({ log }: { log: LogEvent }) {
-  const isSelected = log.id === SELECTED_LOG_ID;
+function StreamRow({
+  log,
+  isSelected,
+  rowRef,
+}: {
+  log: LogEvent;
+  isSelected: boolean;
+  rowRef?: (el: HTMLDivElement | null) => void;
+}) {
   const hasMessage = Boolean(log.message);
   const hasPayload =
     Boolean(log.payload) && Object.keys(log.payload ?? {}).length > 0;
 
   return (
     <div
-      className={`w-full flex items-center gap-3 px-3 py-1.5 text-left border-b border-border/50 ${getRowTintClass(log)}`}
+      ref={rowRef}
+      className={`w-full flex items-center gap-3 px-3 py-1.5 text-left border-b border-border/50 ${getRowTintClass(log, isSelected)}`}
     >
       <span className="w-20 shrink-0 text-[10px] font-mono text-muted-foreground">
         {formatLogDate(log.occurredAt)}
@@ -103,7 +117,7 @@ function DetailPanel({ log }: { log: LogEvent }) {
 
   return (
     <div
-      className="flex flex-col rounded-lg border border-border bg-surface overflow-hidden"
+      className="h-full flex flex-col rounded-lg border border-border bg-surface overflow-hidden"
       style={{
         WebkitMaskImage:
           "linear-gradient(to bottom, black 60%, transparent 100%)",
@@ -163,9 +177,118 @@ function DetailPanel({ log }: { log: LogEvent }) {
   );
 }
 
+/** Rows the simulated cursor cycles through: error, warn, info, info. */
+const DEMO_CYCLE_IDS = [
+  "lg_01jbf2mac7e4g9h1j3k5", // payment.failed (error) — default selection
+  "lg_01jbf2m8a5c2e7g9j1l3", // database.query.slow (warn)
+  "lg_01jbf2m7q3x9k1n4r8t2", // request.completed (info)
+  "lg_01jbf2mce9g6h1k3l5m7", // deploy.completed (info)
+].filter((id) => INVESTIGATION_LOGS.some((log) => log.id === id));
+
+const CURSOR_MOVE_MS = 650;
+const CLICK_SETTLE_MS = 250;
+const DWELL_MS = 3400;
+
 export function LogInvestigationSection() {
+  const [selectedId, setSelectedId] = useState(SELECTED_LOG_ID);
+  const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null);
+  const [pulse, setPulse] = useState<{
+    x: number;
+    y: number;
+    key: number;
+  } | null>(null);
+
+  const compositionRef = useRef<HTMLDivElement | null>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const startedRef = useRef(false);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    const composition = compositionRef.current;
+    if (!composition || startedRef.current) return;
+
+    if (DEMO_CYCLE_IDS.length === 0) return;
+
+    let cycleIndex = 0;
+
+    const rowCenter = (id: string) => {
+      const row = rowRefs.current[id];
+      if (!row) return null;
+      const r = row.getBoundingClientRect();
+      const c = composition.getBoundingClientRect();
+      return {
+        // Stay within the VISIBLE sliver of the receded LOGS column (the
+        // foreground details panel overlaps the right ~3/4 of it), roughly
+        // over the timestamp/level cells.
+        x: r.left - c.left + Math.min(r.width * 0.15, 60),
+        y: r.top - c.top + r.height / 2,
+      };
+    };
+
+    // Move the cursor to the next reachable row in the cycle, click it,
+    // dwell, repeat. Never dies: unreachable rows are skipped, and if none
+    // are reachable yet (refs not attached) the pass is retried.
+    const step = () => {
+      for (let i = 0; i < DEMO_CYCLE_IDS.length; i++) {
+        cycleIndex = (cycleIndex + 1) % DEMO_CYCLE_IDS.length;
+        const nextId = DEMO_CYCLE_IDS[cycleIndex];
+        const target = rowCenter(nextId);
+        if (!target) continue;
+
+        setCursor(target);
+
+        timersRef.current.push(
+          setTimeout(() => {
+            setSelectedId(nextId);
+            setPulse({ ...target, key: Date.now() });
+            timersRef.current.push(setTimeout(step, DWELL_MS));
+          }, CURSOR_MOVE_MS + CLICK_SETTLE_MS),
+        );
+        return;
+      }
+      // Rows not measurable yet — retry instead of stopping the loop.
+      timersRef.current.push(setTimeout(step, DWELL_MS));
+    };
+
+    // Starts exactly once; safe to call from both the viewport pre-check
+    // and the IntersectionObserver.
+    const start = () => {
+      if (startedRef.current) return;
+      startedRef.current = true;
+
+      const initial = rowCenter(DEMO_CYCLE_IDS[0]);
+      if (initial) setCursor(initial); // appear instantly on the default row
+      timersRef.current.push(setTimeout(step, DWELL_MS));
+    };
+
+    // Primary trigger: first time the composition enters the viewport.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        start();
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(composition);
+
+    // Fallback trigger: if the composition is already on screen at mount
+    // (observer timing edge cases), start immediately.
+    const rect = composition.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      observer.disconnect();
+      start();
+    }
+
+    return () => {
+      observer.disconnect();
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    };
+  }, []);
+
   const selectedLog =
-    INVESTIGATION_LOGS.find((log) => log.id === SELECTED_LOG_ID) ??
+    INVESTIGATION_LOGS.find((log) => log.id === selectedId) ??
     INVESTIGATION_LOGS[0];
 
   return (
@@ -181,21 +304,23 @@ export function LogInvestigationSection() {
             column-gap (~10%) between them */}
         <div className="mt-16 lg:mt-24 grid grid-cols-1 gap-y-24 lg:grid-cols-[minmax(0,58%)_minmax(0,32%)] lg:gap-x-[10%] lg:gap-y-0 items-start">
           {/* Panel composition — explorer behind, details in front */}
-          <div className="relative">
-            {/* Ambient brand glow behind the panel stack */}
+          <div ref={compositionRef} className="relative">
+            {/* Ambient brand glow behind the panel stack — anchored to the
+                upper-left so it never sits under the Log Details panel's
+                bottom fade zone (which dissolves to the page background). */}
             <div
               aria-hidden
-              className="absolute -inset-x-20 -inset-y-24 opacity-[0.16] pointer-events-none"
+              className="absolute -top-24 -left-28 w-[110%] h-[80%] opacity-[0.16] pointer-events-none"
               style={{
                 background:
                   "radial-gradient(closest-side, var(--primary), transparent)",
               }}
             />
 
-            {/* Log Explorer — receded background layer, visible at every breakpoint */}
+            {/* Log Explorer — receded background layer, fixed-size slot */}
             <div
               aria-hidden
-              className="absolute top-0 left-0 w-[72%] opacity-60 rounded-lg bg-surface overflow-hidden border-transparent"
+              className="absolute top-0 left-0 w-[72%] h-65 opacity-60 rounded-lg bg-surface overflow-hidden border-transparent"
             >
               <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50">
                 <span className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
@@ -206,19 +331,54 @@ export function LogInvestigationSection() {
                 </span>
               </div>
               {INVESTIGATION_LOGS.map((log) => (
-                <StreamRow key={log.id} log={log} />
+                <StreamRow
+                  key={log.id}
+                  log={log}
+                  isSelected={log.id === selectedId}
+                  rowRef={(el) => {
+                    rowRefs.current[log.id] = el;
+                  }}
+                />
               ))}
             </div>
 
-            {/* Log Details — dominant foreground layer, bottom content fade */}
-            <div className="relative z-10 ml-[18%] mt-10">
-              <DetailPanel log={selectedLog} />
+            {/* Simulated cursor */}
+            {cursor && (
+              <div
+                aria-hidden
+                className="absolute z-20 pointer-events-none transition-all duration-650 ease-in-out"
+                style={{ left: cursor.x, top: cursor.y }}
+              >
+                <MousePointer2 className="h-4 w-4 -translate-x-0.5 -translate-y-0.5 text-foreground/80 fill-foreground/80" />
+              </div>
+            )}
+
+            {/* Click pulse at the cursor tip */}
+            {pulse && (
+              <span
+                key={pulse.key}
+                aria-hidden
+                className="animate-click-pulse absolute z-20 h-7 w-7 rounded-full border-2 border-primary bg-primary/20 pointer-events-none"
+                style={{ left: pulse.x, top: pulse.y }}
+              />
+            )}
+
+            {/* Log Details — dominant foreground layer; fixed-size slot so
+                varying content never reflows surrounding layout. Content
+                scrolls/truncates internally, crossfade stays unclipped. */}
+            <div className="relative z-10 ml-[18%] mt-10 h-120">
+              <div
+                key={selectedLog.id}
+                className="animate-detail-crossfade absolute inset-0 overflow-hidden"
+              >
+                <DetailPanel log={selectedLog} />
+              </div>
             </div>
           </div>
 
           {/* Copy column — second column of the shared container */}
           <div className="space-y-12">
-            <p className="text-lg leading-relaxed max-w-none lg:max-w-[360px]">
+            <p className="text-lg leading-relaxed max-w-none lg:max-w-90">
               <span className="font-semibold text-foreground">
                 Every event carries its full context.
               </span>{" "}
@@ -226,29 +386,6 @@ export function LogInvestigationSection() {
                 Open any log to read its message and payload.
               </span>
             </p>
-
-            <div className="space-y-6">
-              <p className="text-[10px] font-mono font-medium uppercase tracking-wider text-muted-foreground">
-                Features
-              </p>
-
-              <ul className="space-y-3">
-                {[
-                  "Realtime log stream",
-                  "Full event payloads",
-                  "Projects & environments",
-                  "API key ingestion",
-                ].map((feature) => (
-                  <li
-                    key={feature}
-                    className="text-sm text-foreground flex items-center gap-2 whitespace-nowrap"
-                  >
-                    <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
       </div>
