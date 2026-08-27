@@ -46,7 +46,6 @@ function GitHubIcon({ className }: { className?: string }) {
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -62,15 +61,6 @@ export function Navbar() {
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 8);
-    };
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Lock body scroll while mobile menu is open, without shifting layout
@@ -275,13 +265,8 @@ export function Navbar() {
     : null;
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-40 transition-colors duration-200 ${
-        isScrolled
-          ? "bg-background/50 backdrop-blur-md"
-          : "bg-transparent"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-40 bg-background">
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr]">
           {navContent}
