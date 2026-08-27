@@ -67,7 +67,7 @@ function DashboardProjectRow({ project }: { project: Project }) {
 // --- Presentation-only sidebar — clearly visible (real product) ---
 function PreviewSidebar() {
   return (
-    <div className="flex w-[118px] shrink-0 flex-col bg-surface sm:w-[172px]">
+    <div className="flex w-[172px] shrink-0 flex-col bg-surface">
       {/* Header — real Delok mark + collapse icon (PanelLeftClose as in SidebarHeader) */}
       <div className="flex items-center justify-between px-3 py-4">
         <Image src={DelokTextLogo} alt="Delok" width={90} priority />
@@ -216,7 +216,7 @@ export function ProjectsAwarenessSection() {
               hasEntered ? "animate-section-visual" : "opacity-0"
             }`}
           >
-            <div className="relative overflow-hidden rounded-xl bg-background">
+            <div className="relative flex justify-end overflow-hidden rounded-xl bg-background lg:justify-start">
               {/* Atmospheric border — top more visible, bottom/sides fade */}
               <div
                 aria-hidden
@@ -230,9 +230,9 @@ export function ProjectsAwarenessSection() {
                   maskComposite: "intersect" as const,
                 }}
               />
-              <div className="flex h-[420px] sm:h-[460px] lg:h-[520px]">
+              <div className="flex h-[420px] w-[680px] shrink-0 sm:h-[460px] sm:w-[720px] lg:h-[520px] lg:w-full lg:min-w-0">
                 <PreviewSidebar />
-                <div className="flex min-w-0 flex-1 flex-col">
+                <div className="flex min-w-[460px] flex-1 flex-col">
                   <PreviewTopbar />
                   <div className="flex flex-1 flex-col overflow-hidden p-4 sm:p-5 lg:p-6">
                     <div className="mb-4 flex shrink-0 items-center justify-between">
