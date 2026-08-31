@@ -5,4 +5,8 @@ export const ASSETS = {
     LIGHT_TEXT: "/delok-light-teks_logo.webp",
     DARK_TEXT: "/delok-dark-teks_logo.webp",
   },
+  VIEW: {
+    ONE: "/view-one.png",
+    TWO: "/view-two.png",
+  },
 } as const;

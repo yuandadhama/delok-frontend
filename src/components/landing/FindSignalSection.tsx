@@ -46,7 +46,9 @@ function ShowcaseRow({
   rowRef?: (el: HTMLDivElement | null) => void;
 }) {
   const innerRef = useRef<HTMLDivElement | null>(null);
-  const [pulseDanger, setPulseDanger] = useState(log.isRealtime && log.id === SIGNAL_INJECTED_LOG.id);
+  const [pulseDanger, setPulseDanger] = useState(
+    log.isRealtime && log.id === SIGNAL_INJECTED_LOG.id,
+  );
 
   useEffect(() => {
     if (pulseDanger) {
@@ -61,7 +63,13 @@ function ShowcaseRow({
 
     const enter = node.animate(
       [
-        { opacity: 0, transform: log.id === SIGNAL_INJECTED_LOG.id ? "translateY(-6px) scale(1.025)" : "translateY(-6px)" },
+        {
+          opacity: 0,
+          transform:
+            log.id === SIGNAL_INJECTED_LOG.id
+              ? "translateY(-6px) scale(1.025)"
+              : "translateY(-6px)",
+        },
         { opacity: 1, transform: "translateY(0) scale(1)" },
       ],
       { duration: 650, easing: "cubic-bezier(0.16, 1, 0.3, 1)" },
@@ -77,9 +85,7 @@ function ShowcaseRow({
         rowRef?.(el);
       }}
       className={`grid transition-all duration-700 ease-out ${
-        matches
-          ? "grid-rows-[1fr] opacity-100"
-          : "grid-rows-[0fr] opacity-0"
+        matches ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
       }`}
       style={{ transitionDelay: `${Math.min(index * 30, 400)}ms` }}
     >
@@ -95,7 +101,7 @@ function ShowcaseRow({
           <span className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground">
             {log.event}
           </span>
-          <span className="hidden shrink-0 truncate font-mono text-[10px] text-muted-foreground sm:block sm:max-w-[120px]">
+          <span className="hidden shrink-0 truncate font-mono text-[10px] text-muted-foreground sm:block sm:max-w-30">
             {log.environment}
           </span>
         </div>
@@ -201,28 +207,33 @@ export function FindSignalSection() {
     const runPhase = (phase: DemoPhase) => {
       if (cancelled) return;
 
-      const getSearchInput = () => sectionRef.current?.querySelector('input[aria-label="Search logs"]') as HTMLInputElement | null;
+      const getSearchInput = () =>
+        sectionRef.current?.querySelector(
+          'input[aria-label="Search logs"]',
+        ) as HTMLInputElement | null;
 
       if (phase.kind === "reset") {
         injectedRef.current = false;
-        
+
         // Typewriter delete
-        let currentText = filters.search || phaseToFilters({kind: "search", value: "payment"}).search || "payment";
+        let currentText =
+          filters.search ||
+          phaseToFilters({ kind: "search", value: "payment" }).search ||
+          "payment";
         const deleteChar = () => {
           if (cancelled) return;
           if (currentText.length > 0) {
             currentText = currentText.slice(0, -1);
-            setFilters(prev => ({ ...prev, search: currentText }));
+            setFilters((prev) => ({ ...prev, search: currentText }));
             timersRef.current.push(setTimeout(deleteChar, 35));
           } else {
-             setLogs(SIGNAL_SHOWCASE_LOGS);
-             setFilters(phaseToFilters(phase));
-             const input = getSearchInput();
-             if (input) input.blur();
+            setLogs(SIGNAL_SHOWCASE_LOGS);
+            setFilters(phaseToFilters(phase));
+            const input = getSearchInput();
+            if (input) input.blur();
           }
         };
         deleteChar();
-
       } else if (phase.kind === "all") {
         setLogs(SIGNAL_SHOWCASE_LOGS);
         setFilters(phaseToFilters(phase));
@@ -234,7 +245,8 @@ export function FindSignalSection() {
               if (cancelled || injectedRef.current) return;
               injectedRef.current = true;
               setLogs((prev) => {
-                if (prev.some((l) => l.id === SIGNAL_INJECTED_LOG.id)) return prev;
+                if (prev.some((l) => l.id === SIGNAL_INJECTED_LOG.id))
+                  return prev;
                 return [SIGNAL_INJECTED_LOG, ...prev];
               });
             }, 1200),
@@ -248,14 +260,16 @@ export function FindSignalSection() {
         let currentText = "";
         const targetText = phase.value;
         let index = 0;
-        
+
         const typeChar = () => {
           if (cancelled) return;
           if (index < targetText.length) {
             currentText += targetText[index];
-            setFilters(prev => ({ ...prev, search: currentText }));
+            setFilters((prev) => ({ ...prev, search: currentText }));
             index++;
-            timersRef.current.push(setTimeout(typeChar, 60 + Math.random() * 50));
+            timersRef.current.push(
+              setTimeout(typeChar, 60 + Math.random() * 50),
+            );
           }
         };
         timersRef.current.push(setTimeout(typeChar, 300));
@@ -291,10 +305,10 @@ export function FindSignalSection() {
     () =>
       Boolean(
         filters.search.trim() ||
-          filters.level ||
-          filters.environment ||
-          filters.from ||
-          filters.to,
+        filters.level ||
+        filters.environment ||
+        filters.from ||
+        filters.to,
       ),
     [filters],
   );
@@ -357,25 +371,52 @@ export function FindSignalSection() {
               />
             </div>
 
-            {/* Log stream */}
-            <div className="min-h-[280px] overflow-x-auto sm:min-h-[320px]">
-              <div className="min-w-[340px]">
-                <div className="flex items-center gap-3 border-b border-border bg-background px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  <span className="w-14 shrink-0">Level</span>
-                  <span className="min-w-0 flex-1">Event</span>
-                  <span className="hidden w-[120px] shrink-0 sm:block">
-                    Environment
-                  </span>
+            {/* Log stream — the viewport height is driven by an invisible
+                "sizing ghost" that always renders the full unfiltered list,
+                so collapsing/expanding the real rows never changes the panel
+                height (and never moves the content below). */}
+            <div className="min-h-70 overflow-x-auto sm:min-h-80">
+              <div className="relative min-w-85">
+                {/* Sizing ghost — invisible, in normal flow, keeps the
+                    viewport at its full-list height during every phase. */}
+                <div aria-hidden className="pointer-events-none invisible">
+                  <div className="flex items-center gap-3 border-b border-border bg-background px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <span className="w-14 shrink-0">Level</span>
+                    <span className="min-w-0 flex-1">Event</span>
+                    <span className="hidden w-30 shrink-0 sm:block">
+                      Environment
+                    </span>
+                  </div>
+                  {SIGNAL_SHOWCASE_LOGS.map((log, index) => (
+                    <ShowcaseRow
+                      key={`ghost-${log.id}`}
+                      log={log}
+                      index={index}
+                      matches={true}
+                    />
+                  ))}
                 </div>
 
-                {logs.map((log, index) => (
-                  <ShowcaseRow
-                    key={log.id}
-                    log={log}
-                    index={index}
-                    matches={matchesLogFilters(log, filters)}
-                  />
-                ))}
+                {/* Live rows — absolutely positioned over the ghost so row
+                    transitions animate inside the fixed-height viewport. */}
+                <div className="absolute inset-0">
+                  <div className="flex items-center gap-3 border-b border-border bg-background px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <span className="w-14 shrink-0">Level</span>
+                    <span className="min-w-0 flex-1">Event</span>
+                    <span className="hidden w-30 shrink-0 sm:block">
+                      Environment
+                    </span>
+                  </div>
+
+                  {logs.map((log, index) => (
+                    <ShowcaseRow
+                      key={log.id}
+                      log={log}
+                      index={index}
+                      matches={matchesLogFilters(log, filters)}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -383,11 +424,11 @@ export function FindSignalSection() {
           {/* Subtle edge fades — intentional crop on narrow viewports */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-background/80 to-transparent sm:w-12"
+            className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-linear-to-l from-background/80 to-transparent sm:w-12"
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-background/60 to-transparent"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-linear-to-t from-background/60 to-transparent"
           />
         </div>
 
@@ -397,7 +438,7 @@ export function FindSignalSection() {
             hasEntered ? "animate-section-copy" : "opacity-0"
           }`}
         >
-          <h3 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+          <h3 className="text-xl font-semibold tracking-tight text-primary sm:text-2xl">
             Structured events, searchable by design
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground sm:text-base">

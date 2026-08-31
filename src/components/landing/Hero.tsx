@@ -1,4 +1,5 @@
 import { ROUTES } from "@/src/constants/routes";
+import { EXTERNAL_LINKS } from "@/src/constants/external-links";
 import { ArrowUpRight } from "lucide-react";
 import Button from "@/src/components/ui/Button";
 import { DelokLogPreview } from "./DelokLogPreview";
@@ -22,7 +23,7 @@ export function Hero() {
       {/* Hero text — overlaps on top of the log panel */}
       <div className="absolute inset-x-0 top-0 z-10">
         {/* Dark backdrop — faint log texture remains visible behind text */}
-        <div className="absolute inset-0 bg-linear-to-b from-background via-background/85 via-[72%] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-b from-background via-background/85 via-72% to-transparent pointer-events-none" />
 
         {/* Text content */}
         <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-32">
@@ -44,7 +45,7 @@ export function Hero() {
                   Get started
                 </Button>
                 <Button
-                  href="/docs"
+                  href={EXTERNAL_LINKS.DOCS}
                   variant="secondary"
                   size="lg"
                   className="group relative rounded-none"

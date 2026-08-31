@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import { ROUTES } from "@/src/constants/routes";
+import { EXTERNAL_LINKS } from "@/src/constants/external-links";
 import { ASSETS } from "@/src/constants/assets";
 import Image from "next/image";
 
@@ -14,10 +15,10 @@ type NavLink = {
 };
 
 const NAV_LINKS: readonly NavLink[] = [
-  { label: "Docs", href: "/docs" },
+  { label: "Docs", href: EXTERNAL_LINKS.DOCS },
   {
     label: "GitHub",
-    href: "https://github.com/yuandadhama/delok",
+    href: EXTERNAL_LINKS.GITHUB,
     external: true,
   },
 ];

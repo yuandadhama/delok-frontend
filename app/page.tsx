@@ -8,6 +8,8 @@ import {
   LogInvestigationSection,
   ProjectsAwarenessSection,
   FindSignalSection,
+  GetStartedSection,
+  Footer,
 } from "@/src/components/landing";
 import { authClient } from "@/src/lib/auth/auth-client";
 
@@ -37,6 +39,8 @@ export default function HomePage() {
       <LogInvestigationSection />
       <ProjectsAwarenessSection />
       <FindSignalSection />
+      <GetStartedSection />
+      <Footer />
     </div>
   );
 }
