@@ -7,6 +7,7 @@ import {
   Hero,
   LogInvestigationSection,
   ProjectsAwarenessSection,
+  FindSignalSection,
 } from "@/src/components/landing";
 import { authClient } from "@/src/lib/auth/auth-client";
 
@@ -35,6 +36,7 @@ export default function HomePage() {
       <Hero />
       <LogInvestigationSection />
       <ProjectsAwarenessSection />
+      <FindSignalSection />
     </div>
   );
 }

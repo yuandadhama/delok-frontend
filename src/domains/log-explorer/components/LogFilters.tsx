@@ -5,6 +5,19 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Filter, Search, X } from "lucide-react";
 
+const ANIMATION_STYLES = `
+  @keyframes slideUpIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUpOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(-4px); }
+  }
+  .animate-slide-up-in { animation: slideUpIn 200ms ease-out forwards; }
+  .animate-slide-up-out { animation: slideUpOut 200ms ease-out forwards; }
+`;
+
 const SEARCH_DEBOUNCE_MS = 300;
 
 type LogFiltersProps = {
@@ -86,22 +99,68 @@ function SelectField({
   options: { value: string; label: string }[];
   className?: string;
 }) {
+  const [pulse, setPulse] = useState(false);
+  const prevValue = useRef(value);
+  const [key, setKey] = useState(0);
+  const [prevLabel, setPrevLabel] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (value !== prevValue.current) {
+      setPulse(true);
+      const oldLabel = options.find((o) => o.value === prevValue.current)?.label || "";
+      setPrevLabel(oldLabel);
+      setKey((k) => k + 1);
+      prevValue.current = value;
+      
+      const timer = setTimeout(() => {
+        setPulse(false);
+        setPrevLabel(null);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [value, options]);
+
+  const currentLabel = options.find((o) => o.value === value)?.label || "";
+
   return (
-    <div className={`relative ${className}`}>
+    <div 
+      className={`relative rounded-md border bg-surface transition-all duration-400 ${
+        pulse 
+          ? "border-primary ring-2 ring-primary/20" 
+          : "border-border"
+      } ${className}`}
+    >
       <select
         aria-label={ariaLabel}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`${FIELD} w-full appearance-none py-1.5 pl-2.5 pr-8 text-foreground`}
+        className="w-full appearance-none bg-transparent py-1.5 pl-2.5 pr-8 text-[12.5px] text-transparent focus:outline-none relative z-10"
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} className="text-foreground bg-surface">
             {option.label}
           </option>
         ))}
       </select>
 
-      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+      <div className="absolute inset-y-0 left-0 right-8 flex items-center pl-2.5 pointer-events-none overflow-hidden rounded-l-md text-[12.5px] text-foreground">
+        {prevLabel && (
+          <span 
+            key={`prev-${key}`}
+            className="absolute left-2.5 animate-slide-up-out"
+          >
+            {prevLabel}
+          </span>
+        )}
+        <span 
+          key={`curr-${key}`}
+          className="absolute left-2.5 animate-slide-up-in"
+        >
+          {currentLabel}
+        </span>
+      </div>
+
+      <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground z-20" />
     </div>
   );
 }
@@ -198,6 +257,7 @@ export function LogFilters({
 
   return (
     <div className="mb-3 px-3">
+      <style dangerouslySetInnerHTML={{ __html: ANIMATION_STYLES }} />
       {/* Compact mode (< @2xl container): collapsible filter box */}
       <div className="@2xl:hidden flex flex-wrap items-center gap-x-1 gap-y-1 rounded-md border border-border bg-surface py-1 pl-1.5 pr-2">
         <button

@@ -6,8 +6,8 @@ import { DelokLogPreview } from "./DelokLogPreview";
 export function Hero() {
   return (
     <section className="relative w-full pt-24">
-      {/* Log panel — behind the text, pulled up */}
-      <div className="relative w-full -mt-8 animate-hero-log">
+      {/* Log panel — behind the text, pulled up — dimmed ambient texture */}
+      <div className="relative w-full -mt-8 animate-hero-log opacity-[0.36]">
         <DelokLogPreview />
 
         {/* Gradients to hide panel edges */}
@@ -21,8 +21,8 @@ export function Hero() {
 
       {/* Hero text — overlaps on top of the log panel */}
       <div className="absolute inset-x-0 top-0 z-10">
-        {/* Dark gradient backdrop behind the text */}
-        <div className="absolute inset-0 bg-linear-to-b from-background via-background/95 via-60% to-transparent pointer-events-none" />
+        {/* Dark backdrop — faint log texture remains visible behind text */}
+        <div className="absolute inset-0 bg-linear-to-b from-background via-background/85 via-[72%] to-transparent pointer-events-none" />
 
         {/* Text content */}
         <div className="relative mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-32">
