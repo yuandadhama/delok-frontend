@@ -3,8 +3,8 @@ import { DocsLayout } from "@/src/components/docs/DocsLayout";
 
 export const metadata: Metadata = {
   title: {
-    template: "%s — Delok Docs",
-    default: "Documentation — Delok",
+    template: "%s | Delok Docs",
+    default: "Documentation | Delok",
   },
 };
 

@@ -17,7 +17,7 @@ export default function InstallationPage() {
           Installation
         </h1>
         <p className="text-base leading-relaxed text-muted-foreground">
-          Install the Delok SDK v1 from npm.
+          Install the Delok SDK.
         </p>
       </header>
 
