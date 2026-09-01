@@ -10,7 +10,9 @@ export default function LogEventPage() {
   return (
     <article className="space-y-8">
       <header className="space-y-3">
-        <p className="font-mono text-xs uppercase tracking-wider text-primary">Reference</p>
+        <p className="font-mono text-xs uppercase tracking-wider text-primary">
+          Reference
+        </p>
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Log Event
         </h1>
@@ -20,7 +22,9 @@ export default function LogEventPage() {
       </header>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">Example</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          Example
+        </h2>
         <CodeBlock
           language="json"
           code={`{
@@ -37,7 +41,9 @@ export default function LogEventPage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">Fields</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          Fields
+        </h2>
         <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-left text-sm">
             <thead className="bg-surface text-xs uppercase tracking-wider text-muted-foreground">
@@ -69,12 +75,16 @@ export default function LogEventPage() {
                 <td className="px-4 py-2">info | warn | error | fatal</td>
               </tr>
               <tr>
-                <td className="px-4 py-2 font-mono text-foreground">occurredAt</td>
+                <td className="px-4 py-2 font-mono text-foreground">
+                  occurredAt
+                </td>
                 <td className="px-4 py-2">SDK</td>
                 <td className="px-4 py-2">ISO timestamp generated at call</td>
               </tr>
               <tr>
-                <td className="px-4 py-2 font-mono text-foreground">environment</td>
+                <td className="px-4 py-2 font-mono text-foreground">
+                  environment
+                </td>
                 <td className="px-4 py-2">developer</td>
                 <td className="px-4 py-2">from Delok config</td>
               </tr>
@@ -82,19 +92,9 @@ export default function LogEventPage() {
           </table>
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          <span className="font-mono text-foreground">apiKey</span> is sent in the{" "}
-          <span className="font-mono text-foreground">x-api-key</span> header and is not part of the JSON body.
-        </p>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground">What is not in the event</h2>
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          No <span className="font-mono text-foreground">id</span>,{" "}
-          <span className="font-mono text-foreground">projectId</span>,{" "}
-          <span className="font-mono text-foreground">timestamp</span> (use{" "}
-          <span className="font-mono text-foreground">occurredAt</span>),{" "}
-          <span className="font-mono text-foreground">traceId</span>, or custom level. Do not invent fields.
+          <span className="font-mono text-foreground">apiKey</span>{" "}
+          authenticates your project and is not part of the JSON body. Keep it
+          secret.
         </p>
       </section>
     </article>

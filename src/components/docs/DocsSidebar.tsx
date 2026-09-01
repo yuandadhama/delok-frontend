@@ -24,7 +24,7 @@ export function DocsSidebar() {
                     href={item.href}
                     className={`block rounded-md px-2 py-1.5 text-sm transition-colors ${
                       active
-                        ? "bg-surface font-medium text-foreground"
+                        ? "bg-primary font-medium text-primary-foreground"
                         : "text-muted-foreground hover:bg-surface-hover hover:text-foreground"
                     }`}
                   >

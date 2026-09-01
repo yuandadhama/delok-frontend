@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Search, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { DocsHomeSearch } from "@/src/components/docs/DocsHomeSearch";
 
 export const metadata: Metadata = {
   title: "Documentation",
@@ -14,7 +15,7 @@ const SECTIONS = [
       {
         title: "Introduction",
         href: "/docs/introduction",
-        description: "Understand what Delok does and how logs move through the system.",
+        description: "Learn what Delok is and how it helps you monitor your application logs.",
       },
       {
         title: "Quickstart",
@@ -60,13 +61,7 @@ export default function DocsPage() {
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           Everything you need to start sending and understanding logs with Delok.
         </p>
-        <div className="mt-6 flex max-w-xl items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-muted-foreground">
-          <Search className="h-4 w-4 shrink-0" />
-          <span>Search documentation</span>
-          <span className="ml-auto hidden rounded bg-background px-1.5 py-0.5 font-mono text-[11px] sm:inline">
-            /
-          </span>
-        </div>
+        <DocsHomeSearch />
       </div>
 
       <div className="space-y-10">

@@ -10,7 +10,9 @@ export default function InstallationPage() {
   return (
     <article className="space-y-8">
       <header className="space-y-3">
-        <p className="font-mono text-xs uppercase tracking-wider text-primary">SDK</p>
+        <p className="font-mono text-xs uppercase tracking-wider text-primary">
+          SDK
+        </p>
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Installation
         </h1>
@@ -20,7 +22,9 @@ export default function InstallationPage() {
       </header>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">Requirements</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          Requirements
+        </h2>
         <ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
           <li>
             Node.js <span className="font-mono text-foreground">&gt;=18</span>
@@ -32,16 +36,22 @@ export default function InstallationPage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">Install</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          Install
+        </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
           Install the Delok SDK v1 from npm.
         </p>
         <CodeBlock language="bash" code={`npm install delok`} />
-        <p className="text-sm leading-relaxed text-muted-foreground">Delok requires Node.js 18 or later.</p>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          Delok requires Node.js 18 or later.
+        </p>
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">Verify</h2>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+          Verify
+        </h2>
         <CodeBlock
           language="typescript"
           code={`import { Delok } from "delok";
@@ -53,8 +63,12 @@ const delok = new Delok({
         />
         <p className="text-sm leading-relaxed text-muted-foreground">
           If <span className="font-mono text-foreground">apiKey</span> or{" "}
-          <span className="font-mono text-foreground">environment</span> is invalid, the constructor throws synchronously (
-          <span className="font-mono text-foreground">DelokConfigurationError</span>).
+          <span className="font-mono text-foreground">environment</span> is
+          invalid, the constructor throws{" "}
+          <span className="font-mono text-foreground">
+            DelokConfigurationError
+          </span>
+          .
         </p>
       </section>
     </article>

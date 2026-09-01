@@ -1,19 +1,31 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { DocsNavbar } from "./DocsNavbar";
 import { DocsSidebar } from "./DocsSidebar";
+import { DocsSearchModal } from "./DocsSearch";
+import { EXTERNAL_LINKS } from "@/src/constants/external-links";
 
 export function DocsLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setSearchOpen(true);
+    window.addEventListener("open-docs-search", handler as EventListener);
+    return () =>
+      window.removeEventListener("open-docs-search", handler as EventListener);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
       <DocsNavbar
         menuOpen={mobileOpen}
         onMenuToggle={() => setMobileOpen((v) => !v)}
+        onSearchOpen={() => setSearchOpen(true)}
       />
+      <DocsSearchModal open={searchOpen} onOpenChange={setSearchOpen} />
 
       {mobileOpen && (
         <div className="fixed inset-0 z-30 bg-background lg:hidden">
@@ -22,76 +34,37 @@ export function DocsLayout({ children }: { children: React.ReactNode }) {
             <div onClick={() => setMobileOpen(false)}>
               <DocsSidebar />
             </div>
-            <div className="mt-6 border-t border-border pt-4">
-              <Link
-                href="/"
-                onClick={() => setMobileOpen(false)}
-                className="text-sm text-muted-foreground hover:text-foreground"
-              >
-                ← Back to Delok
-              </Link>
-            </div>
           </div>
         </div>
       )}
 
-      <div className="mx-auto flex w-full max-w-[1440px]">
-        <aside className="hidden w-[240px] shrink-0 border-r border-border lg:block">
+      <div className="mx-auto flex w-full max-w-360">
+        <aside className="hidden w-60 shrink-0 border-r border-border lg:block">
           <div className="sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto px-4 py-8">
             <DocsSidebar />
-            <div className="mt-8 border-t border-border pt-6">
-              <Link
-                href="/"
-                className="text-sm text-muted-foreground hover:text-foreground"
-              >
-                ← Back to Delok
-              </Link>
-            </div>
           </div>
         </aside>
 
         <main className="min-w-0 flex-1">
           <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
             {children}
+            <div className="mt-12 border-t border-border pt-6">
+              <p className="inline-flex flex-wrap items-center gap-1.5 text-sm leading-relaxed text-muted-foreground">
+                <span>Found Something?</span>
+                <a
+                  href={EXTERNAL_LINKS.GITHUB}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 font-medium text-foreground underline decoration-border underline-offset-4 hover:text-primary hover:decoration-primary"
+                >
+                  Share your feedback on GitHub
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </a>
+              </p>
+            </div>
           </div>
         </main>
       </div>
-    </div>
-  );
-}
-
-// Helper for pages that want a right TOC column
-export function DocsPageWithTOC({
-  children,
-  toc,
-}: {
-  children: React.ReactNode;
-  toc: { id: string; title: string }[];
-}) {
-  if (toc.length === 0) return <>{children}</>;
-
-  return (
-    <div className="flex gap-8">
-      <div className="min-w-0 flex-1">{children}</div>
-      <aside className="hidden w-45 shrink-0 xl:block">
-        <div className="sticky top-24">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            On this page
-          </p>
-          <ul className="mt-3 space-y-2 border-l border-border pl-4">
-            {toc.map((item) => (
-              <li key={item.id}>
-                <a
-                  href={`#${item.id}`}
-                  className="block text-sm text-muted-foreground hover:text-foreground"
-                >
-                  {item.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </aside>
     </div>
   );
 }

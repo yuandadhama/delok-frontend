@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Search, Menu, X } from "lucide-react";
-import { useState } from "react";
 import { ASSETS } from "@/src/constants/assets";
 import { EXTERNAL_LINKS } from "@/src/constants/external-links";
 
@@ -23,49 +22,61 @@ function GitHubIcon({ className }: { className?: string }) {
 type DocsNavbarProps = {
   onMenuToggle?: () => void;
   menuOpen?: boolean;
+  onSearchOpen?: () => void;
 };
 
-export function DocsNavbar({ onMenuToggle, menuOpen }: DocsNavbarProps) {
+export function DocsNavbar({
+  onMenuToggle,
+  menuOpen,
+  onSearchOpen,
+}: DocsNavbarProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-14 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2" aria-label="Delok home">
-            <Image src={ASSETS.LOGO.LIGHT_TEXT} alt="Delok" width={86} height={24} />
-            <span className="hidden rounded bg-surface px-1.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-muted-foreground sm:inline">
-              Docs
-            </span>
-          </Link>
-          <span className="hidden h-4 w-px bg-border sm:block" />
-          <span className="hidden text-sm font-medium text-muted-foreground sm:block">
-            Documentation
-          </span>
-        </div>
+    <header className="sticky top-0 z-40 border-b border-border bg-background">
+      <div className="mx-auto flex h-14 w-full max-w-360 items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center" aria-label="Delok home">
+          <Image
+            src={ASSETS.LOGO.LIGHT_TEXT}
+            alt="Delok"
+            width={86}
+            height={24}
+          />
+        </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <Link
+            href="/docs"
+            className="hidden items-center rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground sm:inline-flex"
+          >
+            Documentation
+          </Link>
           <a
             href={EXTERNAL_LINKS.GITHUB}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="hidden items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground sm:inline-flex"
+            className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
           >
             <GitHubIcon className="h-5 w-5" />
           </a>
-          <Link
-            href="/docs"
-            className="hidden rounded-md bg-surface px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover sm:inline-flex"
+          <button
+            type="button"
+            onClick={onSearchOpen}
+            aria-label="Search documentation"
+            className="inline-flex items-center cursor-pointer justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
           >
-            Search
-            <Search className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" />
-          </Link>
+            <Search className="h-5 w-5" />
+          </button>
           <button
             type="button"
             onClick={onMenuToggle}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-surface text-foreground hover:bg-surface-hover lg:hidden"
+            className="ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md border border-border cursor-pointer bg-surface text-foreground hover:bg-surface-hover lg:hidden"
             aria-label={menuOpen ? "Close docs menu" : "Open docs menu"}
           >
-            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {menuOpen ? (
+              <X className="h-4 w-4" />
+            ) : (
+              <Menu className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

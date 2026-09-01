@@ -13,66 +13,118 @@ function escapeHtml(s: string) {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+function replaceOutsidePlaceholders(
+  str: string,
+  regex: RegExp,
+  replacer: (match: string, ...groups: string[]) => string,
+): string {
+  const phRe = /\u0000H\d+\u0000/g;
+  const segments: Array<{ text: string; isPh: boolean }> = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  while ((m = phRe.exec(str)) !== null) {
+    segments.push({ text: str.slice(last, m.index), isPh: false });
+    segments.push({ text: m[0], isPh: true });
+    last = m.index + m[0].length;
+  }
+  segments.push({ text: str.slice(last), isPh: false });
+
+  const flags = regex.flags.includes("g") ? regex.flags : `${regex.flags}g`;
+  return segments
+    .map((seg) => {
+      if (seg.isPh) return seg.text;
+      const re = new RegExp(regex.source, flags);
+      return seg.text.replace(re, replacer as unknown as string);
+    })
+    .join("");
+}
+
 function highlight(code: string, lang: string): string {
   const l = lang.toLowerCase();
   let html = escapeHtml(code);
+  const placeholders: string[] = [];
+  const ph = (i: number) => `\u0000H${i}\u0000`;
 
   if (l === "text" || l === "txt") {
     return html;
   }
 
   if (l === "bash" || l === "shell" || l === "sh") {
-    // Comments
-    html = html.replace(/(^|\n)(#.*)$/gm, (_m, p1, p2) => `${p1}<span class="text-muted-foreground/60 italic">${p2}</span>`);
-    // Strings
-    html = html.replace(/(&quot;[^&]*?&quot;|&#39;[^&]*?&#39;|`[^`]*?`)/g, '<span class="text-success">$1</span>');
-    // Flags --xxx
-    html = html.replace(/(--[\w-]+)/g, '<span class="text-info">$1</span>');
-    // Commands
-    html = html.replace(
-      /\b(npm|pnpm|yarn|npx|tsc|node|git)\b/g,
-      '<span class="text-primary">$1</span>',
-    );
+    const combined = /#.*$|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`/gm;
+    let idx = 0;
+    html = html.replace(combined, (match) => {
+      const cls = match.startsWith("#") ? "text-muted-foreground/60 italic" : "text-success";
+      const token = ph(idx);
+      placeholders[idx] = `<span class="${cls}">${match}</span>`;
+      idx++;
+      return token;
+    });
+
+    html = replaceOutsidePlaceholders(html, /(--[\w-]+)/, (_m, g1) => `<span class="text-info">${g1}</span>`);
+    html = replaceOutsidePlaceholders(html, /\b(npm|pnpm|yarn|npx|tsc|node|git)\b/, (_m, g1) => `<span class="text-primary">${g1}</span>`);
+
+    placeholders.forEach((rep, i) => {
+      html = html.split(ph(i)).join(rep);
+    });
     return html;
   }
 
   if (l === "json") {
+    let idx = 0;
     // Keys: "key":
-    html = html.replace(/(&quot;[^&]*?&quot;)(\s*:)/g, '<span class="text-primary">$1</span>$2');
-    // Strings (remaining quoted values)
-    html = html.replace(/(:\s*)(&quot;[^&]*?&quot;)/g, '$1<span class="text-success">$2</span>');
-    // Booleans / null
-    html = html.replace(/:\s*\b(true|false|null)\b/g, ': <span class="text-info">$1</span>');
-    // Numbers
-    html = html.replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="text-warning">$1</span>');
+    html = html.replace(/("(?:[^"\\]|\\.)*")(\s*:)/g, (_m, p1: string, p2: string) => {
+      const token = ph(idx);
+      placeholders[idx] = `<span class="text-primary">${p1}</span>`;
+      idx++;
+      return token + p2;
+    });
+    // Remaining strings are values
+    html = html.replace(/"(?:[^"\\]|\\.)*"/g, (match) => {
+      const token = ph(idx);
+      placeholders[idx] = `<span class="text-success">${match}</span>`;
+      idx++;
+      return token;
+    });
+
+    html = replaceOutsidePlaceholders(html, /\b(true|false|null)\b/, (_m, g1) => `<span class="text-info">${g1}</span>`);
+    html = replaceOutsidePlaceholders(html, /:\s*(-?\d+\.?\d*)/, (_m, g1) => `: <span class="text-warning">${g1}</span>`);
+
+    placeholders.forEach((rep, i) => {
+      html = html.split(ph(i)).join(rep);
+    });
     return html;
   }
 
   // TypeScript / JavaScript (default)
-  // Comments // and /* */
-  html = html.replace(/(\/\/.*)$/gm, '<span class="text-muted-foreground/60 italic">$1</span>');
-  html = html.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="text-muted-foreground/60 italic">$1</span>');
-  // Strings: " ", ' ', ` `
-  html = html.replace(/(&quot;[^&]*?&quot;|&#39;[^&]*?&#39;|`[^`]*?`)/g, (m) => {
-    // Don't re-highlight inside already highlighted comments - simple: if contains muted class, skip? Already done after comments, strings inside comments already wrapped, but okay.
-    return `<span class="text-success">${m}</span>`;
-  });
-  // Keywords
-  html = html.replace(
-    /\b(import|from|const|let|var|async|await|new|if|else|try|catch|instanceof|return|export|default|class|extends|implements|interface|type|function|for|while|switch|case|break|throw|throws|extends|of|in|as)\b/g,
-    '<span class="text-primary">$1</span>',
-  );
-  // Built-in types / Promise
-  html = html.replace(
-    /\b(string|number|boolean|void|Promise|Error|DelokError|DelokConfigurationError|DelokNetworkError|DelokTimeoutError|DelokHttpError)\b/g,
-    '<span class="text-info">$1</span>',
-  );
-  // Numbers
-  html = html.replace(/\b(\d+\.?\d*)\b/g, '<span class="text-warning">$1</span>');
-  // Properties after dot: .info .warn etc - keep foreground but subtle
-  // Level strings like "development" already handled as strings
+  {
+    const combined = /\/\/.*$|\/\*[\s\S]*?\*\/|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`/gm;
+    let idx = 0;
+    html = html.replace(combined, (match) => {
+      const isComment = match.startsWith("//") || match.startsWith("/*");
+      const cls = isComment ? "text-muted-foreground/60 italic" : "text-success";
+      const token = ph(idx);
+      placeholders[idx] = `<span class="${cls}">${match}</span>`;
+      idx++;
+      return token;
+    });
 
-  return html;
+    html = replaceOutsidePlaceholders(
+      html,
+      /\b(import|from|const|let|var|async|await|new|if|else|try|catch|instanceof|return|export|default|class|extends|implements|interface|type|function|for|while|switch|case|break|throw|of|in|as)\b/,
+      (_m, g1) => `<span class="text-primary">${g1}</span>`,
+    );
+    html = replaceOutsidePlaceholders(
+      html,
+      /\b(string|number|boolean|void|Promise|Error|DelokError|DelokConfigurationError|DelokNetworkError|DelokTimeoutError|DelokHttpError)\b/,
+      (_m, g1) => `<span class="text-info">${g1}</span>`,
+    );
+    html = replaceOutsidePlaceholders(html, /\b(\d+\.?\d*)\b/, (_m, g1) => `<span class="text-warning">${g1}</span>`);
+
+    placeholders.forEach((rep, i) => {
+      html = html.split(ph(i)).join(rep);
+    });
+    return html;
+  }
 }
 
 export function CodeBlock({ code, language = "bash", title }: CodeBlockProps) {
