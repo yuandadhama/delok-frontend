@@ -40,7 +40,7 @@ export default function InstallationPage() {
           Install
         </h2>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Install the Delok SDK v1 from npm.
+          Install the Delok SDK
         </p>
         <CodeBlock language="bash" code={`npm install delok`} />
         <p className="text-sm leading-relaxed text-muted-foreground">

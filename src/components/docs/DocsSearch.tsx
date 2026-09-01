@@ -14,7 +14,8 @@ type DocsEntry = {
 const DOCS_ENTRIES: DocsEntry[] = [
   {
     title: "Introduction",
-    description: "Learn what Delok is and how it helps you monitor your application logs.",
+    description:
+      "Learn what Delok is and how it helps you monitor your application logs.",
     href: "/docs/introduction",
     section: "Getting Started",
   },
@@ -26,13 +27,14 @@ const DOCS_ENTRIES: DocsEntry[] = [
   },
   {
     title: "Installation",
-    description: "Install the Delok SDK v1 from npm.",
+    description: "Install the Delok SDK.",
     href: "/docs/installation",
     section: "SDK",
   },
   {
     title: "Logging",
-    description: "Send logs with info, warn, error, fatal — with structured payloads.",
+    description:
+      "Send logs with info, warn, error, fatal — with structured payloads.",
     href: "/docs/logging",
     section: "SDK",
   },
@@ -44,7 +46,8 @@ const DOCS_ENTRIES: DocsEntry[] = [
   },
   {
     title: "Documentation",
-    description: "Everything you need to start sending and understanding logs with Delok.",
+    description:
+      "Everything you need to start sending and understanding logs with Delok.",
     href: "/docs",
     section: "Overview",
   },
@@ -53,7 +56,8 @@ const DOCS_ENTRIES: DocsEntry[] = [
 function matches(entry: DocsEntry, query: string): boolean {
   const q = query.toLowerCase().trim();
   if (!q) return false;
-  const hay = `${entry.title} ${entry.description} ${entry.section} ${entry.href}`.toLowerCase();
+  const hay =
+    `${entry.title} ${entry.description} ${entry.section} ${entry.href}`.toLowerCase();
   // Support multi-word query: all tokens must be present
   const tokens = q.split(/\s+/).filter(Boolean);
   return tokens.every((t) => hay.includes(t));
@@ -166,8 +170,12 @@ export function DocsSearchModal({
         <div className="max-h-[60vh] overflow-y-auto p-2">
           {filtered.length === 0 ? (
             <div className="px-3 py-10 text-center">
-              <p className="text-sm font-medium text-foreground">No results found.</p>
-              <p className="mt-1 text-sm text-muted-foreground">Try a different search term.</p>
+              <p className="text-sm font-medium text-foreground">
+                No results found.
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Try a different search term.
+              </p>
             </div>
           ) : (
             <ul className="space-y-1">
@@ -184,7 +192,9 @@ export function DocsSearchModal({
                     }`}
                   >
                     <span className="text-sm font-medium">{entry.title}</span>
-                    <span className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{entry.description}</span>
+                    <span className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+                      {entry.description}
+                    </span>
                   </button>
                 </li>
               ))}
@@ -193,7 +203,9 @@ export function DocsSearchModal({
         </div>
 
         <div className="flex items-center justify-between border-t border-border bg-background/50 px-3 py-2 text-[11px] text-muted-foreground">
-          <span className="hidden sm:inline">↑↓ Navigate • Enter Select • Esc Close</span>
+          <span className="hidden sm:inline">
+            ↑↓ Navigate • Enter Select • Esc Close
+          </span>
           <span className="sm:hidden">Tap to select • Esc Close</span>
           <span className="font-mono hidden sm:inline">⌘K</span>
         </div>

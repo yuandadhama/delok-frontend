@@ -16,20 +16,8 @@ import { authClient } from "@/src/lib/auth/auth-client";
 export default function HomePage() {
   const { data: session, isPending } = authClient.useSession();
 
-  if (isPending) {
-    return (
-      <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
-        Loading session...
-      </div>
-    );
-  }
-
-  if (session?.user?.id) {
-    return (
-      <div className="flex justify-center items-center w-full h-screen bg-background text-sm text-muted-foreground">
-        Redirecting...
-      </div>
-    );
+  if (isPending || session?.user?.id) {
+    return;
   }
 
   return (
