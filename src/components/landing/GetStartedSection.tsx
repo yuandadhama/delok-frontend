@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowUpRight,
   BookOpen,
@@ -138,24 +137,15 @@ export function GetStartedSection() {
           hasEntered ? "opacity-100" : "opacity-0"
         }`}
       >
-        <div className="absolute inset-y-0 left-0 w-[44%] opacity-10 sm:w-[38%] lg:w-[30%]">
-          <Image
-            src={ASSETS.VIEW.ONE}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 38vw, 44vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-linear-to-r from-transparent via-background/35 to-background" />
-        </div>
-
         <div className="absolute inset-y-0 right-0 w-[44%] opacity-10 sm:w-[38%] lg:w-[30%]">
-          <Image
-            src={ASSETS.VIEW.TWO}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 30vw, (min-width: 640px) 38vw, 44vw"
-            className="object-cover"
+          <video
+            src={ASSETS.VIDEO.TWO}
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden
+            className="h-full w-full object-cover object-right"
           />
           <div className="absolute inset-0 bg-linear-to-l from-transparent via-background/35 to-background" />
         </div>
