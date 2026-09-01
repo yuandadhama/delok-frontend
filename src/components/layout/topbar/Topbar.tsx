@@ -2,6 +2,8 @@
 
 "use client";
 
+import Link from "next/link";
+import { BookOpen } from "lucide-react";
 import { authClient } from "@/src/lib/auth/auth-client";
 import { OrganizationSwitcher } from "./OrganizationSwitcher";
 import { UserMenu } from "./UserMenu";
@@ -21,10 +23,19 @@ export function Topbar({ organizationSlug, organizationName }: TopbarProps) {
         organizationName={organizationName}
       />
 
-      <UserMenu
-        userName={session?.user?.name}
-        userEmail={session?.user?.email}
-      />
+      <div className="flex items-center gap-1">
+        <Link
+          href="/docs"
+          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground"
+        >
+          <BookOpen className="h-3.5 w-3.5" />
+          Docs
+        </Link>
+        <UserMenu
+          userName={session?.user?.name}
+          userEmail={session?.user?.email}
+        />
+      </div>
     </header>
   );
 }

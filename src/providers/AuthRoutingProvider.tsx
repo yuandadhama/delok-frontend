@@ -17,7 +17,9 @@ export function AuthRoutingProvider({ children }: { children: ReactNode }) {
       isPending ||
       !session?.user?.id ||
       pathname === ROUTES.ORGANIZATION.ROOT ||
-      pathname.startsWith(`${ROUTES.ORGANIZATION.ROOT}/`)
+      pathname.startsWith(`${ROUTES.ORGANIZATION.ROOT}/`) ||
+      pathname === "/docs" ||
+      pathname.startsWith("/docs/")
     ) {
       return;
     }
