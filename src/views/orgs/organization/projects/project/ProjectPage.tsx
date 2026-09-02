@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
 import Button from "@/src/components/ui/Button";
+import Loader from "@/src/components/ui/Loader";
 
 import { ProjectHeader, useProject } from "@/src/domains/project";
 
@@ -36,9 +37,7 @@ export default function ProjectPage() {
   if (loadingProject) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="animate-pulse text-xs text-muted-foreground">
-          Loading project...
-        </p>
+        <Loader label="Loading project" />
       </div>
     );
   }

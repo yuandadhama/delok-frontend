@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 
 import { Sidebar } from "@/src/components/layout/sidebar";
 import { Topbar } from "@/src/components/layout/topbar";
+import Loader from "@/src/components/ui/Loader";
 
 import { useOrganization } from "@/src/domains/organization";
 import { STORAGE_KEYS } from "@/src/constants/storage";
@@ -51,8 +52,8 @@ export default function OrganizationLayout({ children }: Props) {
 
   if (isPending) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background text-sm text-muted-foreground">
-        Loading organization...
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader label="Loading organization" />
       </div>
     );
   }

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight, KeyRound } from "lucide-react";
 
 import EmptyState from "@/src/components/ui/EmptyState";
+import Loader from "@/src/components/ui/Loader";
 
 import { LogDetailPanel, LogEventRow } from "@/src/domains/log";
 
@@ -230,9 +231,7 @@ export function LogsPanel({ data, actions, settingsUrl }: LogsPanelProps) {
 
               {isLoading && (
                 <div className="flex h-32 items-center justify-center">
-                  <p className="animate-pulse text-xs text-muted-foreground">
-                    Loading logs...
-                  </p>
+                  <Loader label="Loading logs" />
                 </div>
               )}
 
