@@ -5,7 +5,8 @@ import { DocsHomeSearch } from "@/src/components/docs/DocsHomeSearch";
 
 export const metadata: Metadata = {
   title: "Documentation",
-  description: "Everything you need to start sending and understanding logs with Delok.",
+  description:
+    "Everything you need to start sending and understanding logs with Delok.",
 };
 
 const SECTIONS = [
@@ -15,7 +16,8 @@ const SECTIONS = [
       {
         title: "Introduction",
         href: "/docs/introduction",
-        description: "Learn what Delok is and how it helps you monitor your application logs.",
+        description:
+          "Learn what Delok is and how it helps you monitor your application logs.",
       },
       {
         title: "Quickstart",
@@ -59,7 +61,8 @@ export default function DocsPage() {
           Documentation
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          Everything you need to start sending and understanding logs with Delok.
+          Everything you need to start sending and understanding logs with
+          Delok.
         </p>
         <DocsHomeSearch />
       </div>
@@ -67,7 +70,7 @@ export default function DocsPage() {
       <div className="space-y-10">
         {SECTIONS.map((section) => (
           <div key={section.title}>
-            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-primary">
               {section.title}
             </h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">

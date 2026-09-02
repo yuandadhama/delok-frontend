@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { delok } from "@/src/lib/delok";
 import { ProjectService } from "@/src/domains/project";
 import { ROUTES } from "@/src/constants/routes";
 import { clearLastProjectId, getLastProjectId } from "@/src/constants/storage";
@@ -27,15 +26,6 @@ export function SidebarNavigationItem({
   const Icon = item.icon;
 
   const handleClick = async (event: React.MouseEvent<HTMLAnchorElement>) => {
-    await delok.info({
-      event: "sidebar_nav_clicked",
-      message: `Sidebar navigation clicked: ${item.label}`,
-      payload: {
-        organizationSlug,
-        section: item.label,
-      },
-    });
-
     if (item.label === "Projects") {
       const projectId = getLastProjectId(organizationSlug);
 

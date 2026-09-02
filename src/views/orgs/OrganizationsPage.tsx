@@ -2,10 +2,7 @@
 
 "use client";
 
-import { useEffect, useRef } from "react";
-
 import { useOrganizations } from "@/src/domains/organization";
-import { delok } from "@/src/lib/delok";
 
 import OrganizationsShell from "./components/OrganizationsShell";
 import OrganizationsWelcome from "./components/OrganizationsWelcome";
@@ -16,23 +13,6 @@ export default function OrganizationsPage() {
   const { data } = authClient.useSession();
   const name = data?.user.name;
   const { organizations, isLoading } = useOrganizations();
-
-  const hasLogged = useRef(false);
-
-  useEffect(() => {
-    if (hasLogged.current) return;
-
-    hasLogged.current = true;
-
-    delok.info({
-      event: "user_open_organization",
-      message: "User opens organizations page",
-      payload: {
-        userId: data?.user.id,
-        name,
-      },
-    });
-  }, []);
 
   return (
     <OrganizationsShell>

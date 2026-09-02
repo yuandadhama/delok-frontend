@@ -2,7 +2,29 @@
 
 import type { RealtimeEvent } from "./realtime.types";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL!;
+function getWebSocketUrl(): string {
+  const url = process.env.NEXT_PUBLIC_WS_URL;
+  if (!url) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("NEXT_PUBLIC_WS_URL is required in production");
+    }
+    return "ws://localhost:8000";
+  }
+  if (
+    typeof window !== "undefined" &&
+    window.location.protocol === "https:" &&
+    url.startsWith("ws://")
+  ) {
+    throw new Error("NEXT_PUBLIC_WS_URL must use wss:// when app is served over https");
+  }
+  if (process.env.NODE_ENV === "production" && url.startsWith("ws://")) {
+    // Allow ws:// during `next build` prerender (no window) but fail in browser on https
+    if (typeof window !== "undefined") {
+      throw new Error("NEXT_PUBLIC_WS_URL must use wss:// in production");
+    }
+  }
+  return url;
+}
 
 const BASE_DELAY_MS = 1_000;
 const MAX_DELAY_MS = 30_000;
@@ -104,6 +126,14 @@ class WebSocketManager {
 
   private open() {
     if (this.intentionallyClosed) {
+      return;
+    }
+
+    let WS_URL: string;
+    try {
+      WS_URL = getWebSocketUrl();
+    } catch (error) {
+      console.error("[WS]", (error as Error).message);
       return;
     }
 

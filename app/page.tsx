@@ -1,7 +1,5 @@
 // ./app/page.tsx
 
-"use client";
-
 import {
   Navbar,
   Hero,
@@ -11,17 +9,12 @@ import {
   GetStartedSection,
   Footer,
 } from "@/src/components/landing";
-import { authClient } from "@/src/lib/auth/auth-client";
+import { HomeGate } from "@/src/components/landing/HomeGate";
 
 export default function HomePage() {
-  const { data: session, isPending } = authClient.useSession();
-
-  if (isPending || session?.user?.id) {
-    return;
-  }
-
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <HomeGate />
       <Navbar />
       <Hero />
       <LogInvestigationSection />

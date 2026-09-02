@@ -13,7 +13,6 @@ import {
 } from "@/src/domains/organization";
 
 import { ROUTES } from "@/src/constants/routes";
-import { delok } from "@/src/lib/delok";
 import { formatDateTime } from "@/src/utils/format-date";
 
 type OrganizationSettingsViewProps = {
@@ -38,15 +37,6 @@ export function OrganizationSettingsView({
   const handleUpdate = async (name: string) => {
     const updated = await updateOrganization.mutateAsync({ name });
 
-    delok.info({
-      event: "organization_updated",
-      message: "Organization updated",
-      payload: {
-        organizationSlug,
-        name: updated.name,
-      },
-    });
-
     // The URL contains the old slug after a rename, so follow the
     // organization to its new projects route.
     if (updated.slug && updated.slug !== organizationSlug) {
@@ -56,14 +46,6 @@ export function OrganizationSettingsView({
 
   const handleDelete = async () => {
     await deleteOrganization.mutateAsync();
-
-    delok.info({
-      event: "organization_deleted",
-      message: "Organization deleted",
-      payload: {
-        organizationSlug,
-      },
-    });
 
     showToast({ message: "Organization deleted", type: "success" });
 

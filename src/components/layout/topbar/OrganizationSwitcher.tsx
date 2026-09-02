@@ -7,7 +7,6 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { useOrganizations } from "@/src/domains/organization";
 import { ROUTES } from "@/src/constants/routes";
-import { delok } from "@/src/lib/delok";
 
 type OrganizationSwitcherProps = {
   organizationSlug: string;
@@ -25,16 +24,9 @@ export function OrganizationSwitcher({
     (org) => org.slug === organizationSlug,
   );
 
-  const handleSwitch = async (targetSlug: string) => {
+  const handleSwitch = (targetSlug: string) => {
     setOpen(false);
-    await delok.info({
-      event: "organization_switched",
-      message: "User switched organization",
-      payload: {
-        from: organizationSlug,
-        to: targetSlug,
-      },
-    });
+    void targetSlug;
   };
 
   return (
