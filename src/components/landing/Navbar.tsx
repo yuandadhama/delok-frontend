@@ -95,8 +95,10 @@ export function Navbar() {
         <Image
           src={ASSETS.LOGO.LIGHT_TEXT}
           alt="Delok"
-          width={100}
-          height={100}
+          width={512}
+          height={128}
+          className="w-21.5 h-auto"
+          priority
         />
       </Link>
 
@@ -189,8 +191,10 @@ export function Navbar() {
               <Image
                 src={ASSETS.LOGO.LIGHT_TEXT}
                 alt="Delok"
-                width={100}
-                height={100}
+                width={500}
+                height={120}
+                className="w-25 h-auto"
+                priority
               />
             </Link>
             <button
@@ -267,7 +271,6 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-background">
-
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr]">
           {navContent}

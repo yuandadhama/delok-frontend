@@ -1,5 +1,3 @@
-// ./app/page.tsx
-
 import {
   Navbar,
   Hero,
@@ -13,15 +11,16 @@ import { HomeGate } from "@/src/components/landing/HomeGate";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <HomeGate />
-      <Navbar />
-      <Hero />
-      <LogInvestigationSection />
-      <ProjectsAwarenessSection />
-      <FindSignalSection />
-      <GetStartedSection />
-      <Footer />
-    </div>
+    <HomeGate>
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <Hero />
+        <LogInvestigationSection />
+        <ProjectsAwarenessSection />
+        <FindSignalSection />
+        <GetStartedSection />
+        <Footer />
+      </div>
+    </HomeGate>
   );
 }

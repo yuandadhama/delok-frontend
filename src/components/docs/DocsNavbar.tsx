@@ -37,8 +37,9 @@ export function DocsNavbar({
           <Image
             src={ASSETS.LOGO.LIGHT_TEXT}
             alt="Delok"
-            width={86}
-            height={24}
+            width={512}
+            height={128}
+            className="w-21.5 h-auto"
           />
         </Link>
 

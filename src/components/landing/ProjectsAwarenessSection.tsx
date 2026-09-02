@@ -67,7 +67,7 @@ function DashboardProjectRow({ project }: { project: Project }) {
 // --- Presentation-only sidebar — clearly visible (real product) ---
 function PreviewSidebar() {
   return (
-    <div className="flex w-[172px] shrink-0 flex-col bg-surface">
+    <div className="flex w-43 shrink-0 flex-col bg-surface">
       {/* Header — real Delok mark + collapse icon (PanelLeftClose as in SidebarHeader) */}
       <div className="flex items-center justify-between px-3 py-4">
         <Image src={DelokTextLogo} alt="Delok" width={90} priority />
@@ -117,7 +117,7 @@ function PreviewTopbar() {
         <span className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-[11px] font-semibold text-primary">
           A
         </span>
-        <span className="max-w-[120px] truncate text-sm font-medium text-foreground sm:max-w-none">
+        <span className="max-w-30 truncate text-sm font-medium text-foreground sm:max-w-none">
           Acme Corp
         </span>
         <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -230,9 +230,9 @@ export function ProjectsAwarenessSection() {
                   maskComposite: "intersect" as const,
                 }}
               />
-              <div className="flex h-[420px] w-[680px] shrink-0 sm:h-[460px] sm:w-[720px] lg:h-[520px] lg:w-full lg:min-w-0">
+              <div className="flex h-105 w-170 shrink-0 sm:h-115 sm:w-180 lg:h-130 lg:w-full lg:min-w-0">
                 <PreviewSidebar />
-                <div className="flex min-w-[460px] flex-1 flex-col">
+                <div className="flex min-w-115 flex-1 flex-col">
                   <PreviewTopbar />
                   <div className="flex flex-1 flex-col overflow-hidden p-4 sm:p-5 lg:p-6">
                     <div className="mb-4 flex shrink-0 items-center justify-between">
@@ -258,20 +258,20 @@ export function ProjectsAwarenessSection() {
               {/* Horizontal fade between headline area and dashboard — left edge */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-y-0 left-0 w-[22%] bg-gradient-to-r from-background via-background/70 to-transparent"
+                className="pointer-events-none absolute inset-y-0 left-0 w-[22%] bg-linear-to-r from-background via-background/70 to-transparent"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-y-0 left-0 w-[36%] bg-gradient-to-r from-background via-background/35 via-[42%] to-transparent"
+                className="pointer-events-none absolute inset-y-0 left-0 w-[36%] bg-linear-to-r from-background via-background/35 via-42% to-transparent"
               />
               {/* Bottom + right atmospheric blend */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-[18%] bg-gradient-to-t from-background via-background/70 via-[30%] to-transparent"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-[18%] bg-linear-to-t from-background via-background/70 via-30% to-transparent"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-y-0 right-0 w-[8%] bg-gradient-to-l from-background/50 to-transparent"
+                className="pointer-events-none absolute inset-y-0 right-0 w-[8%] bg-linear-to-l from-background/50 to-transparent"
               />
             </div>
           </div>

@@ -7,7 +7,7 @@ import { ROUTES } from "@/src/constants/routes";
 import { STORAGE_KEYS } from "@/src/constants/storage";
 import { authClient } from "@/src/lib/auth/auth-client";
 
-export function HomeGate() {
+export function HomeGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
@@ -27,5 +27,13 @@ export function HomeGate() {
     );
   }, [isPending, pathname, router, session?.user?.id]);
 
-  return null;
+  if (isPending) {
+    return null;
+  }
+
+  if (session?.user?.id) {
+    return null;
+  }
+
+  return children;
 }
