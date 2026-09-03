@@ -1,3 +1,5 @@
+// ./src/domains/log-explorer/hooks/useLogExplorer.ts
+
 // src/domains/log-explorer/hooks/useLogExplorer.ts
 
 "use client";

@@ -1,3 +1,5 @@
+// ./src/domains/project/index.ts
+
 export {
   ProjectSettings,
   ProjectDangerZone,

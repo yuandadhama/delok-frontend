@@ -1,3 +1,5 @@
+// ./src/domains/organization/components/index.ts
+
 export { CreateOrganizationModal } from "./CreateOrganizationModal";
 export { OrganizationCard } from "./OrganizationCard";
 export { OrganizationList } from "./OrganizationList";

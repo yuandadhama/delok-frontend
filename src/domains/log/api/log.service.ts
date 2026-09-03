@@ -1,3 +1,5 @@
+// ./src/domains/log/api/log.service.ts
+
 import type { LogFiltersState, LogResponse } from "../types/log.type";
 
 function getApiBaseUrl(): string {

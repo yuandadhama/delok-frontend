@@ -1,3 +1,5 @@
+// ./src/components/landing/delok-projects-awareness.data.ts
+
 import type { Project } from "@/src/domains/project";
 
 /**

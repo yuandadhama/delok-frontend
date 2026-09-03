@@ -1,3 +1,5 @@
+// ./src/components/landing/find-signal.data.ts
+
 import type { LogEvent, LogFiltersState } from "@/src/domains/log";
 
 /**

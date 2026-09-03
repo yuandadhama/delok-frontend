@@ -1,3 +1,5 @@
+// ./app/page.tsx
+
 import {
   Navbar,
   Hero,

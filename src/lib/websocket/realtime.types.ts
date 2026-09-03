@@ -1,3 +1,5 @@
+// ./src/lib/websocket/realtime.types.ts
+
 // src/types/realtime.types.ts
 
 export type RealtimeEvent = {

@@ -1,3 +1,5 @@
+// ./src/components/landing/index.ts
+
 export { Navbar } from "./Navbar";
 export { Hero } from "./Hero";
 export { LogInvestigationSection } from "./LogInvestigationSection";

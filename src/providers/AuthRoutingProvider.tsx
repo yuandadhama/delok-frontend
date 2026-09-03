@@ -1,3 +1,5 @@
+// ./src/providers/AuthRoutingProvider.tsx
+
 "use client";
 
 import { ReactNode, useEffect } from "react";
@@ -18,8 +20,8 @@ export function AuthRoutingProvider({ children }: { children: ReactNode }) {
       !session?.user?.id ||
       pathname === ROUTES.ORGANIZATION.ROOT ||
       pathname.startsWith(`${ROUTES.ORGANIZATION.ROOT}/`) ||
-      pathname === "/docs" ||
-      pathname.startsWith("/docs/")
+      pathname === ROUTES.DOCS.ROOT ||
+      pathname.startsWith(`${ROUTES.DOCS.ROOT}/`)
     ) {
       return;
     }

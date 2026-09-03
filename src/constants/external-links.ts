@@ -1,3 +1,5 @@
+// ./src/constants/external-links.ts
+
 /**
  * External destinations referenced by the landing page.
  * Kept isolated in one place so URLs stay easy to find and update.

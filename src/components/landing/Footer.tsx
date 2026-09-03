@@ -1,3 +1,5 @@
+// ./src/components/landing/Footer.tsx
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";

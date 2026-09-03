@@ -1,6 +1,9 @@
+// ./app/docs/introduction/page.tsx
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { ROUTES } from "@/src/constants/routes";
 
 export const metadata: Metadata = {
   title: "Introduction",
@@ -51,7 +54,7 @@ export default function IntroductionPage() {
 
         <div className="flex gap-3 pt-4">
           <Link
-            href="/docs/quickstart"
+            href={ROUTES.DOCS.QUICKSTART}
             className="inline-flex items-center gap-1.5 justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
             Quickstart

@@ -1,8 +1,11 @@
+// ./app/docs/quickstart/page.tsx
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { CodeBlock } from "@/src/components/docs/CodeBlock";
 import { Callout } from "@/src/components/docs/Callout";
+import { ROUTES } from "@/src/constants/routes";
 
 export const metadata: Metadata = {
   title: "Quickstart",
@@ -49,13 +52,13 @@ export default function QuickstartPage() {
         </p>
         <div className="flex gap-2">
           <Link
-            href="/sign-up"
+            href={ROUTES.AUTH.SIGN_UP}
             className="inline-flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90"
           >
             Create account
           </Link>
           <Link
-            href="/sign-in"
+            href={ROUTES.AUTH.SIGN_IN}
             className="inline-flex items-center justify-center rounded-md border border-border bg-surface px-3 py-1.5 text-sm font-medium text-foreground hover:bg-surface-hover"
           >
             Sign in
@@ -198,7 +201,7 @@ const delok = new Delok({
           <span className="font-mono text-foreground">fatal()</span>.
         </p>
         <Link
-          href="/docs/logging"
+          href={ROUTES.DOCS.LOGGING}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
           Continue with Logging

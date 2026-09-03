@@ -1,3 +1,5 @@
+// ./src/domains/api-key/schemas/api-key.schema.ts
+
 import { z } from "zod";
 
 export const apiKeySchema = z.object({

@@ -1,9 +1,12 @@
+// ./src/components/docs/DocsNavbar.tsx
+
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
 import { Search, Menu, X } from "lucide-react";
 import { ASSETS } from "@/src/constants/assets";
+import { ROUTES } from "@/src/constants/routes";
 import { EXTERNAL_LINKS } from "@/src/constants/external-links";
 
 function GitHubIcon({ className }: { className?: string }) {
@@ -33,7 +36,7 @@ export function DocsNavbar({
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background">
       <div className="mx-auto flex h-14 w-full max-w-360 items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center" aria-label="Delok home">
+        <Link href={ROUTES.HOME} className="flex items-center" aria-label="Delok home">
           <Image
             src={ASSETS.LOGO.LIGHT_TEXT}
             alt="Delok"
@@ -45,7 +48,7 @@ export function DocsNavbar({
 
         <div className="flex items-center gap-1">
           <Link
-            href="/docs"
+            href={ROUTES.DOCS.ROOT}
             className="hidden items-center rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-hover hover:text-foreground sm:inline-flex"
           >
             Documentation

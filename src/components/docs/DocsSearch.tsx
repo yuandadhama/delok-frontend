@@ -1,8 +1,11 @@
+// ./src/components/docs/DocsSearch.tsx
+
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
+import { ROUTES } from "@/src/constants/routes";
 
 type DocsEntry = {
   title: string;
@@ -16,39 +19,39 @@ const DOCS_ENTRIES: DocsEntry[] = [
     title: "Introduction",
     description:
       "Learn what Delok is and how it helps you monitor your application logs.",
-    href: "/docs/introduction",
+    href: ROUTES.DOCS.INTRODUCTION,
     section: "Getting Started",
   },
   {
     title: "Quickstart",
     description: "Send your first log with the Delok SDK.",
-    href: "/docs/quickstart",
+    href: ROUTES.DOCS.QUICKSTART,
     section: "Getting Started",
   },
   {
     title: "Installation",
     description: "Install the Delok SDK.",
-    href: "/docs/installation",
+    href: ROUTES.DOCS.INSTALLATION,
     section: "SDK",
   },
   {
     title: "Logging",
     description:
       "Send logs with info, warn, error, fatal — with structured payloads.",
-    href: "/docs/logging",
+    href: ROUTES.DOCS.LOGGING,
     section: "SDK",
   },
   {
     title: "Log Event",
     description: "Understand the structure of a log event sent to Delok.",
-    href: "/docs/reference/log-event",
+    href: ROUTES.DOCS.REFERENCE_LOG_EVENT,
     section: "Reference",
   },
   {
     title: "Documentation",
     description:
       "Everything you need to start sending and understanding logs with Delok.",
-    href: "/docs",
+    href: ROUTES.DOCS.ROOT,
     section: "Overview",
   },
 ];
@@ -78,7 +81,7 @@ export function DocsSearchModal({
   const filtered = useMemo(() => {
     if (!query.trim()) {
       // Initial state: show useful destinations
-      return DOCS_ENTRIES.filter((e) => e.href !== "/docs").slice(0, 5);
+      return DOCS_ENTRIES.filter((e) => e.href !== ROUTES.DOCS.ROOT).slice(0, 5);
     }
     return DOCS_ENTRIES.filter((e) => matches(e, query));
   }, [query]);

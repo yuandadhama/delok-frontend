@@ -1,3 +1,5 @@
+// ./src/constants/routes.ts
+
 export const ROUTES = {
   HOME: "/",
 
@@ -30,5 +32,14 @@ export const ROUTES = {
 
     PROJECT_SETTINGS: (organizationSlug: string, projectId: string) =>
       `/orgs/${organizationSlug}/projects/${projectId}/settings`,
+  },
+
+  DOCS: {
+    ROOT: "/docs",
+    INTRODUCTION: "/docs/introduction",
+    QUICKSTART: "/docs/quickstart",
+    INSTALLATION: "/docs/installation",
+    LOGGING: "/docs/logging",
+    REFERENCE_LOG_EVENT: "/docs/reference/log-event",
   },
 } as const;

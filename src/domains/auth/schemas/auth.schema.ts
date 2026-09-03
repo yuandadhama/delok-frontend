@@ -1,3 +1,5 @@
+// ./src/domains/auth/schemas/auth.schema.ts
+
 import { z } from "zod";
 
 export const passwordSchema = z

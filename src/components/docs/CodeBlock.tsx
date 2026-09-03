@@ -1,3 +1,5 @@
+// ./src/components/docs/CodeBlock.tsx
+
 "use client";
 
 import { useState, useMemo } from "react";

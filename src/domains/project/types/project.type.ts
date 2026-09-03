@@ -1,3 +1,5 @@
+// ./src/domains/project/types/project.type.ts
+
 // src/domains/project/types/project.type.ts
 
 export type Project = {

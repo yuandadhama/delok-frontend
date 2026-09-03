@@ -1,11 +1,12 @@
+// ./src/hooks/useCooldown.ts
+
 // src/hooks/useCooldown.ts
 
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 
-import { ACTION_COOLDOWN_MS } from "@/src/constants/action";
-
+export const ACTION_COOLDOWN_MS = 3000;
 /**
  * Generic short anti-spam lock for a single user-triggered action.
  *

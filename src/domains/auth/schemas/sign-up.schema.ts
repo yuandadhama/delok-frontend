@@ -1,3 +1,5 @@
+// ./src/domains/auth/schemas/sign-up.schema.ts
+
 import { z } from "zod";
 import { passwordSchema } from "./auth.schema";
 

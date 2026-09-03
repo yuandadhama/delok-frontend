@@ -1,3 +1,5 @@
+// ./app/docs/logging/page.tsx
+
 import type { Metadata } from "next";
 import { CodeBlock } from "@/src/components/docs/CodeBlock";
 import { Callout } from "@/src/components/docs/Callout";

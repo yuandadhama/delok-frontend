@@ -1,3 +1,5 @@
+// ./src/constants/assets.ts
+
 export const ASSETS = {
   LOGO: {
     LIGHT: "/delok-light-logo.webp",

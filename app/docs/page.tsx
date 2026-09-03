@@ -1,7 +1,10 @@
+// ./app/docs/page.tsx
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { DocsHomeSearch } from "@/src/components/docs/DocsHomeSearch";
+import { ROUTES } from "@/src/constants/routes";
 
 export const metadata: Metadata = {
   title: "Documentation",
@@ -15,13 +18,13 @@ const SECTIONS = [
     items: [
       {
         title: "Introduction",
-        href: "/docs/introduction",
+        href: ROUTES.DOCS.INTRODUCTION,
         description:
           "Learn what Delok is and how it helps you monitor your application logs.",
       },
       {
         title: "Quickstart",
-        href: "/docs/quickstart",
+        href: ROUTES.DOCS.QUICKSTART,
         description: "Send your first log with the Delok SDK.",
       },
     ],
@@ -31,12 +34,12 @@ const SECTIONS = [
     items: [
       {
         title: "Installation",
-        href: "/docs/installation",
+        href: ROUTES.DOCS.INSTALLATION,
         description: "Install the SDK and prepare your application.",
       },
       {
         title: "Logging",
-        href: "/docs/logging",
+        href: ROUTES.DOCS.LOGGING,
         description: "Learn how to send info, warning, error, and fatal logs.",
       },
     ],
@@ -46,7 +49,7 @@ const SECTIONS = [
     items: [
       {
         title: "Log Event",
-        href: "/docs/reference/log-event",
+        href: ROUTES.DOCS.REFERENCE_LOG_EVENT,
         description: "Understand the structure of a log event sent to Delok.",
       },
     ],

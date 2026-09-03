@@ -1,3 +1,5 @@
+// ./app/docs/installation/page.tsx
+
 import type { Metadata } from "next";
 import { CodeBlock } from "@/src/components/docs/CodeBlock";
 

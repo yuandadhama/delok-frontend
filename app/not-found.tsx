@@ -1,7 +1,9 @@
+// ./app/not-found.tsx
+
 import Link from "next/link";
 import Image from "next/image";
 
-import Logo from "@/public/delok-light-logo.webp";
+import { ASSETS } from "@/src/constants/assets";
 import { ROUTES } from "@/src/constants/routes";
 import { Button } from "@/src/components/ui";
 
@@ -14,7 +16,7 @@ export default function NotFound() {
         </p>
         <Link href={ROUTES.HOME} className="mb-4 block">
           <Image
-            src={Logo}
+            src={ASSETS.LOGO.LIGHT}
             alt="Delok"
             width={48}
             height={48}

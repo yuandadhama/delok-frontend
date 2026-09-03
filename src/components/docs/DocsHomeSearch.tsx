@@ -1,3 +1,5 @@
+// ./src/components/docs/DocsHomeSearch.tsx
+
 "use client";
 
 import { Search } from "lucide-react";

@@ -1,4 +1,4 @@
-// ./src/components/layout/sidebar/OrganizationSwitcher.tsx
+// ./src/components/layout/topbar/OrganizationSwitcher.tsx
 
 "use client";
 

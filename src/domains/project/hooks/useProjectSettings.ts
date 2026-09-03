@@ -1,4 +1,4 @@
-// ./src/domains/projects/hooks/useProjectSettings.ts
+// ./src/domains/project/hooks/useProjectSettings.ts
 
 "use client";
 

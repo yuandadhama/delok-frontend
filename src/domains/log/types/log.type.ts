@@ -1,3 +1,5 @@
+// ./src/domains/log/types/log.type.ts
+
 // src/domains/log/types/log.type.ts
 
 export type LogLevel = "debug" | "info" | "warn" | "error" | "fatal" | string;

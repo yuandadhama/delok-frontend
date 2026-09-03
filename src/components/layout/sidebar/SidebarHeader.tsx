@@ -1,9 +1,8 @@
 // ./src/components/layout/sidebar/SidebarHeader.tsx
 
+import { ASSETS } from "@/src/constants/assets";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Image from "next/image";
-import DelokMarkLogo from "@/public/delok-light-logo.webp";
-import DelokTextLogo from "@/public/delok-light-teks_logo.webp";
 
 type SidebarHeaderProps = {
   collapsed: boolean;
@@ -31,7 +30,7 @@ export function SidebarHeader({
           className="flex items-center justify-center rounded-md hover:bg-surface-hover transition-colors cursor-pointer"
         >
           <Image
-            src={DelokMarkLogo}
+            src={ASSETS.LOGO.LIGHT}
             alt=""
             aria-hidden
             width={24}
@@ -40,7 +39,7 @@ export function SidebarHeader({
         </button>
       ) : (
         <>
-          <Image src={DelokTextLogo} alt="Delok" width={90} />
+          <Image src={ASSETS.LOGO.LIGHT_TEXT} alt="Delok" width={90} height={22} />
 
           <button
             type="button"
