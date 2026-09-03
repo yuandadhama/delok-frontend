@@ -1,167 +1,80 @@
-# Delok
+# Delok Frontend
 
-**Delok** is an observability platform that helps developers collect, store, search, and investigate application logs from multiple projects in a single place.
+**Delok** is an observability platform for collecting, storing, searching, and investigating structured log events per project, scoped inside organizations.
 
-Delok ships a lightweight SDK for sending structured events to a centralized backend, so you can understand what your application is doing without building a logging pipeline from scratch.
+> **Status:** Under active development. Frontend and backend not yet deployed; SDK not yet published (`README` prior). This repo is the Next.js frontend.
 
-> **Status:** Delok is under active development. The frontend and backend are not yet deployed (frontend hardening in progress), and the SDK — while feature-complete — has not been published yet. It will be published once the frontend and backend are ready together.
+## Tech Stack
 
----
+| Layer | Choice |
+|-------|--------|
+| Framework | Next.js 16.2.9 (App Router) + React 19.2.4 |
+| Language | TypeScript 5 (strict) |
+| Styling | Tailwind CSS 4, design tokens in `app/globals.css` |
+| Server state | TanStack React Query 5 |
+| Auth | better-auth 1.6.23 |
+| Forms | react-hook-form + zod + @hookform/resolvers |
+| Theming | next-themes |
+| Realtime | Native WebSocket singleton (`src/lib/websocket/websocket.ts`) |
 
-## Table of Contents
-
-- [Why Delok](#why-delok)
-- [Architecture](#architecture)
-- [Getting Started](#getting-started)
-- [Sending Structured Events](#sending-structured-events)
-- [Log Levels](#log-levels)
-- [How It Works](#how-it-works)
-  - [1. Ingestion API](#1-ingestion-api)
-  - [2. Event Normalization](#2-event-normalization)
-  - [3. Reliable Delivery](#3-reliable-delivery)
-  - [4. Realtime Dashboard](#4-realtime-dashboard)
-- [License](#license)
-
----
-
-## Why Delok
-
-Instead of scattering `console.log` calls or ad-hoc log strings across your codebase, Delok encourages sending **structured events** — consistent, queryable, and easy to correlate across services and environments.
-
-- **Drop-in SDK** — a few lines of setup, no infrastructure to run
-- **Structured by design** — every event follows the same schema
-- **Realtime** — logs reach your dashboard the moment they're stored
-- **Project-scoped** — API keys and dashboards are isolated per project
-
-## Architecture
+## Repository Structure
 
 ```
-Developer Application
-        │
-        ▼
-     Delok SDK
-        │
-        ▼
- HTTP Ingestion API
-        │
-        ▼
- API Key Validation
-        │
-        ▼
- Event Normalization
-        │
-        ▼
-  PostgreSQL Storage
-        │
-        ▼
-  Realtime Service
-        │
-        ▼
-  Delok Dashboard
+app/                  # Routes (App Router): (auth), (root)/orgs, docs, globals.css, layout.tsx
+src/
+  components/         # ui, landing, docs, layout (Sidebar/Topbar)
+  domains/            # auth, organization, project, log, log-explorer, api-key
+  lib/                # auth-client, websocket
+  providers/          # AppProvider -> Theme/Query/Socket/AuthRouting
+  constants/          # routes, assets, storage, external-links
+  hooks/              # useCooldown
+  utils/              # api-error, format-date
+  views/              # Page compositions consumed by app/
+public/               # Logos (.webp), demo video
 ```
 
-Every event follows the same path: the SDK sends it to the Ingestion API, the API validates and normalizes it, PostgreSQL persists it, and the Realtime Service pushes it to any dashboard subscribed to that project.
+Path alias: `@/* -> ./*` so `@/src/...` works.
 
 ## Getting Started
 
-> ⚠️ The SDK is feature-complete but **not published yet**. It will be released once the frontend and backend are deployed. The usage below reflects the intended API once it's published.
-
-Once published, you'll install the SDK in any application you want to monitor:
-
 ```bash
-npm install delok
+npm install
+# create .env.local
+# NEXT_PUBLIC_API_URL=http://localhost:8000
+# NEXT_PUBLIC_WS_URL=ws://localhost:8000
+# NEXT_PUBLIC_APP_URL=http://localhost:3000
+npm run dev
 ```
 
-Initialize it with your project's API key:
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server |
+| `npm run build` | Production build |
+| `npm run start` | Start prod |
+| `npm run lint` | ESLint |
 
-```js
-import { Delok } from "delok";
+See [docs/guides/getting-started.md](docs/guides/getting-started.md) for env details.
 
-const delok = new Delok({
-  apiKey: "...",
-  environment: "production",
-});
-```
+## Architecture Overview
 
-That's it — your application can now send events.
+- **Routing:** File-based App Router with groups `(auth)` and `(root)`. All paths in `src/constants/routes.ts`. See `docs/architecture/routing.md`.
+- **Providers:** `AppProvider` wraps `Theme > Query > Socket > AuthRouting`. See `docs/architecture/providers.md`.
+- **State:** React Query for server state, local `useState` for explorer, `localStorage` for last org/project, WebSocket for realtime. See `docs/architecture/state-management.md`.
+- **API:** Native `fetch` with cookie auth to `NEXT_PUBLIC_API_URL`; WebSocket to `NEXT_PUBLIC_WS_URL`. See `docs/architecture/api-integration.md`.
+- **Design:** Tokens in `app/globals.css` (dark default, `.light` override). See `docs/design/README.md`.
 
-## Sending Structured Events
+## Documentation
 
-Rather than logging arbitrary strings, send structured events with a clear name, message, and payload:
+Full docs index: [docs/README.md](docs/README.md)
 
-```js
-await delok.info({
-  event: "user_login",
-  message: "User successfully logged in",
-  payload: {
-    userId: "123",
-  },
-});
-```
+- Architecture: `docs/architecture/`
+- Design: `docs/design/`
+- Application / flows: `docs/application/`
+- Domains: `docs/domains/`
+- Guides: `docs/guides/`
+- Decisions: `docs/decisions/`
 
-Some common event examples:
+## Contributing
 
-| Event                     | Description                          |
-| ------------------------- | ------------------------------------ |
-| `user_login`              | A user successfully authenticated    |
-| `payment_completed`       | A payment was processed successfully |
-| `payment_failed`          | A payment attempt failed             |
-| `email_verification_sent` | A verification email was dispatched  |
-
-This consistent structure makes logs easy to search, filter, and analyze later — instead of parsing free-text strings.
-
-## Log Levels
-
-Every event is categorized using one of Delok's built-in log levels:
-
-| Level   | Use case                                           |
-| ------- | -------------------------------------------------- |
-| `info`  | Normal application activity worth recording        |
-| `warn`  | Something unexpected but non-critical              |
-| `error` | An operation failed and needs attention            |
-| `fatal` | A critical failure affecting application stability |
-
-## How It Works
-
-### 1. Ingestion API
-
-The SDK sends every event to the Delok Ingestion API along with the project's API key. The backend is responsible for:
-
-- Validating the API key
-- Identifying the target project
-- Validating incoming data
-- Normalizing the event
-- Storing the log
-
-The SDK intentionally contains no business logic — its only job is delivering events reliably.
-
-### 2. Event Normalization
-
-Before a log is stored, Delok transforms it into a standardized format. The backend automatically enriches every incoming event with metadata such as:
-
-- Log ID
-- Project ID
-- Environment
-- Timestamp
-- Normalized log structure
-
-This guarantees every log follows the same schema, regardless of how or where it was generated.
-
-### 3. Reliable Delivery
-
-The SDK is designed to stay lightweight while handling common network issues automatically:
-
-- Request timeouts
-- Automatic retry on transient failures
-- Internal error handling
-- Defensive network communication
-
-These mechanisms reduce the chance of losing logs to temporary network failures, without blocking or slowing down your application.
-
-### 4. Realtime Dashboard
-
-Once a log is stored, Delok immediately pushes it to subscribed dashboards over WebSocket. Each dashboard only subscribes to its own project, so logs are only ever visible to authorized viewers — letting you watch application activity live, with no manual refreshing.
-
-## License
-
-This project is licensed under the [MIT License](./LICENSE).
+- Follow conventions in `docs/guides/conventions.md`.
+- Keep `docs/` in sync with code — when adding a domain/route, update the corresponding doc (see `docs/README.md` maintenance table).
