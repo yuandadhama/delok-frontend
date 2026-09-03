@@ -12,4 +12,7 @@ function getAuthBaseURL(): string {
 
 export const authClient = createAuthClient({
   baseURL: getAuthBaseURL(),
+  fetchOptions: {
+    credentials: "include",
+  },
 });
