@@ -1,5 +1,4 @@
-// ./src/domains/project/components/index.ts
-
+// src/domains/project/components/index.ts
 export { CreateProjectModal } from "./CreateProjectModal";
 export { ProjectCard } from "./ProjectCard";
 export { ProjectList } from "./ProjectList";

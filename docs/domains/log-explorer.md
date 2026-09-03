@@ -53,8 +53,3 @@ LogExplorer
  -> LogsPanel (renders LogEventRow list)
  -> LogDetailPanel (when selectedLog != null)
 ```
-
-## Incomplete
-
-- Filters are local state, not URL-synced (no deep link to filtered view).
-- No virtualized list; large log counts may need virtualization.

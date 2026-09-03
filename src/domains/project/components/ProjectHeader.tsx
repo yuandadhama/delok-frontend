@@ -1,5 +1,4 @@
-// ./src/domains/project/components/ProjectHeader.tsx
-
+// src/domains/project/components/ProjectHeader.tsx
 import Link from "next/link";
 import { Settings } from "lucide-react";
 

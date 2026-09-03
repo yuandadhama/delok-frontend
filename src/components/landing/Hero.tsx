@@ -1,5 +1,4 @@
-// ./src/components/landing/Hero.tsx
-
+// src/components/landing/Hero.tsx
 import { ROUTES } from "@/src/constants/routes";
 import { EXTERNAL_LINKS } from "@/src/constants/external-links";
 import { ArrowUpRight } from "lucide-react";

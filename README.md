@@ -1,8 +1,6 @@
 # Delok Frontend
 
-**Delok** is an observability platform for collecting, storing, searching, and investigating structured log events per project, scoped inside organizations.
-
-> **Status:** Under active development. Frontend and backend not yet deployed; SDK not yet published (`README` prior). This repo is the Next.js frontend.
+Next.js frontend for Delok — organization and project management, API key issuance, and realtime log exploration.
 
 ## Tech Stack
 
@@ -30,12 +28,12 @@ src/
   hooks/              # useCooldown
   utils/              # api-error, format-date
   views/              # Page compositions consumed by app/
-public/               # Logos (.webp), demo video
+public/               # Static assets
 ```
 
-Path alias: `@/* -> ./*` so `@/src/...` works.
+Path alias: `@/* -> ./*`.
 
-## Getting Started
+## Setup
 
 ```bash
 npm install
@@ -53,11 +51,11 @@ npm run dev
 | `npm run start` | Start prod |
 | `npm run lint` | ESLint |
 
-See [docs/guides/getting-started.md](docs/guides/getting-started.md) for env details.
+See `docs/guides/getting-started.md` for environment details.
 
-## Architecture Overview
+## Architecture
 
-- **Routing:** File-based App Router with groups `(auth)` and `(root)`. All paths in `src/constants/routes.ts`. See `docs/architecture/routing.md`.
+- **Routing:** File-based App Router with groups `(auth)` and `(root)`. Paths in `src/constants/routes.ts`. See `docs/architecture/routing.md`.
 - **Providers:** `AppProvider` wraps `Theme > Query > Socket > AuthRouting`. See `docs/architecture/providers.md`.
 - **State:** React Query for server state, local `useState` for explorer, `localStorage` for last org/project, WebSocket for realtime. See `docs/architecture/state-management.md`.
 - **API:** Native `fetch` with cookie auth to `NEXT_PUBLIC_API_URL`; WebSocket to `NEXT_PUBLIC_WS_URL`. See `docs/architecture/api-integration.md`.
@@ -65,16 +63,15 @@ See [docs/guides/getting-started.md](docs/guides/getting-started.md) for env det
 
 ## Documentation
 
-Full docs index: [docs/README.md](docs/README.md)
+Full index: `docs/README.md`
 
 - Architecture: `docs/architecture/`
 - Design: `docs/design/`
-- Application / flows: `docs/application/`
+- Application: `docs/application/`
 - Domains: `docs/domains/`
 - Guides: `docs/guides/`
 - Decisions: `docs/decisions/`
 
 ## Contributing
 
-- Follow conventions in `docs/guides/conventions.md`.
-- Keep `docs/` in sync with code — when adding a domain/route, update the corresponding doc (see `docs/README.md` maintenance table).
+Follow conventions in `docs/guides/conventions.md`.

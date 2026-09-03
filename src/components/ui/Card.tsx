@@ -1,5 +1,4 @@
-// ./src/components/ui/Card.tsx
-
+// src/components/ui/Card.tsx
 import { HTMLAttributes } from "react";
 import clsx from "clsx";
 

@@ -1,5 +1,4 @@
-// ./src/components/ui/ConfirmModal.tsx
-
+// src/components/ui/ConfirmModal.tsx
 "use client";
 
 import { useId, useState } from "react";

@@ -1,5 +1,4 @@
-// ./src/components/ui/toast.tsx
-
+// src/components/ui/toast.tsx
 import { toast } from "sonner";
 import { AlertTriangle, CheckCircle2, Info, X } from "lucide-react";
 

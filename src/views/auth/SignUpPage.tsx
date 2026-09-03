@@ -1,5 +1,4 @@
-// ./src/views/auth/SignUpPage.tsx
-
+// src/views/auth/SignUpPage.tsx
 "use client";
 
 import { useRouter } from "next/navigation";

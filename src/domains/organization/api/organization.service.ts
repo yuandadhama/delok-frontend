@@ -1,5 +1,4 @@
-// ./src/domains/organization/api/organization.service.ts
-
+// src/domains/organization/api/organization.service.ts
 import { getApiErrorCode, getApiErrorMessage } from "@/src/utils/api-error";
 
 import type {

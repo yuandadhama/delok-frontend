@@ -1,5 +1,4 @@
-// ./src/views/orgs/components/OrganizationsShell.tsx
-
+// src/views/orgs/components/OrganizationsShell.tsx
 import { ReactNode } from "react";
 
 import { OrganizationsTopbar } from "@/src/components/layout/topbar/OrganizationsTopbar";

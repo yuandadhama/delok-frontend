@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/settings/OrganizationSettingsPage.tsx
-
+// src/views/orgs/organization/settings/OrganizationSettingsPage.tsx
 "use client";
 
 import { useParams } from "next/navigation";

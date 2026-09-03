@@ -1,7 +1,4 @@
-// ./src/domains/log-explorer/utils/matchesLogFilters.ts
-
 // src/domains/log-explorer/utils/matchesLogFilters.ts
-
 import type { LogEvent, LogFiltersState } from "@/src/domains/log";
 
 /**

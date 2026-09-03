@@ -1,5 +1,4 @@
-// ./src/views/orgs/OrganizationsPage.tsx
-
+// src/views/orgs/OrganizationsPage.tsx
 "use client";
 
 import { useOrganizations } from "@/src/domains/organization";

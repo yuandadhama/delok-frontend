@@ -1,5 +1,4 @@
-// ./src/domains/api-key/api/api-key.service.ts
-
+// src/domains/api-key/api/api-key.service.ts
 import type { ApiKey, CreateApiKeyInput } from "../types/api-key.type";
 
 function getApiBaseUrl(): string {

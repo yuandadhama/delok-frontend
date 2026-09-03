@@ -1,5 +1,4 @@
-// ./src/domains/organization/components/OrganizationSettings.tsx
-
+// src/domains/organization/components/OrganizationSettings.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";

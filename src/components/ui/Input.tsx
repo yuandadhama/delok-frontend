@@ -1,5 +1,4 @@
-// ./src/components/ui/Input.tsx
-
+// src/components/ui/Input.tsx
 "use client";
 
 import { forwardRef, InputHTMLAttributes, useState } from "react";

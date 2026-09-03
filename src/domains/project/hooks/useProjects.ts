@@ -1,7 +1,4 @@
-// ./src/domains/project/hooks/useProjects.ts
-
 // src/domains/project/hooks/useProjects.ts
-
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

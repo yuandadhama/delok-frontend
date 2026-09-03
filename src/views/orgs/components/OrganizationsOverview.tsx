@@ -1,5 +1,4 @@
-// ./src/views/orgs/components/OrganizationsOverview.tsx
-
+// src/views/orgs/components/OrganizationsOverview.tsx
 import {
   GetStartedSection,
   OrganizationsPanel,

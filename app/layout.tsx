@@ -1,5 +1,4 @@
-// ./app/layout.tsx
-
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";

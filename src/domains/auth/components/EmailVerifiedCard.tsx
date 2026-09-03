@@ -1,5 +1,4 @@
-// ./src/domains/auth/components/EmailVerifiedCard.tsx
-
+// src/domains/auth/components/EmailVerifiedCard.tsx
 import Link from "next/link";
 
 import Button from "@/src/components/ui/Button";

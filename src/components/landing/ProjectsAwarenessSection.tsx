@@ -1,5 +1,4 @@
-// ./src/components/landing/ProjectsAwarenessSection.tsx
-
+// src/components/landing/ProjectsAwarenessSection.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";

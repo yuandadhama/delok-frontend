@@ -1,7 +1,4 @@
-// ./src/lib/websocket/websocket.ts
-
 // src/lib/websocket/websocket.ts
-
 import type { RealtimeEvent } from "./realtime.types";
 
 function getWebSocketUrl(): string {

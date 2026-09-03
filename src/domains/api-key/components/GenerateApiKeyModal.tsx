@@ -1,5 +1,4 @@
-// ./src/domains/api-key/components/GenerateApiKeyModal.tsx
-
+// src/domains/api-key/components/GenerateApiKeyModal.tsx
 "use client";
 
 import { useState } from "react";

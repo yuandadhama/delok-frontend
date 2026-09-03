@@ -1,5 +1,4 @@
-// ./src/components/layout/sidebar/SidebarFooter.tsx
-
+// src/components/layout/sidebar/SidebarFooter.tsx
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { ROUTES } from "@/src/constants/routes";

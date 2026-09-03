@@ -1,5 +1,4 @@
-// ./src/views/auth/ResetPasswordPage.tsx
-
+// src/views/auth/ResetPasswordPage.tsx
 "use client";
 
 import { Suspense } from "react";

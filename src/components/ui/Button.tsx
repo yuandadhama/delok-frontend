@@ -1,5 +1,4 @@
-// ./src/components/ui/Button.tsx
-
+// src/components/ui/Button.tsx
 import { ButtonHTMLAttributes } from "react";
 import Link from "next/link";
 import clsx from "clsx";

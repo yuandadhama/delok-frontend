@@ -1,5 +1,4 @@
-// ./src/domains/auth/api/auth.service.ts
-
+// src/domains/auth/api/auth.service.ts
 import { ROUTES } from "@/src/constants/routes";
 import { authClient } from "@/src/lib/auth/auth-client";
 

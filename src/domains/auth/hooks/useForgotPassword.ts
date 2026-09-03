@@ -1,5 +1,4 @@
-// ./src/domains/auth/hooks/useForgotPassword.ts
-
+// src/domains/auth/hooks/useForgotPassword.ts
 "use client";
 
 import { useEffect, useState } from "react";

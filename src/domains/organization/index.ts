@@ -1,5 +1,4 @@
-// ./src/domains/organization/index.ts
-
+// src/domains/organization/index.ts
 export {
   CreateOrganizationModal,
   OrganizationCard,

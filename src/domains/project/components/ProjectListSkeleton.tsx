@@ -1,5 +1,4 @@
-// ./src/domains/project/components/ProjectListSkeleton.tsx
-
+// src/domains/project/components/ProjectListSkeleton.tsx
 import Skeleton from "@/src/components/ui/Skeleton";
 
 export function ProjectListSkeleton() {

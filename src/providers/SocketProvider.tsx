@@ -1,5 +1,4 @@
-// ./src/providers/SocketProvider.tsx
-
+// src/providers/SocketProvider.tsx
 "use client";
 
 import { ReactNode, useEffect } from "react";

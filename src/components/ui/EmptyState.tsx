@@ -1,5 +1,4 @@
-// ./src/components/ui/EmptyState.tsx
-
+// src/components/ui/EmptyState.tsx
 import { HTMLAttributes } from "react";
 import clsx from "clsx";
 

@@ -1,5 +1,4 @@
-// ./src/domains/project/hooks/useProject.ts
-
+// src/domains/project/hooks/useProject.ts
 "use client";
 
 import { useQuery } from "@tanstack/react-query";

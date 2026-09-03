@@ -1,5 +1,4 @@
-// ./src/domains/auth/hooks/useResendVerification.ts
-
+// src/domains/auth/hooks/useResendVerification.ts
 "use client";
 
 import { useEffect, useState } from "react";

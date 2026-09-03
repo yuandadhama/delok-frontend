@@ -1,5 +1,4 @@
-// ./src/components/ui/Badge.tsx
-
+// src/components/ui/Badge.tsx
 import { HTMLAttributes } from "react";
 import clsx from "clsx";
 

@@ -1,5 +1,4 @@
-// ./src/components/landing/GetStartedSection.tsx
-
+// src/components/landing/GetStartedSection.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";

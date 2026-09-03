@@ -43,8 +43,3 @@ api-key/
 ## External systems
 
 - Backend: API key storage; keys are project-scoped; `keyPrefix` shown in list for identification.
-
-## Incomplete
-
-- No key rotation or expiry UI.
-- No permission scoping per key (single project scope only, verified).

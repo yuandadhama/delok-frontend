@@ -1,7 +1,4 @@
-// ./src/domains/project/schemas/project.schema.ts
-
 // src/domains/project/schemas/project.schema.ts
-
 import { z } from "zod";
 
 export const projectSchema = z.object({

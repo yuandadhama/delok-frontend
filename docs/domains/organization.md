@@ -53,7 +53,3 @@ Error code `ORGANIZATION_SLUG_ALREADY_EXISTS` is mapped to "Organization name is
 ## External systems
 
 - Backend: `/api/organization/*` with cookie auth; OWNER role required for create/update/delete per service comments.
-
-## Incomplete
-
-- No member list / invite UI in frontend (backend may support it).

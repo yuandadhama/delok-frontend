@@ -1,5 +1,4 @@
-// ./src/components/layout/topbar/Topbar.tsx
-
+// src/components/layout/topbar/Topbar.tsx
 "use client";
 
 import Link from "next/link";

@@ -1,5 +1,4 @@
-// ./src/views/orgs/components/GetStartedSection.tsx
-
+// src/views/orgs/components/GetStartedSection.tsx
 "use client";
 
 import { Building2, Link2 } from "lucide-react";

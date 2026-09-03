@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/projects/project/settings/ProjectSettingsLoading.tsx
-
+// src/views/orgs/organization/projects/project/settings/ProjectSettingsLoading.tsx
 import Loader from "@/src/components/ui/Loader";
 
 export default function ProjectSettingsLoading() {

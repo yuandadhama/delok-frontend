@@ -1,7 +1,4 @@
-// ./src/lib/auth/auth-client.ts
-
-// /src/lib/auth-client.ts
-
+// src/lib/auth/auth-client.ts
 import { createAuthClient } from "better-auth/react";
 
 function getAuthBaseURL(): string {

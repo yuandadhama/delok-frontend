@@ -1,5 +1,4 @@
-// ./src/components/docs/DocsNavbar.tsx
-
+// src/components/docs/DocsNavbar.tsx
 "use client";
 
 import Link from "next/link";

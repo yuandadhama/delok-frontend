@@ -1,5 +1,4 @@
-// ./src/domains/log-explorer/components/LogExplorer.tsx
-
+// src/domains/log-explorer/components/LogExplorer.tsx
 "use client";
 
 import { ROUTES } from "@/src/constants/routes";

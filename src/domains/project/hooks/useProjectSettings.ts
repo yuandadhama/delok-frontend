@@ -1,5 +1,4 @@
-// ./src/domains/project/hooks/useProjectSettings.ts
-
+// src/domains/project/hooks/useProjectSettings.ts
 "use client";
 
 import { showToast } from "@/src/components/ui/toast";

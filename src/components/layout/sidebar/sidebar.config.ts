@@ -1,5 +1,4 @@
-// ./src/components/layout/sidebar/sidebar.config.ts
-
+// src/components/layout/sidebar/sidebar.config.ts
 import {
   LayoutDashboard,
   FolderKanban,

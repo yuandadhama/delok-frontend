@@ -1,5 +1,4 @@
-// ./src/components/layout/sidebar/SidebarNavigationItem.tsx
-
+// src/components/layout/sidebar/SidebarNavigationItem.tsx
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ProjectService } from "@/src/domains/project";

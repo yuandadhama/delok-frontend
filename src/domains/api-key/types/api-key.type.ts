@@ -1,5 +1,4 @@
-// ./src/domains/api-key/types/api-key.type.ts
-
+// src/domains/api-key/types/api-key.type.ts
 export type ApiKey = {
   id: string;
   name: string;

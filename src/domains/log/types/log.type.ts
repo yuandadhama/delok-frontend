@@ -1,7 +1,4 @@
-// ./src/domains/log/types/log.type.ts
-
 // src/domains/log/types/log.type.ts
-
 export type LogLevel = "info" | "warn" | "error" | "fatal" | string;
 
 export type LogEvent = {

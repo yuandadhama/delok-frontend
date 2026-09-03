@@ -1,5 +1,4 @@
-// ./src/components/landing/FindSignalSection.tsx
-
+// src/components/landing/FindSignalSection.tsx
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";

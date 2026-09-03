@@ -1,5 +1,4 @@
-// ./src/domains/project/components/CreateProjectModal.tsx
-
+// src/domains/project/components/CreateProjectModal.tsx
 "use client";
 
 import { useState } from "react";

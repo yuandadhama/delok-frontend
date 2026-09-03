@@ -1,7 +1,4 @@
-// ./src/hooks/useCooldown.ts
-
 // src/hooks/useCooldown.ts
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";

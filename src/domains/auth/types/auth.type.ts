@@ -1,5 +1,4 @@
-// ./src/domains/auth/types/auth.type.ts
-
+// src/domains/auth/types/auth.type.ts
 import { z } from "zod";
 import { signUpSchema } from "../schemas/sign-up.schema";
 import { signInSchema, resetPasswordSchema } from "../schemas/auth.schema";

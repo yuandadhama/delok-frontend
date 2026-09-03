@@ -1,5 +1,4 @@
-// ./src/domains/log/index.ts
-
+// src/domains/log/index.ts
 export { LogDetailPanel, LogEventRow } from "./components";
 
 export { LogService } from "./api/log.service";

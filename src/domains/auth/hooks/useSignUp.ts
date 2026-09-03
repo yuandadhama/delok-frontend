@@ -1,5 +1,4 @@
-// ./src/domains/auth/hooks/useSignUp.ts
-
+// src/domains/auth/hooks/useSignUp.ts
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";

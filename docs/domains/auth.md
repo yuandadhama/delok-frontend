@@ -53,8 +53,3 @@ auth/
 ## External systems
 
 - Backend auth endpoints via `NEXT_PUBLIC_API_URL` (better-auth server) + OAuth providers (Google, GitHub).
-
-## Incomplete / Unknown
-
-- No session refresh UI; no "remember me".
-- `better-auth` session cookie details not documented in repo.

@@ -51,7 +51,3 @@ project/
 ## External systems
 
 - Backend: organization-scoped project endpoints, cookie auth, OWNER checks.
-
-## Incomplete
-
-- No project-level member/permission UI.

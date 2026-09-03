@@ -1,5 +1,4 @@
-// ./src/components/landing/HomeGate.tsx
-
+// src/components/landing/HomeGate.tsx
 "use client";
 
 import { useEffect } from "react";

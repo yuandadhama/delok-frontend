@@ -1,5 +1,4 @@
-// ./src/domains/log-explorer/components/LogsPanel.tsx
-
+// src/domains/log-explorer/components/LogsPanel.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";

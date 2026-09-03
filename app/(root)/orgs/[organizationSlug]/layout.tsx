@@ -1,5 +1,4 @@
-// ./app/(root)/orgs/[organizationSlug]/layout.tsx
-
+// app/(root)/orgs/[organizationSlug]/layout.tsx
 import { ReactNode } from "react";
 
 import OrganizationLayout from "@/src/views/orgs/organization/OrganizationLayout";

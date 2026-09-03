@@ -1,5 +1,4 @@
-// ./src/domains/api-key/hooks/useProjectApiKeys.ts
-
+// src/domains/api-key/hooks/useProjectApiKeys.ts
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

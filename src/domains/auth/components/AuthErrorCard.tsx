@@ -1,5 +1,4 @@
-// ./src/domains/auth/components/AuthErrorCard.tsx
-
+// src/domains/auth/components/AuthErrorCard.tsx
 import { Button } from "@/src/components/ui";
 import AuthCard from "./AuthCard";
 import AuthLayout from "./AuthLayout";

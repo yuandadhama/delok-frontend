@@ -1,5 +1,4 @@
-// ./src/domains/log/components/LogDetailPanel.tsx
-
+// src/domains/log/components/LogDetailPanel.tsx
 "use client";
 
 import { FileJson, MessageSquare, X } from "lucide-react";

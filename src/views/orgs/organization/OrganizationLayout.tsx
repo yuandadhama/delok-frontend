@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/OrganizationLayout.tsx
-
+// src/views/orgs/organization/OrganizationLayout.tsx
 "use client";
 
 import { ReactNode, useEffect } from "react";

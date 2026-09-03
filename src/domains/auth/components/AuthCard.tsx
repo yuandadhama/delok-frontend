@@ -1,5 +1,4 @@
-// ./src/domains/auth/components/AuthCard.tsx
-
+// src/domains/auth/components/AuthCard.tsx
 import Image from "next/image";
 import { ReactNode } from "react";
 import Link from "next/link";

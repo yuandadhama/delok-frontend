@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/OrganizationPage.tsx
-
+// src/views/orgs/organization/OrganizationPage.tsx
 "use client";
 
 import { ROUTES } from "@/src/constants/routes";

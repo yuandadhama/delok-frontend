@@ -1,5 +1,4 @@
-// ./src/components/docs/navigation.ts
-
+// src/components/docs/navigation.ts
 export type DocsNavItem = {
   title: string;
   href: string;

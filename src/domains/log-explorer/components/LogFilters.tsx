@@ -1,5 +1,4 @@
-// ./src/domains/log-explorer/components/LogFilters.tsx
-
+// src/domains/log-explorer/components/LogFilters.tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";

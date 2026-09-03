@@ -1,5 +1,4 @@
-// ./src/utils/format-date.ts
-
+// src/utils/format-date.ts
 const FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
   dateStyle: "medium",
   timeStyle: "short",

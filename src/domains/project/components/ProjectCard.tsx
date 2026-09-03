@@ -1,5 +1,4 @@
-// ./src/domains/project/components/ProjectCard.tsx
-
+// src/domains/project/components/ProjectCard.tsx
 import Link from "next/link";
 import { FileText } from "lucide-react";
 import { useEffect, useRef } from "react";

@@ -1,5 +1,4 @@
-// ./src/components/ui/Modal.tsx
-
+// src/components/ui/Modal.tsx
 "use client";
 
 import { HTMLAttributes, useEffect } from "react";

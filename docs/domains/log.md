@@ -41,8 +41,3 @@ Indirectly via `log-explorer` on `/orgs/:slug/projects/:projectId`.
 ## External systems
 
 - Backend: `/api/projects/:projectId/logs` (filtering, pagination).
-
-## Incomplete
-
-- No log export or share.
-- `level` is `string` union plus `string` fallback; no enum enforcement in UI beyond filter.

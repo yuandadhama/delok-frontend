@@ -1,5 +1,4 @@
-// ./app/not-found.tsx
-
+// app/not-found.tsx
 import Link from "next/link";
 import Image from "next/image";
 

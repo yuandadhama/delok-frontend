@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/settings/OrganizationSettingsView.tsx
-
+// src/views/orgs/organization/settings/OrganizationSettingsView.tsx
 "use client";
 
 import { useRouter } from "next/navigation";

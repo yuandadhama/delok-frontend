@@ -1,5 +1,4 @@
-// ./src/components/layout/sidebar/index.ts
-
+// src/components/layout/sidebar/index.ts
 export { Sidebar } from "./Sidebar";
 export { SidebarHeader } from "./SidebarHeader";
 export { SidebarNavigation } from "./SidebarNavigation";

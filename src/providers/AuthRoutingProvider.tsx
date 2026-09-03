@@ -1,5 +1,4 @@
-// ./src/providers/AuthRoutingProvider.tsx
-
+// src/providers/AuthRoutingProvider.tsx
 "use client";
 
 import { ReactNode, useEffect } from "react";

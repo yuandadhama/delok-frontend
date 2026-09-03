@@ -1,7 +1,4 @@
-// ./src/utils/api-error.ts
-
 // src/utils/api-error.ts
-
 type ApiErrorBody = {
   error?: { code?: string; message?: string };
   errors?: Array<{

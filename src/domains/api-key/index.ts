@@ -1,5 +1,4 @@
-// ./src/domains/api-key/index.ts
-
+// src/domains/api-key/index.ts
 export { ApiKeyService } from "./api/api-key.service";
 
 export { ApiKeyList, GenerateApiKeyModal } from "./components";

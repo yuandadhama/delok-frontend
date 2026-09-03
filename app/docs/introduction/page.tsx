@@ -1,5 +1,4 @@
-// ./app/docs/introduction/page.tsx
-
+// app/docs/introduction/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";

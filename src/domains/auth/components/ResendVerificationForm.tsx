@@ -1,5 +1,4 @@
-// ./src/domains/auth/components/ResendVerificationForm.tsx
-
+// src/domains/auth/components/ResendVerificationForm.tsx
 "use client";
 
 import Link from "next/link";

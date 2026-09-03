@@ -1,5 +1,4 @@
-// ./src/domains/auth/components/SocialLogin.tsx
-
+// src/domains/auth/components/SocialLogin.tsx
 "use client";
 
 import Button from "@/src/components/ui/Button";

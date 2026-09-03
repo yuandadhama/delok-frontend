@@ -1,5 +1,4 @@
-// ./src/domains/organization/components/OrganizationCard.tsx
-
+// src/domains/organization/components/OrganizationCard.tsx
 import Link from "next/link";
 import { Building2 } from "lucide-react";
 

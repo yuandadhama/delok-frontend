@@ -1,5 +1,4 @@
-// ./src/components/ui/Skeleton.tsx
-
+// src/components/ui/Skeleton.tsx
 import { HTMLAttributes } from "react";
 import clsx from "clsx";
 

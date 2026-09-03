@@ -1,5 +1,4 @@
-// ./src/components/layout/sidebar/SidebarHeader.tsx
-
+// src/components/layout/sidebar/SidebarHeader.tsx
 import { ASSETS } from "@/src/constants/assets";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Image from "next/image";

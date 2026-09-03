@@ -1,5 +1,4 @@
-// ./app/docs/layout.tsx
-
+// app/docs/layout.tsx
 import type { Metadata } from "next";
 import { DocsLayout } from "@/src/components/docs/DocsLayout";
 

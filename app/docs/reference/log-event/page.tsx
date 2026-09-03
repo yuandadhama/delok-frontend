@@ -1,5 +1,4 @@
-// ./app/docs/reference/log-event/page.tsx
-
+// app/docs/reference/log-event/page.tsx
 import type { Metadata } from "next";
 import { CodeBlock } from "@/src/components/docs/CodeBlock";
 

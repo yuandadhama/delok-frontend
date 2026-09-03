@@ -1,7 +1,4 @@
-// ./src/domains/log-explorer/hooks/useLogExplorerRealtime.ts
-
 // src/domains/log-explorer/hooks/useLogExplorerRealtime.ts
-
 "use client";
 
 import { useEffect } from "react";

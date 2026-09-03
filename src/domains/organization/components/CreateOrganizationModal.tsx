@@ -1,5 +1,4 @@
-// ./src/domains/organization/components/CreateOrganizationModal.tsx
-
+// src/domains/organization/components/CreateOrganizationModal.tsx
 "use client";
 
 import { useState } from "react";

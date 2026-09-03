@@ -1,7 +1,4 @@
-// ./src/lib/websocket/realtime.types.ts
-
-// src/types/realtime.types.ts
-
+// src/lib/websocket/realtime.types.ts
 export type RealtimeEvent = {
   "log.created": {
     id: string;

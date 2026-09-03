@@ -1,5 +1,4 @@
-// ./src/domains/auth/components/SignInForm.tsx
-
+// src/domains/auth/components/SignInForm.tsx
 "use client";
 
 import Link from "next/link";

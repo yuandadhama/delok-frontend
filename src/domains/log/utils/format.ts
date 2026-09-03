@@ -1,7 +1,4 @@
-// ./src/domains/log/utils/format.ts
-
 // src/domains/log/utils/format.ts
-
 const pad = (value: number) => String(value).padStart(2, "0");
 
 /** YYYY-MM-DD */

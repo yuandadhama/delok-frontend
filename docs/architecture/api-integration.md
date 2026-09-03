@@ -1,8 +1,8 @@
-# API & Backend Integration Audit
+# API Integration
 
 ## HTTP Client
 
-No axios/fetch wrapper library. All services use native `fetch` with `credentials:"include"` (cookie auth). Each service resolves base URL via:
+Services use native `fetch` with `credentials:"include"` (cookie auth). Each service resolves the base URL as:
 
 ```ts
 function getApiBaseUrl(): string {
@@ -13,70 +13,68 @@ function getApiBaseUrl(): string {
 }
 ```
 
-This pattern appears identically in `auth.service.ts:12`, `organization.service.ts:12`, `project.service.ts:10`, `log.service.ts:5`, `api-key.service.ts:5`.
-
-Backend repository: **Not inspected** (out of scope). Contracts inferred from frontend code only.
+This pattern appears in `auth.service.ts`, `organization.service.ts`, `project.service.ts`, `log.service.ts`, `api-key.service.ts`.
 
 ## Authentication
 
-- Client: `better-auth` `createAuthClient({ baseURL: getAuthBaseURL() })` (`src/lib/auth/auth-client.ts:16`).
-- Session: `authClient.useSession()` (React hook) and `authClient.signIn/signUp` via `AuthService`.
-- Custom endpoint: `POST /api/auth/resend-verification` is called via raw `fetch`, not `authClient` (`src/domains/auth/api/auth.service.ts:45`).
+- Client: `better-auth` `createAuthClient({ baseURL: getAuthBaseURL() })` (`src/lib/auth/auth-client.ts`).
+- Session: `authClient.useSession()` and `authClient.signIn/signUp` via `AuthService`.
+- Custom endpoint: `POST /api/auth/resend-verification` is called via raw `fetch` (`src/domains/auth/api/auth.service.ts`).
 - Social: `authClient.signIn.social({provider:"google"|"github", callbackURL:...})`.
 
-## API Structure (from service files)
+## API Endpoints
 
 | Domain | Method | Endpoint | File |
 |--------|--------|----------|------|
-| Org | GET | `/api/organization` | `organization.service.ts:30` |
-| Org | POST | `/api/organization` | `organization.service.ts:42` |
-| Org | GET | `/api/organization/:slug` | `organization.service.ts:70` |
-| Org | PATCH | `/api/organization/:slug` | `organization.service.ts:88` |
-| Org | DELETE | `/api/organization/:slug` | `organization.service.ts:118` |
-| Project | GET | `/api/organizations/:organizationSlug/projects` | `project.service.ts:32` |
-| Project | POST | `/api/organizations/:organizationSlug/projects` | `project.service.ts:50` |
-| Project | GET | `/api/organizations/:organizationSlug/projects/:projectId` | `project.service.ts:76` |
-| Project | PATCH | `/api/organizations/:organizationSlug/projects/:projectId` | `project.service.ts:103` |
-| Project | DELETE | `/api/organizations/:organizationSlug/projects/:projectId` | `project.service.ts:131` |
-| Log | GET | `/api/projects/:projectId/logs?page=&limit=&search=&level=&environment=&from=&to=` | `log.service.ts:23` |
-| API Key | GET | `/api/projects/:projectId/api-keys` | `api-key.service.ts:12` |
-| API Key | POST | `/api/projects/:projectId/api-keys` | `api-key.service.ts:26` |
-| API Key | PATCH | `/api/api-key/:id` (rename) | `api-key.service.ts:50` |
-| API Key | PATCH | `/api/api-key/:id/revoke` | `api-key.service.ts:68` |
+| Org | GET | `/api/organization` | `organization.service.ts` |
+| Org | POST | `/api/organization` | `organization.service.ts` |
+| Org | GET | `/api/organization/:slug` | `organization.service.ts` |
+| Org | PATCH | `/api/organization/:slug` | `organization.service.ts` |
+| Org | DELETE | `/api/organization/:slug` | `organization.service.ts` |
+| Project | GET | `/api/organizations/:organizationSlug/projects` | `project.service.ts` |
+| Project | POST | `/api/organizations/:organizationSlug/projects` | `project.service.ts` |
+| Project | GET | `/api/organizations/:organizationSlug/projects/:projectId` | `project.service.ts` |
+| Project | PATCH | `/api/organizations/:organizationSlug/projects/:projectId` | `project.service.ts` |
+| Project | DELETE | `/api/organizations/:organizationSlug/projects/:projectId` | `project.service.ts` |
+| Log | GET | `/api/projects/:projectId/logs?page=&limit=&search=&level=&environment=&from=&to=` | `log.service.ts` |
+| API Key | GET | `/api/projects/:projectId/api-keys` | `api-key.service.ts` |
+| API Key | POST | `/api/projects/:projectId/api-keys` | `api-key.service.ts` |
+| API Key | PATCH | `/api/api-key/:id` (rename) | `api-key.service.ts` |
+| API Key | PATCH | `/api/api-key/:id/revoke` | `api-key.service.ts` |
 
-Response shape assumed: `{ data: T }` on success; errors are `{ error:{code,message}}` or `{errors:[...]}` — see `src/utils/api-error.ts:5-13`.
+Response shape: `{ data: T }` on success; errors are `{ error:{code,message}}` or `{errors:[...]}` — see `src/utils/api-error.ts`.
 
-## Request / Response Handling
+## Request and Response Handling
 
-- Requests: `Content-Type: application/json` for POST/PATCH, no custom headers. API keys are **not** sent by the frontend; they are for SDK ingestion.
-- Responses: `response.json()` then `normalize*` helpers map `created_at/updated_at` -> `createdAt/updatedAt` (`organization.service.ts:18`, `project.service.ts:18`).
-- Org list/maps: `(data.data ?? []).map(normalizeX)`.
+- Requests: `Content-Type: application/json` for POST/PATCH. API keys are not sent by the frontend; they are for SDK ingestion.
+- Responses: `response.json()` then `normalize*` helpers map `created_at/updated_at` -> `createdAt/updatedAt` (`organization.service.ts`, `project.service.ts`).
+- Lists: `(data.data ?? []).map(normalizeX)`.
 
-## Error Handling & Validation
+## Error Handling and Validation
 
-- `getApiErrorMessage` / `getApiErrorCode` (`src/utils/api-error.ts:15-33`) extract `error.message`, `errorDetail.message`, `errors[0].message`.
-- Domain-specific: `ORGANIZATION_SLUG_ALREADY_EXISTS` mapped to `"Organization name is unavailable"` (`organization.service.ts:60`).
-- Form validation: `zod` schemas in `src/domains/*/schemas/*` with `react-hook-form` + `@hookform/resolvers` (`SignInForm`, `CreateOrganizationModal`, etc.). No backend schema sharing verified.
-- No global error boundary; per-hook `console.error` and `throw new Error(...)` surfaced via toasts or inline UI.
+- `getApiErrorMessage` / `getApiErrorCode` (`src/utils/api-error.ts`) extract `error.message`, `errorDetail.message`, `errors[0].message`.
+- `ORGANIZATION_SLUG_ALREADY_EXISTS` maps to `"Organization name is unavailable"` (`organization.service.ts`).
+- Form validation uses `zod` schemas in `src/domains/*/schemas/*` with `react-hook-form` + `@hookform/resolvers`.
+- Errors are surfaced via toasts or inline UI. No global error boundary.
 
 ## WebSocket (Realtime)
 
-- Manager: `src/lib/websocket/websocket.ts:48` — singleton `websocketManager`.
+- Manager: `src/lib/websocket/websocket.ts` — singleton `websocketManager`.
 - URL: `NEXT_PUBLIC_WS_URL` (fallback `ws://localhost:8000`), with `wss://` enforcement on https/production.
 - Connection: `SocketProvider` calls `connect()` on mount. Exponential backoff reconnect (`1s * 2^attempt`, cap 30s). Auto-resubscribes on `onopen`.
 - Protocol:
   - Subscribe: `{type:"project.subscribe", data:{projectId}}`
   - Unsubscribe: `{type:"project.unsubscribe", data:{projectId}}`
   - Events: `{type, data}` dispatched to handlers registered via `websocketManager.on(type, handler)`.
-- Event types (`src/lib/websocket/realtime.types.ts:5`):
+- Event types (`src/lib/websocket/realtime.types.ts`):
   - `log.created` -> `LogEvent`
   - `project.log_count.updated` -> `{projectId, logCount}`
 - Consumers: `useLogExplorerRealtime` (filters via `matchesLogFilters`) and `useProjectsRealtime` (updates React Query cache).
 
-## Frontend vs Backend Responsibility
+## Frontend and Backend Responsibilities
 
-- **Frontend:** Auth UI, org/project CRUD UI, log filtering/pagination UI, realtime subscription, local UX state (last org/project).
-- **Backend:** Session/cookie management, slug generation, permission checks (OWNER role), log storage/search, API key generation/revocation, WebSocket fan-out per project.
+- **Frontend:** Auth UI, org and project CRUD UI, log filtering and pagination UI, realtime subscription, local UX state.
+- **Backend:** Session and cookie management, slug generation, permission checks (OWNER role), log storage and search, API key generation and revocation, WebSocket fan-out per project.
 
 ## Environment Variables
 

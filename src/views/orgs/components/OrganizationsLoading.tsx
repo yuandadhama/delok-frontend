@@ -1,5 +1,4 @@
-// ./src/views/orgs/components/OrganizationsLoading.tsx
-
+// src/views/orgs/components/OrganizationsLoading.tsx
 import Loader from "@/src/components/ui/Loader";
 
 export default function OrganizationsLoading() {

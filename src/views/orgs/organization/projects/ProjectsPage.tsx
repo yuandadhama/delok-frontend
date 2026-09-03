@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/projects/ProjectsPage.tsx
-
+// src/views/orgs/organization/projects/ProjectsPage.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";

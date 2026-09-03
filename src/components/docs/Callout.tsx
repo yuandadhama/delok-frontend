@@ -1,5 +1,4 @@
-// ./src/components/docs/Callout.tsx
-
+// src/components/docs/Callout.tsx
 import { Info } from "lucide-react";
 
 type CalloutProps = {

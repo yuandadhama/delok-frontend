@@ -1,5 +1,4 @@
-// ./src/domains/organization/components/OrganizationDangerZone.tsx
-
+// src/domains/organization/components/OrganizationDangerZone.tsx
 "use client";
 
 import { useState } from "react";

@@ -1,5 +1,4 @@
-// ./src/views/orgs/components/OrganizationsWelcome.tsx
-
+// src/views/orgs/components/OrganizationsWelcome.tsx
 type OrganizationsWelcomeProps = {
   name?: string | null;
 };

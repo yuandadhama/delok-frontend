@@ -1,5 +1,4 @@
-// ./src/domains/organization/schemas/organization.schema.ts
-
+// src/domains/organization/schemas/organization.schema.ts
 import { z } from "zod";
 
 export const organizationSchema = z.object({

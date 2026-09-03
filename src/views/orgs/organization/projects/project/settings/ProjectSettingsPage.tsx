@@ -1,5 +1,4 @@
-// ./src/views/orgs/organization/projects/project/settings/ProjectSettingsPage.tsx
-
+// src/views/orgs/organization/projects/project/settings/ProjectSettingsPage.tsx
 "use client";
 
 import { useParams } from "next/navigation";
