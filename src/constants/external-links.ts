@@ -8,7 +8,7 @@ export const EXTERNAL_LINKS = {
   DOCS: "/docs",
 
   /** Project repository — the only external link currently configured. */
-  GITHUB: "https://github.com/yuandadhama/delok",
+  GITHUB: "https://github.com/delok-dev",
 
   /**
    * Developer profile.
