@@ -6,7 +6,7 @@ import { DocsHomeSearch } from "@/src/components/docs/DocsHomeSearch";
 import { ROUTES } from "@/src/constants/routes";
 
 export const metadata: Metadata = {
-  title: "Documentation",
+  title: "Delok | Documentation",
   description:
     "Everything you need to start sending and understanding logs with Delok.",
 };
